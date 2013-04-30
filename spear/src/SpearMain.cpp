@@ -26,7 +26,7 @@ using namespace boost;
 
 /*
  * David Quigley
- * UCSF Cancer Research Institute, 2007-2010
+ * UCSF Cancer Research Institute, 2007-2013
  *
  * Spear is used to measure correlation between rows of elements.  Spearman
  * rank correlation is calculated; ties are ranked using the mean of the ranks
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]){
 	ss << "SPEAR\nDavid Quigley, Balmain Lab, UCSF\n\n";
 
 	ss << "Calculates correlation and returns a file in the .SPEAR format\n\n";
-	ss << "GENERAL USE\n";
+	ss << "GENERAL USAGE\n";
 	ss << "Pass --data_path, --sample_path, --gene_path to indicate the data set to analyze.\n";
 	ss << "By default all samples are included; limit the samples by passing limits to\n";
 	ss << "--class_a_limit with the format FOO=BAR or FOO!BAR to include only samples in\n";
