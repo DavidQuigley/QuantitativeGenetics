@@ -22,7 +22,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # load.matrix = function( fn )
 #   Load file in "carmen" format into data frame
 #
-# write.matrix = function(o, fn_out )
+# write.matrix = function(o, fn_out, na.string="NA" )
 #   writes a data frame in the format expected by load.matrix
 #
 # read.eqtl = function(fn){
@@ -78,6 +78,12 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # write.dataset=function(sa, gene.symbols, E, fn)
 #   writes out dataset in a format readable by TMEV or suitable for Excel.
 #
+# do.sam = function(E, ga, A, B, med.FDR){
+#   Perform a turn-key SAM analysis returning values with FDR<med.FDR
+#
+# do.sam.paired = function(E, ga, A, B, med.FDR)
+#   Perform a turn-key paired SAM analysis returning values with FDR<med.FDR
+# 
 # write.SAM.siggenes(siggenes, fn)
 #   Given output of SAM analysis, write siggenes to file. Returns data frame written.
 #
@@ -90,7 +96,31 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # vector.to.file = function( V, file="/users/dquigley/temp/test.txt" )
 #  dump vector to file one value per line
 #
+# find.dupes = function(fn){
+#  identify the duplicates in column one
 #
+#####################################
+# Protein quantification
+#####################################
+#
+# quantify.protein = function(d)
+#  determine concentration of protein from BCA assay
+#
+#
+#####################################
+# RNA-seq code
+#####################################
+# collapse.rs.to.genes=function( counts.rs, GCs, lengths, symbols ){
+#   Given data frame of counts for transcripts, GC content, lengths, symbol of each transcript,
+#   consolidate to consensus values.
+#
+# strain.linear.model = function( FF, STRAINS ){
+#   Calculate linear model of strain on expression. Not truly RNA-seq specific
+#
+# calculate.FPKM = function( counts, lengths ){
+#   N = counts * 1,000,000 / (sample.total * gene.length.in.kb)
+#
+#   
 #####################################
 # AROMA AND AFFYMETRIX HELPER TOOLS #
 #####################################
@@ -102,11 +132,27 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 #   Wrapper for CRLMM genotyping used when we only have X and Y matrixes
 #
 #
+################
+# IMPUTE TOOLS #
+################
+#
+# impute.prepare = function(calls, snp.ids, 
+#                  snp.chr, snp.pos, rs.ids, strand, snp.alleleA, snp.alleleB, 
+#                  target.chrom, target.pos.start, target.pos.end, 
+#                  dir.output, fn.out)
+#   convert 0/1/2 genotype format into impute format.
+#
+# impute.parse.results = function( target.chrom, sample.ids, dir.output, fn.out )
+#   Read the result of a call to impute and convert into 0/1/2 genotype format
+#
+# impute.generate.command = function(target.chrom, target.pos.start, target.pos.end, bin, dir.haplotypes, dir.output, fn.out)
+#   Generate the command to run impute (binary located at bin)
+# 
 #####################################
 # AROMA AND AFFYMETRIX HELPER TOOLS #
 #####################################
 #
-# prepare.affy430_2.dataset = function( dir.CEL, dir.OUT, fn_ga )
+# prepare.affy430_2.dataset = function( dir.CEL, dir.OUT, fn_ga, ga.id )
 #   convert CEL files into dataset files (full, above_bg, above_bg_refseq)
 #
 # prepare.affy133.dataset = function( dir.CEL, dir.OUT, fn.source.ga, ga.id ){
@@ -167,7 +213,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # plot.chr.CRLMM = function(cS, cCN, s.no, max.y=5, x1=1, x2=0, lblS, lblCN)
 #   Separately plots SNP and Copy Number (non-polymorphic) probes for one chromosome
 #
-# plot.cluster = function(M, labels=names(M), d=NULL, main=NULL, direction="samples")
+# plot.cluster = function(M, labels=names(M), d=NULL, main=NULL, direction="samples", cex=0.5)
 #   Plot hierarchical cluster of M 
 #
 # color.dendrogram.labels = function(n){
@@ -176,9 +222,15 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # plot.cluster.colors=function( M, colors, force.flat=F, show.labels=T )
 #   Given dataframe M, plot with labels colored according to colors.
 #
-# plot.clean = function(V ){
+# plot.clean = function(V, ymin=NA, ymax=NA, colors=c(), cex=0.25 )
 #   This is the utility function that just plots what it's given without labels.
 #   Intended for use in figures
+#
+# sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, symbol=NULL, scale=F, y.min=NULL, y.max=NULL )
+#   Given a matrix and a list of gene names and symbol, plot gene names sorted by symbol
+#
+# do.pca = function( D, pca=NULL, labels=NULL)
+#    Helper function for quick visualization of PCA. Automatically colors based on labels.
 #
 ########################
 # STATISTICAL ANALYSIS #
@@ -202,12 +254,21 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # write.spear.to.cytoscape = function( fn.base, DF, attributes=NULL )
 #   write spear file to cytoscape
 #
+# identify.eQTL.networks = function(eqtl, spear, probes.snp, ga.snp.chr, ga.snp.pos, 
+#                                  probes.gene, ga.gene.chr, ga.gene.loc, min.trans=1)
+#
+# write.eqtl.to.cytoscape = function( fn.base, QTL, SPEAR, snps, probes, all.S, S.chr, S.loc, all.G, G.chr, G.loc){
+#   write QTL and SPEAR to cytoscape, using snps and probes specified
+#
 # calculate.min.DC.score = function( n.probes )
 #   What is the Z score required for a P value lower than the bonferroni-corrected
 #   number of tests for differential correlation
 #
-# spear = function( fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b="", probe="", y="symbol" )
+# spear = function( fn_spear, fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b="", probe="", y="symbol" )
 #   simple wrapper for spear 
+#
+# overlap.spear.pairs = function(A, B, p2s )
+#   find probe pairs in two spear files
 #
 ### ANOVA AND REGRESSION
 #
@@ -243,7 +304,12 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # calculate.EQTL = function(dataset, shared.col, covariate=NULL, gene.idx=NULL, n.perm=0)
 #   Calculates eQTLs using a linear model.
 #   dataset is a list with members e.gene, s.gene, g.gene, e.snp, s.snp, g.snp, gene.names
-#   
+#
+# eqtl.filter = function(eqtl, snp, ga.chr.snp, ga.loc.snp, gene, ga.chr.gene, ga.loc.gene, type="cis", window=0)
+#
+# write.rqtl.csv=function( expr, probe.list, sa.geno, sa.col.matching.expr, geno.chrom, calls.geno, fn.rqtl ){
+#   write all probes in probe.list as phenotypes for an RQTL CSV file
+# 
 # generate.rQTL.matrix = function( pheno.ids, pheno, e.snp, ga.snp, sa.snp, fn.out)
 #   generate an input file for R/QTL
 #
@@ -259,7 +325,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # means.by.genotype = function(IDLIST, GENO, PHENO, probes_genotype, probes_phenotype)
 #   report means by genotype, assumes genotypes are in {0,1}
 #
-# annotate.eqtl = function( E, rs2idx, probe2idx, all.chrom.snp, all.loc.snp, all.chrom.expr, all.loc.expr )
+# annotate.eqtl.with.locations = function(E, snp2idx, gene2idx, G.snp.c, G.snp.l, G.expr.c, G.expr.l)
 #   Add chromosome and location to output of eQTL analysis.
 #
 # 
@@ -293,6 +359,10 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # DC.between.labels = function( A1, A2, B1, B2, n.perms=1000 ){
 #   Given values for probes 1 and 2 in two classes A and B, calculate a P value for differential correlation by sampling between classes
 #
+#
+### PLINK
+# calls.to.PLINK = function( calls, snp.ids, sample.ids, sexes, CHR, POS, fn.tped, fn.tfam ){
+#   write genotype calls to PLINK TPED and TFAM files
 #
 ##################
 # GSCA functions #
@@ -380,16 +450,38 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # intersection = function(x, y)
 #   return new graph where edges found in both x and y
 #
+# difference = function(x, y)
+#   return new graph where edges found in x not y
+#
+# triangles = function(x)
+#   return subgraph of x where each node is in a clique of N=3
+# 
+# minimum.degree = function(G, min.n)
+#   return G such that all nodes have degree >= min.n
+#
 #####################
 # UTILITY FUNCTIONS #
 #####################
 #
-# count.appearances = function(V)
+# get.split.col = function(v, string, col=0, last=F, first=F)
+#
+# standardize = function(D)
+#   standardize matrix by rows
+#
+# compress.probes = function( D, idx, min.cor=0.8 )
+#   Given a set of probe indexes idx, look for those with correlation >= min.cor
+#   Report mean values across all probes with correlation >= min.cor
+#   If no genes pairs meet these criteria, default to mean value
+#
+# count.appearances = function(V, order.by="values")
 #   return dataframe how how many times each item in V appears
 #
 # match.idx = function(A, B)
 #   return dataframe of indices into A and B restricted to perfect matches between A and B, 
 #   where idx.A[i] == idx.B[i] for each i in matched pairs. 
+#
+# match.idx.first = function( A, B )
+#   for intersection, returns first index of B in first index of A
 #
 #  mean.by.symbol = function( expr, all.symbols, symbols )
 #   find all occurences of each element in symbols in all.symbols; return mean of those values in expr
@@ -481,12 +573,18 @@ read.spear=function(fn){
     x
 }
 
-    
-write.matrix = function(o, fn_out){
+read.coverage=function(fn){
+    # Read output of BAM coverage table
+    x=read.table(fn, sep='\t', header=F, stringsAsFactors=F)
+    names(x) = c('chrom', 'unknown', 'type', 'start', 'stop', 'a', 'strand', 'b', 'id', 'count', 'n.bases', 'feature.size', 'fraction')
+    x
+}
+
+write.matrix = function(o, fn_out, na.string="NA"){
     # Write data frame in standard format used by load.matrix
     rownames = append( 'IDENTIFIER', names(o) )
     write( rownames, fn_out, sep='\t', ncolumns=length(rownames) )
-    write.table(o, fn_out, quote=F, sep='\t', row.names=T, col.names=F, append=T)
+    write.table(o, fn_out, quote=F, sep='\t', row.names=T, na=na.string, col.names=F, append=T)
 }
 
 write.stanford = function( o, fn.out, col.annotation, row.annotation){
@@ -823,16 +921,30 @@ means.by.genotype = function(IDLIST, GENO, PHENO, probes_genotype, probes_phenot
     data.frame(probes_phenotype, probes_genotype, means.0, means.1)
 }
 
-
-annotate.eqtl = function( E, rs2idx, probe2idx, all.chrom.snp, all.loc.snp, all.chrom.expr, all.loc.expr ){
-    chr.snp = all.chrom.snp[ hsh_get(rs2idx, E$snp) ]
-    loc.snp = all.loc.snp[ hsh_get(rs2idx, E$snp) ]
-    chr.expr = all.chrom.expr[ hsh_get(probe2idx, E$probe) ]
-    loc.expr = all.loc.expr[ hsh_get(probe2idx, E$probe) ]
-    cbind(E, chr.snp, loc.snp, chr.expr, loc.expr)
+annotate.eqtl.with.locations=function(E, snp2idx, gene2idx, G.snp.c, G.snp.l, G.expr.c, G.expr.l){
+    chr.snp = rep(0, dim(E)[1])
+    chr.expr = rep(0, dim(E)[1])
+    loc.snp = rep(0, dim(E)[1])
+    loc.expr = rep(0, dim(E)[1])
+    for(i in 1:dim(E)[1]){
+        chr.snp[i] = G.snp.c[ hsh_get( snp2idx, E$snp[i] ) ]
+        loc.snp[i] = G.snp.l[ hsh_get( snp2idx, E$snp[i] ) ]
+        chr.expr[i] = G.expr.c[ hsh_get( gene2idx, as.character(E$probe[i] ) ) ]
+        loc.expr[i] = G.expr.l[ hsh_get( gene2idx, as.character(E$probe[i] ) ) ]                        
+    }
+    same.chr=chr.snp==chr.expr
+    chr.snp.num = chr.snp
+    chr.snp.num[chr.snp.num=="X"] = 23
+    chr.snp.num = as.numeric(chr.snp.num)
+    E$aa = round(E$aa,3)
+    E$ab = round(E$ab,3)
+    E$bb = round(E$bb,3)
+    E$raw.p = signif(E$raw.p,3)
+    E$t.stat = round(E$t.stat,3)
+    data.frame( E, chr.snp, chr.expr, loc.snp, loc.expr, same.chr, chr.snp.num, stringsAsFactors=F )
 }
     
-    
+   
 annotate.eqtl.old = function(E, fn.ga.snp, fn.ga.expr, cis.window.size=1000000){
     ga.snp = load.matrix(fn.ga.snp)
     ga.expr = load.matrix(fn.ga.expr)
@@ -1044,6 +1156,149 @@ vector.to.file = function( V, file="/users/dquigley/temp/test.txt" ){
     write.table( data.frame(V), file=file, row.names=F, col.names=F, quote=F)
 }
 
+find.dupes = function(fn){
+    x = read.table(fn, sep='\t', header=T, stringsAsFactors=F)
+    freq = count.appearances(x[,1])
+    freq$keys[freq$values>1]
+}
+
+
+################################
+# Begin protein code           #
+################################
+
+quantify.protein = function(d){
+    # Input: one row per sample
+    # First 7 rows should be the standard dilutions
+    
+    means = rowMeans(d)
+    x = c(0, 1, 2, 5, 10, 20, 50)
+    y = means[1:7]
+    sds.dil = rep(0, 7)
+    for(i in 1:7){
+        sds.dil[i] = sd( as.numeric( d[i,]) )
+    }
+    sds.dil = round(sds.dil,3)
+    means.dil = round(means[1:7], 3)
+    print( data.frame(means.dil, sds.dil) )
+    
+    df = data.frame(x,y)
+    L=lm(y~x, data=df)
+    plot(x,y, pch=19)
+    abline(L)
+    prots = means[8:length(means)]
+    y.int = L$coefficients[1]
+    slope = L$coefficients[2]
+    sds = rep(0, length(prots))
+    for(i in 1:length(sds)){
+        sds[i] = sd( as.numeric( d[i+7,]) )
+    }
+    sds = round(sds,3)
+    um.per.2ul = round((prots - y.int)/slope, 3)
+    um.per.ul = round( um.per.2ul / 2, 3)
+    means = round(means[8:length(means)],3)
+    thirty.ug = round( 30/um.per.ul, 2 )
+    twenty.ug = round( 20/um.per.ul, 2 )
+    h20.for.30 = round(30 - thirty.ug, 2)
+    h20.for.20 = round(20 - twenty.ug, 2)
+    points(um.per.2ul, means)
+    data.frame(means, sds, um.per.2ul, um.per.ul, thirty.ug, h20.for.30, twenty.ug, h20.for.20 )
+}
+
+
+#######################
+# BEGIN RNA-seq CODE  #
+#######################
+
+collapse.rs.to.genes=function( counts.rs, GCs, lengths, symbols ){
+    # Given data frame of counts for transcripts, GC content, lengths, symbol of each transcript,
+    # consolidate to consensus values.
+    if(length(GCs)!=length(lengths) | length(GCs)!=dim(counts.rs)[1] | length(GCs) != length(symbols) ){
+        stop("Inconsistent data passed; data fram and three vectors must have same length")
+    }
+    unique.symbols = sort( unique( symbols ) )
+    CNT = matrix(0, nrow=length(unique.symbols), ncol=dim(counts.rs)[2] )
+    LEN = rep(0, length(unique.symbols))
+    GC = rep(0, length(unique.symbols))
+    D = data.matrix(counts.rs)
+    for(i in 1:length(unique.symbols) ){
+        symbol = unique.symbols[i]
+        idx = which( symbols==symbol )
+        if( length(idx)==1 ){
+            CNT[i,] = D[idx,]
+            LEN[i] = lengths[idx] 
+            GC[i] = GCs[idx]
+        }
+        else{
+            CNT[i,] = colMeans( D[idx,] )
+            LEN[i] = max(lengths[idx])
+            GC[i] = mean(GCs[idx])
+        }
+    }
+    counts = data.frame( round(CNT) )
+    rownames(counts) = unique.symbols
+    names(counts) = names(counts.rs)
+
+    list(counts=counts, GC=GC, lengths=LEN)
+}
+    
+calculate.FPKM = function( CNT, LEN ){
+    # N = counts * 1,000,000 / (sample.total * gene.length.in.kb)
+    total.reads = colSums(CNT)
+    fpkm = matrix(0, nrow=dim(CNT)[1], ncol=dim(CNT)[2])
+    seq.lengths = matrix(0, nrow=dim(CNT)[1], ncol=dim(CNT)[2])
+    totals = matrix(0, nrow=dim(CNT)[1], ncol=dim(CNT)[2])
+    for(i in 1:dim(seq.lengths)[2] ){
+        seq.lengths[,i] = LEN
+        totals[,i] = total.reads[i]
+    }
+    seq.lengths = seq.lengths/1000
+    fpkm = CNT / (totals*seq.lengths) * 1000000
+    #for(i in 1:dim(CNT)[1]){
+    #    fpkm[i,] = as.numeric( CNT[i,]) / (total.reads * LEN[i] / 1000 )
+    #}
+    #fpkm = fpkm * 1000000
+    fpkm = data.frame(fpkm)
+    names(fpkm) = names(CNT)
+    rownames(fpkm) = rownames(CNT)
+    fpkm
+}
+
+strain.linear.model = function( FF, STRAINS ){
+    # Calculate linear model of strain on expression
+    # Not truly RNA-seq specific
+    D = data.matrix(FF)            
+    lm.p = rep(-1, dim(D)[1])
+    r.p = rep(0, dim(D)[1])
+    sums = rowSums(D)
+    for(i in 1:dim(D)[1]){
+        if( i %% 200==0 )
+            print(i)
+        if(sums[i]>0){
+            L = lm(STRAINS~D[i,] )
+            if( dim(summary(L)$coefficients)[1] == 2  ){
+                # vector if linear model failed; no second row
+                lm.p[i] = summary( L )$coefficients[2,4]
+                r.p[i] = summary(L)$r.squared
+            }
+        }
+    }
+    idx.FVB = which(STRAINS==0)
+    idx.F1 = which(STRAINS==1)
+    idx.SPR = which(STRAINS==2)
+    FVB = round( rowMeans(D[,idx.FVB], na.rm=T), 3)
+    F1 =  round( rowMeans(D[,idx.F1], na.rm=T), 3)
+    SPR = round( rowMeans(D[,idx.SPR], na.rm=T), 3) 
+    mu10 = round( F1-FVB, 3) 
+    mu21 = round( SPR-F1, 3) 
+    diff = round( SPR-FVB, 3) 
+    mus = data.frame(FVB, F1, SPR, diff, r.p, lm.p)
+    mus = mus[ !( mus$FVB==0 & mus$F1==0 & mus$SPR==0),]
+    mus$r.p = round(mus$r.p,3)
+    mus$lm.p = signif(mus$lm.p,5)
+    mus = mus[order(mus$lm.p),]
+    mus
+}
 
 #######################
 # BEGIN CRLMM FROM XY #
@@ -1169,6 +1424,119 @@ genotype.CRLMM.from.XY = function(X, Y, fn.confs, fn.calls, fn.sa){
     output
 }
 
+
+################
+# BEGIN IMPUTE #
+################
+
+impute.prepare=function(calls, snp.ids, 
+                  snp.chr, snp.pos, rs.ids, strand, snp.alleleA, snp.alleleB, 
+                  target.chrom, target.pos.start, target.pos.end, 
+                  dir.output, fn.out){
+    # convert 0/1/2 genotype format into impute format.
+    # SNP 1 : AA AA
+    # SNP 2 : GG GT
+    # is
+    # SNP1 rs1 1000 A C 1 0 0 1 0 0
+    # SNP2 rs2 2000 G T 1 0 0 0 1 0    
+    # generate strand file for impute
+    
+    if( dim(calls)[1] != length(snp.ids) )
+        stop("number of rows in calls != length of snp.ids")
+    if( dim(calls)[1] != length(rs.ids) )
+        stop("number of rows in calls != length of rs.ids")
+    if( dim(calls)[1] != length(strand) )
+        stop("number of rows in calls != length of strand")
+    if( dim(calls)[1] != length(snp.alleleA) )
+        stop("number of rows in calls != length of snp.alleleA")
+    if( dim(calls)[1] != length(snp.alleleB) )
+        stop("number of rows in calls != length of snp.alleleB")
+    fn.calls = paste(dir.output, '/calls_', fn.out, '_impute.txt', sep='')
+    fn.strand = paste(dir.output, '/strand_', fn.out, '_impute.txt', sep='')
+
+    idx=which(snp.chr==target.chrom & (snp.pos>=target.pos.start & snp.pos<=target.pos.end))
+    ga.target = data.frame( rs.id=rs.ids[idx], pos=snp.pos[idx], allele.a=snp.alleleA[idx], allele.b=snp.alleleB[idx], strand=strand[idx], stringsAsFactors=F)
+    calls.target = calls[idx,]
+    rownames(ga.target) = rownames(calls.target)    
+    N.rs = dim(calls.target)[1]
+    N.samp = dim(calls.target)[2]
+    print(paste("Identified", N.rs, "SNPs in region."))
+    print(paste("Identified", N.samp, "samples."))    
+    calls.i = ga.target[,c("rs.id", "pos", "allele.a", "allele.b")]
+    rownames(calls.i) = snp.ids[idx]
+    vals.i = matrix(0, N.rs, N.samp*3)
+    
+    for( col in 1:N.samp){
+        v = calls.target[,col]==1
+        vals.i[ ,(col*3) - 1]=v
+        v = calls.target[,col]==2
+        vals.i[ ,(col*3) ]=v
+    }   
+    
+    calls.i = cbind(calls.i, vals.i)
+    write.table(calls.i, fn.calls, quote=F,sep=' ', col.names=F)
+    write.table(ga.target[,c("pos", "strand")],  fn.strand, quote=F, sep=' ', col.names=F, row.names=F)
+    print( paste( "Wrote calls to ", fn.calls) )
+    print( paste( "Wrote strand to ", fn.strand) )
+}
+
+
+impute.parse.results = function( target.chrom, sample.ids, dir.output, fn.out ){
+    # Read the result of a call to impute and convert into 0/1/2 genotype format 
+    fn.imputed = paste(dir.output, '/calls_', fn.out, '_imputed.txt', sep='')
+    fn.ga.imputed = paste(dir.output, '/gene_attributes_imputed_', fn.out, '.txt', sep='')
+    fn.calls.imputed = paste(dir.output, '/calls_imputed_', fn.out, '.txt', sep='')
+    
+    print(paste("Reading calls from", fn.imputed))
+    imp = read.table(fn.imputed, sep=' ')
+    print(paste("Identified", dim(imp)[1], "imputed or directly sampled loci"))
+    
+    r = imp[,6:dim(imp)[2]]
+    N.samp = length(r)/3
+    
+    r.rows = dim(r)[2]
+    AA = r[, seq(1, r.rows-2, by=3)]
+    AB = r[, seq(2, r.rows-1, by=3)]
+    BB = r[, seq(3, r.rows, by=3)]
+    calls.r = matrix(0, nrow=dim(imp)[1], ncol=N.samp)
+    calls.r[AB>AA & AB>BB] = 1
+    calls.r[BB>AA & BB>AB] = 2
+
+    ga.imputed = imp[,c(3,4,5)]
+    Chrom = rep( target.chrom, dim(ga.imputed)[1])
+    names(ga.imputed) = c("pos", "allele.a", "allele.b")
+    ga.imputed = cbind(Chrom, ga.imputed)
+    rownames(ga.imputed) = imp$V2
+    calls.r = data.frame(calls.r)
+    rownames(calls.r) = rownames(ga.imputed)
+    names(calls.r) = sample.ids
+    n.zero = rowSums(calls.r==0)
+    n.one = rowSums(calls.r==1)
+    n.two = rowSums(calls.r==2)
+    rows.keep = n.zero!=N.samp & n.one!=N.samp & n.two!=N.samp
+    ga.imputed = ga.imputed[rows.keep,]
+    calls.r = calls.r[rows.keep,]
+    write.matrix(ga.imputed,  fn.ga.imputed)
+    write.matrix(calls.r,  fn.calls.imputed)
+    print(paste("Wrote attributes to ", fn.ga.imputed))
+    print(paste("Wrote calls to ", fn.calls.imputed))
+}
+
+
+impute.generate.command = function(target.chrom, target.pos.start, target.pos.end, bin, dir.haplotypes, dir.output, fn.out){
+    # Generate the command to run impute (binary located at bin)
+    c.haploc = paste("-m ", dir.haplotypes, "/chr", target.chrom, "_genetic_map.txt", sep='')
+    c.haps = paste("-h ", dir.haplotypes, "/chr", target.chrom, "_impute.haps", sep='')
+    c.legend = paste("-l ", dir.haplotypes, "/chr", target.chrom, "_impute.legend", sep='')
+    c.genos = paste("-g ", dir.output, "/calls_", fn.out, "_impute.txt", sep='')
+    c.strand = paste("-strand_g ", dir.output, "/strand_", fn.out, "_impute.txt", sep='' )
+    c.int = paste("-int ", target.pos.start, " ", target.pos.end, " -Ne 20000", sep='')
+    c.o = paste("-o ", dir.output, "/calls_", fn.out, "_imputed.txt", sep='' )
+    cmd = paste(bin, c.haploc, c.haps, c.legend, c.genos, c.strand, c.int, c.o )
+    print(cmd)
+}
+
+
 ####################
 # BEGIN AFFYMETRIX #
 ####################
@@ -1259,10 +1627,18 @@ prepare.affy430_2.dataset = function( dir.CEL, dir.OUT, fn.source.ga, ga.id ){
     write.matrix(ga, fn.ga.above.bg.refseq)
 }
 
-prepare.affy133.dataset = function( dir.CEL, dir.OUT, fn.source.ga, ga.id ){
+prepare.affy133.dataset = function( dir.CEL, dir.OUT, fn.source.ga, ga.id, filenames=NA ){
     library(affy)
-    setwd( dir.CEL )
-    eset <- justRMA()
+    if( dir.CEL != "" ){
+        setwd( dir.CEL )
+        eset <- justRMA()
+    }
+    else{
+        if( is.vector(filenames) & length(filenames)>0 )
+            eset <- justRMA(filenames = filenames)
+        else
+            stop("Must pass either dir.CEL or vector of filenames")
+    }
     fn.expr.all.probes = paste(dir.OUT,'/','expr_all_probes.txt', sep='')
     fn.ga.all.probes = paste(dir.OUT,'/','gene_attributes_', ga.id, '_all_probes.txt', sep='')    
     fn.expr.above.bg = paste(dir.OUT,'/','expr_above_bg.txt', sep='')
@@ -1791,6 +2167,38 @@ DC.between.labels = function( A1, A2, B1, B2, n.perms=1000 ){
 }
 
 
+calls.to.PLINK = function( calls, snp.ids, sample.ids, sexes, CHR, POS, fn.tped, fn.tfam ){
+    # write genotype calls to PLINK TPED and TFAM files
+    # PLINK sex codes for are male 1, females 2
+    #
+    plink.tped = data.frame(CHR, snp.ids, rep(0, length(CHR)), POS, stringsAsFactors=F)
+    tped.odd = matrix('0', nrow=dim(calls)[1], ncol=dim(calls)[2] )
+    tped.even = matrix('0', nrow=dim(calls)[1], ncol=dim(calls)[2] )
+    tped.odd[ calls==0 | calls==1  ] = 'A'
+    tped.odd[ calls==2 ] = 'B'
+    tped.even[ calls==1 | calls==2 ] = 'B'
+    tped.even[ calls==0 ] = 'A'
+    tped = matrix('0', nrow=dim(calls)[1], ncol=(2*dim(calls)[2]) )
+    even.idx = seq(2,dim(tped)[2], by=2)
+    odd.idx = seq(1,dim(tped)[2], by=2)
+    tped[,even.idx] = tped.even
+    tped[,odd.idx] = tped.odd
+    plink.tped = cbind( plink.tped, tped )
+    write.table(plink.tped, fn.tped, sep='\t', quote=F, col.names=F, row.names=F)
+    
+    # WRITE TFAM  
+    FAMILY_ID = rep(0, length(sample.ids))
+    FATHER_ID = FAMILY_ID
+    MOTHER_ID = FAMILY_ID
+    DUMMY_PHENO = FAMILY_ID
+    match = match.idx( names(calls), sample.ids )
+    if( dim(match)[1] != length(sample.ids) )
+        stop("mismatch between matches sample.ids and calls")
+    plink.tfam = data.frame( FAMILY_ID, sample.ids[ match$idx.B ], FATHER_ID, MOTHER_ID, sexes, DUMMY_PHENO, stringsAsFactors=F )
+    write.table(plink.tfam, fn.tfam, sep='\t', quote=F, col.names=F, row.names=F)
+}
+
+
 plot.alterations.on.chr = function( M, name, marker.interval.size=0.1,  upper.bound=0.3, lower.bound=0.3, y.min=NA, y.max=NA, color=T){
     # Plot one chromosome, label X axis with Mb.
     # marker.interval.size is the number of Mb. separating each marker.
@@ -1804,7 +2212,7 @@ plot.alterations.on.chr = function( M, name, marker.interval.size=0.1,  upper.bo
         y.min = floor( min(vals,na.rm=T) )
     if(color){
         cols = rep('lightblue', N.genes)
-        cols[vals<0] = 'yellow'
+        cols[vals<0] = 58
         cols[vals > upper.bound] = 'blue'
         cols[vals < lower.bound] = 'red'
     }
@@ -1843,8 +2251,8 @@ plot.alterations = function(M, name, chr.list, upper.bound=0.3, lower.bound=-0.3
     if(is.na(y.min))
         y.min = floor( min(vals,na.rm=T) )
     if(color){
-        cols = rep('lightblue', N.genes)
-        cols[vals<0] = 'yellow'
+        cols = rep('gray', N.genes)
+        #cols[vals<0] = 'gray'
         cols[vals > upper.bound] = 'blue'
         cols[vals < lower.bound] = 'red'
     }
@@ -2031,18 +2439,20 @@ plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend.x
     col.used = c( col.pool[1] )
     plot(X, as.numeric(V[1,]), col=1, type=plot.type, pch=pch.pool[1], cex=0.5, axes=F, xlab=x_lbl, ylim=c(ymin,ymax), ylab='', lwd=2)
     iter = 2
-    for( i in 2:n_probes){
-        if( iter==n_probes+1 ){ iter==1 }
-        cur.color = col.pool[iter]
-        iter = iter+1
-        if(plot.type=='l')
-            lines(X, as.numeric(V[i,]), col=cur.color, lwd=2)
-        else{
-            new.pch = i %% length(pch.pool)
-            points(X, as.numeric(V[i,]), pch=19, col=cur.color, lwd=2, cex=0.5)
+    if( n_probes>1 ){
+        for( i in 2:n_probes){
+            if( iter==n_probes+1 ){ iter==1 }
+            cur.color = col.pool[iter]
+            iter = iter+1
+            if(plot.type=='l')
+                lines(X, as.numeric(V[i,]), col=cur.color, lwd=2)
+            else{
+                new.pch = i %% length(pch.pool)
+                points(X, as.numeric(V[i,]), pch=19, col=cur.color, lwd=2, cex=0.5)
+            }
+            col.used[length(col.used)+1] = cur.color
+            pch.used[length(pch.used)+1] = 19
         }
-        col.used[length(col.used)+1] = cur.color
-        pch.used[length(pch.used)+1] = 19
     }
     par(ps=8)
     axis(2, at=(ymin:15), las=1)
@@ -2278,7 +2688,7 @@ plot.chr.CRLMM = function(cS, cCN, s.no, max.y=5, x1=1, x2=0, lblS, lblCN){
     abline(2,0,col=3)
 }
 
-plot.cluster = function(M, labels=names(M), d=NULL, main=NULL, direction="samples"){
+plot.cluster = function(M, labels=names(M), d=NULL, main=NULL, direction="samples", cex=0.5){
     #plot hieararchical cluster with labels, use distance d is passed
     if( is.null(d) ){
         if( direction=="samples" ){
@@ -2295,7 +2705,7 @@ plot.cluster = function(M, labels=names(M), d=NULL, main=NULL, direction="sample
         else
             stop("direction must be one of: samples, probes")
     }
-    plot(hclust(d), hang=-1, cex=0.5, labels=as.character(labels), main=main )
+    plot(hclust(d), hang=-1, cex=cex, labels=as.character(labels), main=main )
 }
 
 
@@ -2320,6 +2730,8 @@ color.dendrogram.labels = function(n){
 plot.cluster.colors=function( M, colors, force.flat=F, show.labels=T ){
     # Still a hack, but less awful
     d = (dist(as.matrix(t(M))))
+    if( is.null(names(M)) )
+        stop("columns must have unique names")
     lookup = data.frame( leaf.name = names(M), color=colors, stringsAsFactors=F )
     if(force.flat)
         hangval = -1
@@ -2333,27 +2745,164 @@ plot.cluster.colors=function( M, colors, force.flat=F, show.labels=T ){
 }
 
 
-plot.clean=function(V ){
+
+plot.clean=function( V, ymin=NA, ymax=NA, colors=c(), cex=0.25, y.axis=T ){
     # This is the utility function that just plots what it's given
     n_probes = dim(V)[1]
     n_samples = dim(V)[2]
     X = (1:n_samples)
-    ymax = max(c(1,ceiling(max(V, na.rm=T))))
-    ymin = floor( min(V, na.rm=T) )
-    if(ymin>1)
-        ymin=1
+    if( is.na(ymax) )
+        ymax = max(c(1,ceiling(max(V, na.rm=T))))
+    if( is.na(ymin) ){
+        ymin = floor( min(V, na.rm=T) )
+        if(ymin>1)
+            ymin=1
+    }
     pch.used = c(19)
-    colors = c('black', 'blue', 'darkgreen')
-    plot(X, as.numeric(V[1,]), col=colors[1], type='p', pch=19, cex=0.25, axes=F, ylim=c(ymin,ymax), ylab='', lwd=2)
-    for( i in 2:n_probes){
-        points(X, as.numeric(V[i,]), pch=19, col=colors[i], lwd=2, cex=0.25)
+    if( length(colors) == 0 )
+        colors = c('black', 'blue', 'darkgreen', 'red')
+    plot(X, as.numeric(V[1,]), col=colors[1], type='p', pch=19, cex=cex,  axes=F, ylim=c(ymin,ymax), ylab='', lwd=2, mar=c(1,0.5,1,0.5))
+    if(n_probes>1){
+        for( i in 2:n_probes){
+            points(X, as.numeric(V[i,]), pch=19, col=colors[i], lwd=2, cex=cex)
+        }
     }
     par(ps=8)
-    axis(2, at=(ymin:ymax) )
+    if(y.axis)
+        axis(2, at=(ymin:ymax),las=2, cex.axis=1 )
     segments(0,0,x1=n_samples, col='black')
 }
 
 
+sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, y.min=NULL, y.max=NULL ){
+    library(ggplot2)
+    # passing a list of probes uses the probe IDs to pick exact targets.
+    # If symbol==NULL, sorted by first symbol.
+    probes =  c()
+    symbols= c()
+    if( is.null(target.probes) & is.null(target.symbols) )
+        target.probes = rownames(D)
+        #stop( "Must pass either target.probes or target.symbols" )
+    if( !is.null(target.probes) & !is.null(target.symbols) )
+        stop( "Cannot pass both target.probes and target.symbols" )
+    if( !is.null(target.probes) ){
+        m = match.idx( target.probes, rownames(ga))
+        if( dim(m)[1] != length(target.probes) ){
+            stop("Not all target probes found in gene attributes.")
+        }
+        else{
+            probes = target.probes
+            symbols = ga$symbol[m$idx.B]
+        }
+    }
+    else{
+        for(i in 1:length(target.symbols)){
+            probes = c(probes, rownames(ga)[ga$symbol==target.symbols[i]][1])
+            symbols = c(symbols, ga$symbol[ga$symbol==target.symbols[i]][1])
+        }
+    }
+    DT = data.matrix( D[match.idx(probes, rownames(D))$idx.B,] )
+    
+    if(!is.null(sort.by)){
+        idx.s = which(symbols==sort.by)[1]
+        idx.n = which(names(D)==sort.by)[1]
+        print(idx.s)
+        print(idx.n)
+        
+        if(!is.na(idx.s)){
+            DT = DT[,order(DT[idx.s,])]
+        }
+        else if(!is.na(idx.n)){
+            print(DT[1:4,1:4])
+            DT = DT[order(DT[,idx.n]),]
+            print(DT[1:4,1:4])            
+        }
+        else{
+            stop("Cannot find sort.by parameter in names or rownames of matrix")
+        }
+    }
+    DT = DT[dim(DT)[1]:1,]
+
+    if( scale ){
+        means = rowMeans(DT)
+        sds = rep(0, dim(DT)[1])
+        for(i in 1:length(sds)){
+            sds[i] = sd(DT[i,])
+        }
+        DT = (DT - means) / sds
+    }
+    if( !is.null(y.min) ){
+        if( sum(DT<y.min, na.rm=T)>0 ){
+            print("Truncating at lower bound")
+            DT[DT<y.min] = y.min
+        }
+    }
+    if( !is.null(y.max) ){
+        if( sum(DT>y.max, na.rm=T)>0 ){
+            print("Truncating at upper bound")
+            DT[DT>y.max] = y.max
+        }
+    }    
+    if(is.null(y.min) | is.null(y.max)){
+        y.min=min(DT, na.rm=T)
+        y.max=max(DT, na.rm=T)
+    }    
+    df = expand.grid(y = 1:dim(DT)[1], x = 1:dim(DT)[2] )
+    df = cbind(df, v=as.numeric(DT) )
+    y.mid = mean(c(y.max, y.min))
+    scg = scale_fill_gradient2(low = "darkblue", high = "red2", midpoint=y.mid, limits=c(y.min,y.max))
+    ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + theme_bw() 
+}
+
+do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL){
+    if(is.null(colors))
+        color.wheel = c("black", "blue", "gold", "darkgreen", "slategray1", "gray", "magenta", "darkblue",
+        "violetred", "bisque", "chartreuse3", "orange", "darksalmon", "green1", "red","pink")
+    else{
+        color.wheel = colors
+    }
+    if(is.null(pca)){
+        pca = prcomp(as.matrix(t(D)))
+    }
+    colors = rep("black", dim(D)[2])
+    if( !is.null(labels) ){
+        labels[is.na(labels)]="NA"
+        unique.labels = sort(unique(labels))
+        legend.cex=1.5
+        for( i in 1:length(labels)){
+            colors[i] = color.wheel[ which(unique.labels==labels[i]) ] 
+        }
+        
+        if(length(unique.labels)>8){
+            legend.cex=0.75
+        }
+    }
+    y.min = min( pca$x[,2] )
+    y.max = max( pca$x[,2] )    
+    x.min = min( pca$x[,1] )
+    x.max = max( pca$x[,1] )
+    
+    if( dim(D)[2]>100 ){
+        plot.cex = 0.75
+    }
+    else{
+        plot.cex=1
+    }
+    if(is.null(xlim))
+        xlim = c(x.min, x.max)
+    if(is.null(ylim))
+        ylim = c(y.min, y.max)
+    
+    plot(pca$x[,1], pca$x[,2], col=colors, pch=19, cex=plot.cex, xlim=xlim, ylim=ylim )  
+    
+    if( show.legend & !is.null(labels) ){
+        if( is.null(legend.xy) )
+            legend.xy = c(xlim[1], ylim[2])
+        legend(legend.xy[1], legend.xy[2], unique.labels, col=color.wheel[1:length(unique.labels)], 
+               pch=19,cex=legend.cex,box.col="white" )
+    }
+    pca
+}
 
 ####################
 # BEGIN STATISTICS #
@@ -2512,7 +3061,176 @@ cor.sa.columns=function( sa, method="spearman" ){
 }
 
 
-write.spear.to.cytoscape = function( fn.base, DF, DF.node.attr=NULL ){
+identify.eQTL.networks = function(eqtl, spear, probes.snp, ga.snp.chr, ga.snp.pos, 
+                                  probes.gene, ga.gene.chr, ga.gene.loc, min.trans=1){
+    # find SNPs that appear more than once
+    freq = count.appearances(eqtl$snp)
+    m = match.idx(freq$keys, probes.snp)
+    freq = cbind(freq, chr=ga.snp.chr[m$idx.B], pos=ga.snp.pos[m$idx.B], stringsAsFactors=F)
+    freq = freq[freq$values>1,]
+    is.first=T
+    net.ctr=1
+    for(i in 1:dim(freq)[1]){
+        
+        # make ee, eQTL network for snp i. Call "CIS" anything within 50 Mb.
+        snp = freq$keys[i]
+        snp.chr = ga.snp.chr[which(probes.snp==snp)]
+        snp.loc = ga.snp.pos[which(probes.snp==snp)]
+        ee = eqtl[eqtl$snp==snp,]
+        m = match.idx( ee$probe, probes.gene )
+        ee = cbind(ee, chrom=ga.gene.chr[m$idx.B], start=ga.gene.loc[m$idx.B],stringsAsFactors=F)
+        cis = ee$chrom==snp.chr & abs( ee$start-snp.loc ) < 50000000
+        ee = cbind(ee, cis, stringsAsFactors=F)
+        idx.cis = which(cis)
+        n.matches = dim(ee)[1]
+        n.cis = length(idx.cis)
+        print(paste(i,"of", dim(freq)[1],"SNP", snp, "matches",n.matches,"eQTL",n.cis,"are cis"))
+        # Only continue if there is at least one cis-eQTL
+        if(n.cis>0 & n.matches-n.cis){
+            for(j in 1:length(idx.cis)){
+                # For each cis-eQTL, find probes correlated with it.
+                # If any of those are in this eQTL network, write out the network
+                probe = ee$probe[ idx.cis[j] ]
+                ss = spear[ (spear$probe.1==probe | spear$probe.2==probe) & spear$symbol.1 != spear$symbol.2,]
+                neighbors = setdiff( c( ss$probe.1 , ss$probe.2), probe )
+                with.eqtl = intersect(neighbors, ee$probe )
+                
+                if(length(with.eqtl)>0){
+                    m = match.idx( c( probe, with.eqtl ), ee$probe )
+                    found = ee[m$idx.B,]
+                    if( sum(!found$cis)>min.trans ){
+                        network = rep(net.ctr, dim(found)[1])
+                        net.ctr = net.ctr+1
+                        found = cbind(found, network)
+                        if(is.first){
+                            results=found
+                            is.first=F
+                        }
+                        else{
+                            results = rbind(results, found)
+                            print(paste("Adding",dim(found)[1],"candidates"))
+                        }
+                    }
+                }
+            }
+        }
+    }
+    results
+}
+
+write.eqtl.to.cytoscape = function( fn.base, EQTL, SPEAR, snps, probes, all.S, S.chr, S.loc, all.G, G.chr, G.loc){
+
+    CYTOSCAPE = '/Applications/Cytoscape_v2.8.1/cytoscape.sh'
+    VIZ = '/notebook/code/release/Correlation.props'
+    fn.sif = paste( fn.base, '.sif', sep='')
+    fn.type = paste( fn.base, '.noa', sep='')
+    fn.symbol = paste( fn.base, '_symbol.noa', sep='')
+    fn.chr = paste( fn.base, '_chr.noa', sep='')
+    fn.loc = paste( fn.base, '_loc.noa', sep='')
+    fn.pval = paste( fn.base, '_pval.eda', sep='')
+    fn.rho = paste( fn.base, '_rho.eda', sep='')
+    fn.cis = paste( fn.base, '_cis.eda', sep='' )
+    fn.edgetype = paste( fn.base, '_type.eda', sep='' )
+    
+    noa.files = c(fn.type, fn.chr, fn.loc, fn.symbol,fn.cis)
+    eda.files = c(fn.pval, fn.rho, fn.edgetype)
+    
+    print(paste("Passed", length(snps), "SNPs and ", length(probes), "probes"))
+    EQTL = EQTL[EQTL$snp %in% snps,]    
+    SPEAR = SPEAR[SPEAR$probe.1 %in% probes & SPEAR$probe.2 %in% probes,]
+    probes.from.eqtl = EQTL$probe
+    probes.from.spear = sort(unique(c(SPEAR$probe.1, SPEAR$probe.2)))
+    
+    gene.probes = intersect( probes.from.spear, probes.from.eqtl )
+    SPEAR = SPEAR[SPEAR$probe.1 %in% gene.probes & SPEAR$probe.2 %in% gene.probes,]
+    EQTL = EQTL[EQTL$probe %in% gene.probes,]
+    snp.probes = sort(unique(EQTL$snp))
+    
+    print("Restricting to probes with an eQTL and a correlation" )
+    print(paste("Using ", length(snps), "SNPs and", length(gene.probes), "probes" ) )
+        
+    # Write SIF and rhos
+    unlink(fn.sif)
+    unlink(fn.rho)
+    unlink(fn.edgetype)
+    write( "rho (java.lang.Double)" , file=fn.rho )
+    write( "FOO = 1.0", file=fn.rho, append=T ) # get around cytoscape bug   
+    write( "edgetype (java.lang.String)" , file=fn.edgetype )
+    for(i in 1:dim(SPEAR)[1]){
+        write(paste( SPEAR$probe.1[i], 'gg', SPEAR$probe.2[i], sep=' '), file=fn.sif, append=T)
+        write(paste( SPEAR$probe.1[i], '(gg)', SPEAR$probe.2[i], "=", round(SPEAR$rho.a[i],3), sep=' '), file=fn.rho, append=T )
+        write(paste( SPEAR$probe.1[i], '(gg)', SPEAR$probe.2[i], "= correlation", sep=' '), file=fn.edgetype, append=T )
+    }
+    
+    # Write chromosomes, locations
+    gene.locs = G.loc[ match.idx( gene.probes, all.G )$idx.B ]
+    gene.chrs = G.chr[ match.idx( gene.probes, all.G )$idx.B ]
+    snp.locs = S.loc[ match.idx( snp.probes, all.S )$idx.B ]
+    snp.chrs = S.chr[ match.idx( snp.probes, all.S )$idx.B ]
+
+    # Write chromosomes and locations
+    write( "chr (java.lang.String)" , file=fn.chr )
+    write( "loc (java.lang.String)" , file=fn.loc )    
+    write( "FOO = X", file=fn.chr, append=T ) # get around cytoscape bug   
+    write( "FOO = X", file=fn.loc, append=T ) # get around cytoscape bug   
+    for(i in 1:length(gene.probes)){
+        write(paste( gene.probes[i], '= ', gene.locs[i], sep=' '), file=fn.loc, append=T)
+        write(paste( gene.probes[i], '= ', gene.chrs[i], sep=' '), file=fn.chr, append=T)
+    }
+    for(i in 1:length(snp.probes)){
+        write(paste( snp.probes[i], '= ', snp.locs[i], sep=' '), file=fn.loc, append=T)
+        write(paste( snp.probes[i], '= ', snp.chrs[i], sep=' '), file=fn.chr, append=T)
+    }
+            
+    # Write types
+    write( "type (java.lang.String)" , file=fn.type )
+    write( "FOO = gene", file=fn.type, append=T ) # get around cytoscape bug   
+    for(i in 1:length(gene.probes))
+        write(paste( gene.probes[i], '= gene', sep=' '), file=fn.type, append=T)
+    for(i in 1:length(snp.probes))
+        write(paste( snp.probes[i], '= locus', sep=' '), file=fn.type, append=T)
+    
+    # Write pvalues, symbols
+    write( "symbol (java.lang.Double)" , file=fn.symbol )
+    write( "pval (java.lang.Double)" , file=fn.pval )
+    write( "cis (java.lang.String)" , file=fn.cis )
+    write( "FOO = gene", file=fn.symbol, append=T ) # get around cytoscape bug
+    write( "FOO (gs) BAR = 1.0", file=fn.pval, append=T ) # get around cytoscape bug
+    write( "FOO = CIS", file=fn.cis, append=T ) # get around cytoscape bug
+    for(i in 1:dim(EQTL)[1]){
+        write(paste( EQTL$probe[i], 'gs', EQTL$snp[i], sep=' '), file=fn.sif, append=T)
+        write(paste( EQTL$probe[i], '=', EQTL$symbol[i], sep=' '), file=fn.symbol, append=T )
+        write(paste( EQTL$snp[i], '=', EQTL$snp[i], sep=' '), file=fn.symbol, append=T )        
+        write(paste( EQTL$probe[i], '(gs)', EQTL$snp[i], "=", EQTL$perm.p[i], sep=' '), file=fn.pval, append=T )
+        idx.probe = which(gene.probes==EQTL$probe[i])
+        idx.snp = which(snp.probes==EQTL$snp[i])
+        write(paste( EQTL$probe[i], '(gs)', EQTL$snp[i], "= eqtl", sep=' '), file=fn.edgetype, append=T )        
+        if( is.na( gene.chrs[idx.probe]) | is.na(gene.locs[idx.probe]) | is.na(snp.locs[idx.snp]) )
+            write(paste( EQTL$probe[i], '= UNKNOWN', sep=' '), file=fn.cis, append=T )
+        else{
+             if( gene.chrs[idx.probe]==snp.chrs[idx.snp] & abs(gene.locs[idx.probe]-snp.locs[idx.snp])<70000000)
+                write(paste( EQTL$probe[i], '= CIS', sep=' '), file=fn.cis, append=T )
+            else
+                write(paste( EQTL$probe[i], '= TRANS', sep=' '), file=fn.cis, append=T )
+        }
+    }
+    
+    # Write symbols
+    for(i in 1:dim(EQTL)[1]){
+        write(paste( EQTL$probe[i], '(gs)', EQTL$snp[i], "=", EQTL$perm.p[i], sep=' '), file=fn.pval, append=T )
+    }
+        
+    sh = paste(CYTOSCAPE, "-N", fn.sif, "-V", VIZ, sep=" ")
+    for(i in 1:length(noa.files))
+        sh = paste(sh, "-n", noa.files[i], sep=" ")
+    for(i in 1:length(eda.files))
+        sh = paste(sh, "-e", eda.files[i], sep=" ")
+    write( sh, file=paste( fn.base, '.sh', sep='') )
+
+    print(paste("Wrote to", paste( fn.base, '.sh', sep='') ) )
+}
+
+write.spear.to.cytoscape=function( fn.base, DF, DF.node.attr=NULL ){
     CYTOSCAPE = '/Applications/Cytoscape_v2.8.1/cytoscape.sh'
     VIZ = '/notebook/code/release/Correlation.props'
     fn.sif = paste( fn.base, '.sif', sep='')
@@ -2528,7 +3246,6 @@ write.spear.to.cytoscape = function( fn.base, DF, DF.node.attr=NULL ){
         for(j in 1:length(fn.edge.attr) ){
             numeric.attr[j] = is.numeric(DF[,4+j])
             sh = paste(sh, "-e", fn.edge.attr[j], sep=" ")
-            write( paste( edge.attr[j], "(java.lang.Double)" ), file=fn.edge.attr[j] )
         }
     }
     if( !is.null(DF.node.attr) ){
@@ -2538,36 +3255,51 @@ write.spear.to.cytoscape = function( fn.base, DF, DF.node.attr=NULL ){
             numeric.node.attr[j] = is.numeric(DF.node.attr[,j])
             sh = paste(sh, "-n", fn.node.attr[j], sep=" ")
             if( numeric.node.attr[j] ){
-                write( paste( node.attr[j], "(java.lang.Double)" ), file=fn.node.attr[j] )
+                output = paste( node.attr[j], "(java.lang.Double)"  )
+                output = c(output, "FOO = 1.0" )# get around cytoscape bug
             }
             else{
-                write( paste( node.attr[j], "(java.lang.String)" ), file=fn.node.attr[j] )
-                write( "FOO = yay", file=fn.node.attr[j], append=T ) # get around cytoscape bug
+                output = paste( node.attr[j], "(java.lang.String)"  )
+                output = c(output, "FOO = yay" )# get around cytoscape bug
             }
-        }
-        for(col in 1:length(node.attr) ){
-            for(row in 1:(dim(DF.node.attr)[1]) ){
-                write( paste( rownames(DF.node.attr)[row], DF.node.attr[row, col], sep=' = ') , file=fn.node.attr[col], append=T )
-            }
+            print(output)
+            vector.to.file(output, fn.node.attr[j])
+            write.table(data.frame(rownames(DF.node.attr), DF.node.attr[, j]), 
+                        file=fn.node.attr[j], sep=" = ", 
+                        quote=F, append=T, col.names=F, row.names=F)
         }
     }
     write( sh, file=paste( fn.base, '.sh', sep='') )
     unlink(fn.sif)
     N = dim(DF)[1]
-    for(i in 1:N){
-        write(paste( DF$probe.1[i], 'gg', DF$probe.2[i], sep=' '), file=fn.sif, append=T)
-        gg = paste(DF$probe.1[i], '(gg)', DF$probe.2[i], "=", sep=' ')
-        if( length(fn.edge.attr)>0){
-            for(j in 1:length(fn.edge.attr) ){
-                if(numeric.attr[j])
-                    write( paste( gg, signif(DF[i,j+4], 5), sep=' ' ), file=fn.edge.attr[j], append=T )
-                else
-                    write( paste( gg, DF[i,j+4], sep=' ' ), file=fn.edge.attr[j], append=T )
+    write.table(data.frame(  DF$probe.1, DF$probe.2), 
+                        file=fn.sif, sep=" gg ", 
+                        quote=F, col.names=F, row.names=F)
+    if( length(fn.edge.attr)>0){
+        for(j in 1:length(fn.edge.attr) ){
+            output = paste( edge.attr[j], "(java.lang.Double)"  )
+            output = c(output, "FOO = 1.0" )# get around cytoscape bug
+            vector.to.file( output, fn.edge.attr[j] )
+            
+            col.gg = rep('(gg)', dim(DF)[1])
+            col.eq = rep('=', dim(DF)[1])
+            
+            if( numeric.attr[j] ){
+                write.table(data.frame(  DF$probe.1, col.gg, DF$probe.2, col.eq, signif(DF[,j+4], 5) ), 
+                        file=fn.edge.attr[j], sep=" ", append=T, 
+                        quote=F, col.names=F, row.names=F)
+            }
+            else{
+                write.table(data.frame(  DF$probe.1, col.gg, DF$probe.2, col.eq, DF[,j+4] ), 
+                        file=fn.edge.attr[j], sep=" ", append=T, 
+                        quote=F, col.names=F, row.names=F)            
             }
         }
     }
     print(paste("Wrote to", paste( fn.base, '.sh', sep='') ) )
 }
+
+
 
 calculate.min.DC.score = function( n.probes ){
     # What is the Z score required for a P value lower than the bonferroni-corrected
@@ -2584,9 +3316,9 @@ calculate.min.DC.score = function( n.probes ){
 }
 
 
-spear = function( fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b="", probe="", y="symbol", score="", min_var="" ){
+spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b="", probe="", y="symbol", score="", min_var="", neighbors=F ){
     # simple wrapper for spear 
-    c1 = "spear"
+    c1 = fn.spear
     c2 = paste( "-d", fn_expr, sep='' )
     c3 = paste( "-f", fn_sa, sep='' )
     c4 = paste( "-g", fn_ga, sep='' )
@@ -2615,9 +3347,59 @@ spear = function( fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b=""
     if( min_var != "" ){
         zz = paste( "-m", min_var, sep="" )
         cmd = paste(cmd, zz)
-    }    
+    }
+    if( neighbors ){
+        cmd = paste(cmd, "-rT" )
+    }
     print( cmd )
     system(cmd)
+}
+
+
+overlap.spear.pairs = function(A, B, p2s ){
+    # Assumes that the second condition for A and the first condition for B are identical
+    print("Assumes that the second condition for A and the first condition for B are identical")
+    print(paste("Original size of A:", dim(A)[1]))
+    print(paste("Original size of B:", dim(B)[1]))    
+    gA = hashgraph()
+    gB = hashgraph()
+    addEdge(gA, A$probe.1, A$probe.2)
+    addEdge(gB, B$probe.1, B$probe.2)
+    AB = intersection(gA, gB)
+    ee=edges( AB )
+    symbol.1 = hsh_get( p2s, ee$e1 )
+    symbol.2 = hsh_get( p2s, ee$e2 )
+    probe.1 = ee$e1
+    probe.2 = ee$e2
+    ee = data.frame(symbol.1, probe.1, symbol.2, probe.2, stringsAsFactors=F )
+    keep.A = rep(F, dim(A)[1])
+    keep.B = rep(F, dim(B)[1])
+    for(i in 1:length(keep.A)){
+        if( hasEdge(AB, A$probe.1[i], A$probe.2[i]) ){
+            keep.A[i] = T
+        }
+    }
+    for(i in 1:length(keep.B)){
+        if( hasEdge(AB, B$probe.1[i], B$probe.2[i]) ){
+            keep.B[i] = T
+        }
+    }
+    print(paste( "keeping", sum(keep.A), "probes") )
+    A.keep = A[keep.A,]
+    B.keep = B[keep.B,]
+    A.keep = A.keep[order(A.keep$probe.1, A.keep$probe.2),]
+    B.keep = B.keep[order(B.keep$probe.1, B.keep$probe.2),]
+    if( sum(A.keep$probe.1!=B.keep$probe.1)!=0 )
+        stop("Error synchronizing A and B while merging")
+    R = cbind( A.keep[,c(1,2,3,4,5,6)], B.keep[,6], A.keep[,9], B.keep[,9] )
+    names(R)[5:9] = c('rho.A', 'rho.B', 'rho.C', 'tstat.AB', 'tstat.BC' )
+    R$rho.A = round( R$rho.A, 2)
+    R$rho.B = round( R$rho.B, 2)
+    R$rho.C = round( R$rho.C, 2)
+    R$tstat.AB = round( R$tstat.AB, 2)
+    R$tstat.BC = round( R$tstat.BC, 2)
+    R = R[order(R$rho.B, decreasing=T),]
+    R
 }
 
 paired.t.test = function(ids, expr.A, expr.B, method='ttest', percent.present=0.9, verbose=T){
@@ -2957,6 +3739,64 @@ calculate.EQTL = function(dataset, shared.col, covariate=NULL, gene.idx=NULL, n.
 }
 
 
+
+eqtl.filter = function(eqtl, snp, ga.chr.snp, ga.loc.snp, gene, ga.chr.gene, ga.loc.gene, type="cis", window=0){
+    valid.snp = !is.na(ga.chr.snp) & !is.na(ga.loc.snp) 
+    valid.gene = !is.na(ga.chr.gene) & !is.na(ga.loc.gene)
+    ga.chr.snp = ga.chr.snp[valid.snp]
+    ga.loc.snp = ga.loc.snp[valid.snp]
+    ga.chr.gene = ga.chr.gene[valid.gene]
+    ga.loc.gene = ga.loc.gene[valid.gene]
+    hsh.gene = hsh_from_vectors(as.character(gene), 1:length(gene) ) 
+    hsh.snp = hsh_from_vectors(as.character(snp), 1:length(snp) )
+    idx.gene = hsh_get(hsh.gene, as.character(eqtl$probe) )
+    idx.snp = hsh_get(hsh.snp, as.character(eqtl$snp) )
+    e.chr.snp = ga.chr.snp[idx.snp]
+    e.loc.snp = ga.loc.snp[idx.snp]
+    e.chr.gene = ga.chr.gene[idx.gene]
+    e.loc.gene = ga.loc.gene[idx.gene]    
+    eqtl = cbind(eqtl, e.chr.snp, e.loc.snp, e.chr.gene, e.loc.gene, stringsAsFactors=F)
+    if( type=="cis" ){
+        if(window==0){
+            eqtl[e.chr.snp == e.chr.gene,]
+        }
+        else{
+            eqtl[e.chr.snp == e.chr.gene & abs(e.loc.snp-e.loc.gene)<=window,]
+        }
+    }
+    else{
+        if( window==0){
+            eqtl[e.chr.snp != e.chr.gene,]
+        }
+        else{
+            eqtl[e.chr.snp != e.chr.gene | 
+                 ( e.chr.snp == e.chr.gene & abs(e.loc.snp-e.loc.gene)>window) ,]
+        }
+    }   
+}
+
+
+write.rqtl.csv=function( expr, probe.list, sa.geno, sa.col.matching.expr, geno.chrom, calls.geno, fn.rqtl ){
+    # write all probes in probe.list as phenotypes for an RQTL CSV file
+    sa.match = sa.geno[,which(names(sa.geno)==sa.col.matching.expr)]
+    m = match.idx(sa.match, names(expr))
+    expr = expr[,m$idx.B]
+    sa.geno = sa.geno[m$idx.A,]
+
+    expr.top = t(expr[ match.idx(probe.list, rownames(expr))$idx.B, ])
+    rqtl.pheno = rbind( rep("", dim(expr.top)[2] ), expr.top )
+    if(sum(rownames(ga.geno)!=rownames(calls.geno))>0)
+        stop("WARNING: gene attributes not equal to calls")
+    calls.geno = t(calls.geno[,m$idx.A])
+    rqtl.geno = rbind( geno.chrom, calls.geno )
+    rownames(rqtl.geno) = rownames(rqtl.pheno)
+    rqtl.csv = cbind(rqtl.pheno, rqtl.geno)
+    rownames = append( 'IDENTIFIER', dimnames(rqtl.csv)[[2]] )
+    write( rownames, fn.rqtl, sep=',', ncolumns=length(rownames) )
+    write.table(rqtl.csv, fn.rqtl, quote=F, sep=',', row.names=T, na="NA", col.names=F, append=T)
+}
+
+
 generate.rQTL.matrix=function( pheno.ids, pheno, e.snp, ga.snp, sa.snp, fn.out){
     # Generates a matrix that can be written to be read by R/QTL
     # writes that matrix to fn.out and returns the matrix
@@ -3055,6 +3895,76 @@ genotype.for.expression.ids = function( probe.snp, expr, expr.SNP, sa.SNP, sa.SN
     out
 }
 
+do.sam = function(E, ga, A, B, med.FDR=10){
+    # Perform a turn-key SAM analysis returning values with FDR<med.FDR
+    if( length(A) != length(B) | length(A) != dim(E)[2] )
+        stop( "incorrectly formatted input: bad dimensions")
+    labels = rep(0, dim(E)[2])
+    labels[A] = 1
+    labels[B] = 2
+    E = E[,A|B]
+    labels = labels[A|B]
+    data = list(x=data.matrix(E), y=labels, geneid=rownames(ga), genenames = ga$symbol, logged2=TRUE)
+    samr.obj = samr(data, resp.type="Two class unpaired", nperms=100)
+    delta.table = samr.compute.delta.table(samr.obj)
+    print(delta.table)
+    deltas = delta.table[,1]
+    med.fdrs = delta.table[,5]
+    med.fdrs[is.nan(med.fdrs)]=1
+    if( med.FDR == 100 ){
+        delta=0
+    }
+    else if( min(med.fdrs) > (med.FDR/100) ){
+        delta = min(deltas[med.fdrs==min(med.fdrs)])
+    }
+    else{
+        delta = min(deltas[med.fdrs<=(med.FDR+1)/100])
+    }
+    if( is.infinite(delta) ){
+        NA
+    }
+    else{
+        print(paste("Delta: ", delta) )
+        sgt = samr.compute.siggenes.table( samr.obj, delta, data, delta.table)
+        sig = SAM.convert.siggenes( sgt )
+        sig = sig[sig$q.value.percent<=med.FDR,]
+        sig = sig[order(sig$fold.change, decreasing=T),]
+        fc = sig$fold.change
+        fc[fc<1] = -1/fc[fc<1]
+        fc[fc==1]=0
+        sig = cbind(sig, fc=round(fc,2), stringsAsFactors=F )
+        sig
+    }
+}  
+
+do.sam.paired = function(E, ga, labels, med.FDR=10){
+    # Perform a turn-key SAM analysis returning values with FDR<med.FDR
+    if( length(labels) != dim(E)[2] )
+        stop( "incorrectly formatted input: bad label dimensions")
+    data = list(x=data.matrix(E), y=labels, geneid=rownames(ga), genenames = ga$symbol, logged2=TRUE)
+    samr.obj = samr(data, resp.type="Two class paired", nperms=100)
+    delta.table = samr.compute.delta.table(samr.obj)
+    print(delta.table)
+    deltas = delta.table[,1]
+    med.fdrs = delta.table[,5]
+    med.fdrs[is.nan(med.fdrs)]=1
+    if( min(med.fdrs) > (med.FDR/100) ){
+        delta = min(deltas[med.fdrs==min(med.fdrs)])
+    }
+    else{
+        delta = min(deltas[med.fdrs<=(med.FDR+1)/100])
+    }
+    if( is.infinite(delta) ){
+        NA
+    }
+    else{
+        print(paste("Delta: ", delta) )
+        sgt = samr.compute.siggenes.table( samr.obj, delta, data, delta.table)
+        sig = SAM.convert.siggenes( sgt )
+        sig = sig[sig$q.value.percent<=med.FDR,]
+        sig
+    }
+}
 
 SAM.data = function(expr, ga, valid.p, s1, s2, nperms=100){
     # Wrapper to create data object for unpaired call to SAM
@@ -3085,25 +3995,31 @@ SAM.convert.siggenes = function(T){
       names(genes) = c("symbol", "probe.id")
       values = data.frame( rbind( T$genes.lo[,c(4:8)], T$genes.up[,c(4:8)] ) )
    }
-   else if( no.lo ){
+   else if( no.lo & !no.up){
       genes = data.frame( T$genes.up[,c(2,3)], stringsAsFactors=F )
       names(genes) = c("symbol", "probe.id")
       values = data.frame( T$genes.up[,c(4:8)] )
    }   
-   else if( no.up ){
+   else if( no.up & !no.lo){
       genes = data.frame( T$genes.lo[,c(2,3)], stringsAsFactors=F )   
       names(genes) = c("symbol", "probe.id")
       values = data.frame( T$genes.lo[,c(4:8)] )      
    }
-   values[,1] = round( as.numeric( as.character(values[,1]) ), 3)
-   values[,2] = round( as.numeric( as.character(values[,2]) ), 3)
-   values[,3] = round( as.numeric( as.character(values[,3]) ), 3)
-   values[,4] = round( as.numeric( as.character(values[,4]) ), 3)
-   values[,5] = round( as.numeric( as.character(values[,5]) ), 3)
-   names(values) = c('score', 'numerator.r', 'denominator.s.plus.s0', 'fold.change', 'q.value.percent')
-   T = cbind(genes, values)
-   T
+   if( !no.up | !no.lo){
+      values[,1] = round( as.numeric( as.character(values[,1]) ), 3)
+      values[,2] = round( as.numeric( as.character(values[,2]) ), 3)
+      values[,3] = round( as.numeric( as.character(values[,3]) ), 3)
+      values[,4] = round( as.numeric( as.character(values[,4]) ), 3)
+      values[,5] = round( as.numeric( as.character(values[,5]) ), 3)
+      names(values) = c('score', 'numerator.r', 'denominator.s.plus.s0', 'fold.change', 'q.value.percent')
+      T = cbind(genes, values)
+      T
+   }
+   else{
+      data.frame(score=c(), numerator.r=c(), denominator.s.plus.s0=c(), fold.change=c(), q.value.percent=c())
+   }
 }
+
 
 km = function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T){
     # Wrapper for Kaplan-meier analysis (using library "survival")
@@ -3120,24 +4036,31 @@ km = function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NU
 
     surv.all = survfit(Surv(times, had.events)~conditions)
     cox = coxph(formula = Surv(times,had.events==1)~conditions)
-
+    p.val = as.numeric(summary(cox)$logtest[3])
+    if(p.val>0.01)
+        p.val = round(p.val, 3)
+    else
+        p.val = signif(p.val, 3)
     if( !is.null(fn_out) ){
         png(fn_out)
     }
-    color.list =c("green", "red", "black", "blue", "gray")
+    color.list =c("black", "gray", "darkblue", "red", "darkgreen", "orange")
     if( is.null(main) )
-        main.title=paste('km curve p-val =', signif(as.numeric(summary(cox)$logtest[3]),5), sep=' ')
+        main.title=paste('KM curve')
     else
-        main.title=paste(main,' km curve p-val =', signif(as.numeric(summary(cox)$logtest[3]),5), sep=' ')
+        main.title=main
+    if( length(unique(conditions))== 2 ){
+        main.title = paste(main.title,'P =', p.val, sep=' ')
+    }
 
-    plot(surv.all, lwd=2, col=color.list,
-        main=main.title,
+    plot(surv.all, lwd=3, col=color.list,
+        main=main.title, las=1,
         xlab="time")
     if( !is.null(legends) ){
-        legend(1.5,.25,legends, col=color.list,lty=1,lwd=2)
+        legend(3,.25,legends, col=color.list,lty=1,lwd=3)
     }
     else{
-        legend(1.5,.25,sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=2)
+        legend(3,.25,sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3)
     }
     if( !is.null(fn_out) ){
         i=dev.off()
@@ -3638,7 +4561,7 @@ hsh_get = function( H, key, na.if.not.found=F ){
     }
     else{
         results = rep(0, length(key) )
-        if( na.if.not.found ){
+        if( !na.if.not.found ){
             for(i in 1:length(key) ){
                 if( exists(key[i], H) ){
                     results[i] = get(key[i], H )
@@ -3696,40 +4619,50 @@ hashgraph <- function(...){
     return( G )
 }
 
-addEdge <- function(x, e1, e2)  {
+addEdge <- function(x, e1, e2, value){
   if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
   else{ UseMethod("addEdge") }
 }
 
-addEdge.hashgraph = function(x, e1, e2, ...){
+addEdge.hashgraph = function(x, e1, e2, value=NULL, ...){
     if( !is.character(e1) | !is.character(e2) )
         stop("Edge names must be legal variable names in R.")
     if( length(e1) != length(e2) )
         stop("Edge vectors must have identical length")
+    if( is.null(value) ){
+        value = rep(1, length(e1))    
+    }
+    else{
+        if( length(value) != length(e1) )
+            stop("Value vector must have same length as edge vectors")
+        if( !is.numeric(value) )
+            stop("Value vector must be numeric")
+    }
     for(i in 1:length(e1) ){
         ee1 = e1[i]
         ee2 = e2[i]
         if( !hsh_in(x, ee1) ){
             new.hash = hsh_new()
-            hsh_set( new.hash, ee2, 1)
+            hsh_set( new.hash, ee2, value[i])
             hsh_set(x, ee1, new.hash )
         }
         else{
             existing.hsh = hsh_get( x, ee1 )
-            hsh_set( existing.hsh, ee2, 1 )
+            hsh_set( existing.hsh, ee2, value[i] )
         }
         if( !hsh_in( x, ee2 ) ){
             new.hash = hsh_new()
-            hsh_set( new.hash, ee1, 1)
+            hsh_set( new.hash, ee1, value[i])
             hsh_set(x, ee2, new.hash )
         }
         else{
             existing.hsh = hsh_get( x, ee2 )    
-            hsh_set( existing.hsh, ee1, 1 )
+            hsh_set( existing.hsh, ee1, value[i] )
         }
         attr(x, "n.edges") = attr(x, "n.edges") + 1
     }
 }
+
 
 hasEdge <- function(x, e1, e2)  {
   if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
@@ -3753,6 +4686,20 @@ hasEdge.hashgraph = function(x, e1, e2, ...){
     }
 }
 
+getValue <- function(x, e1, e2){
+  if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
+  else{ UseMethod("getValue") }
+}
+
+getValue.hashgraph = function(x, e1, e2, ...){
+    if( hasEdge( x, e1, e2 )){
+        hsh_get( hsh_get(x, e1), e2 )
+    }
+    else{
+        stop( paste( "Edge {",e1,e2,"} not found") )
+    }
+}
+
 nodes <- function(x)  {
   if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
   else{ UseMethod("nodes") }
@@ -3768,7 +4715,7 @@ edges <- function(x)  {
 }
 
 edges.hashgraph = function(x){
-    # Returns a dataframe of edge1, edge2.
+    # Returns a dataframe of edge1, edge2, value.
     # Spins through edges one time to count number of pairs; this is required for large 
     # graphs because dynamically growing vectors is terribly slow
     keys = hsh_keys( x )
@@ -3789,6 +4736,7 @@ edges.hashgraph = function(x){
     }
     e1 = rep(0, ctr)
     e2 = rep(0, ctr)
+    values = rep(1, ctr)
     ctr = 1
     for(i in 1:length(keys) ){
         k.hsh = hsh_get(x, keys[i] )
@@ -3796,14 +4744,16 @@ edges.hashgraph = function(x){
         for(j in 1:length(i.keys ) ){
             ee1 = keys[i]
             ee2 = i.keys[j]
+            vv = hsh_get( k.hsh, ee2 )
             if( ee1<ee2 ){
                 e1[ctr] = ee1
                 e2[ctr] = ee2
+                values[ctr] = vv
                 ctr = ctr + 1
             }
         }
     }
-    data.frame(e1, e2, stringsAsFactors=F)  
+    data.frame(e1, e2, values, stringsAsFactors=F)  
 }
 
 neighbors <- function(x, node)  {
@@ -3854,18 +4804,44 @@ subgraph <- function(x, nodes)  {
 
 subgraph.hashgraph = function(x, nodes){
     G.new = hashgraph()
-    node.subset = hsh_from_vectors(nodes, rep(1, length(nodes) ) )
-    for(i in 1:length( nodes ) ){
-        if( !hsh_in(x, nodes[i] ) )
-            stop( paste( "Node", nodes[i], "not found in graph") )
-        neighbors = hsh_keys( hsh_get(x, nodes[i] ) )
-        for( j in 1:length(neighbors) ){
-            if( hsh_in( node.subset, neighbors[j] ) ){
-                addEdge( G.new, nodes[i], neighbors[j] )
+    if( length(nodes) > 0 ){
+        node.subset = hsh_from_vectors(nodes, rep(1, length(nodes) ) )
+        for(i in 1:length( nodes ) ){
+            if( !hsh_in(x, nodes[i] ) )
+                stop( paste( "Node", nodes[i], "not found in graph") )
+            neighbors = hsh_keys( hsh_get(x, nodes[i] ) )
+            for( j in 1:length(neighbors) ){
+                if( hsh_in( node.subset, neighbors[j] ) ){
+                    addEdge( G.new, nodes[i], neighbors[j] )
+                }
             }
         }
     }
     G.new
+}
+
+triangles <- function(x)  {
+  if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
+  else{ UseMethod("triangles") }
+}
+
+triangles.hashgraph = function(x){
+    all = nodes(x)
+    keep = rep(F, length(all) )
+    for(i in 1:length(all)){
+        if(!keep[i]){
+            N = neighbors(x, all[i])
+            sub.edges = edges( subgraph(x, N) )
+            if( dim(sub.edges)[1]>0 ){
+                keep[i] = T
+                for(j in 1:dim(sub.edges)[1]){
+                    keep[ which(all==sub.edges[j,1] ) ] = T
+                    keep[ which(all==sub.edges[j,2] ) ] = T                    
+                }
+            }
+        }
+    }
+    subgraph(x, all[keep])
 }
 
 intersection <- function(x, y)  {
@@ -3885,7 +4861,6 @@ intersection = function(x, y){
     G
 }
 
-
 difference <- function(x, y)  {
   if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
   else{ UseMethod("difference") }
@@ -3897,18 +4872,16 @@ difference = function(x, y){
     G = hashgraph()
     for(i in 1:dim(e.x)[1] ){
         if( !hasEdge( y, e.x[i,1], e.x[i,2] ) ){
-            addEdge( G, e.x[i,1], e.x[i,2] )
+            addEdge( G, e.x[i,1], e.x[i,2], getValue( x, e.x[i,1], e.x[i,2] ) )
         }
     }
     G
 }
 
-
 restrict3cliques = function(x){
     if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
     else{ UseMethod("restrict3cliques") }
 }
-
 
 restrict3cliques.hashgraph = function(G){
     in_clique = hsh_new()
@@ -3935,12 +4908,35 @@ restrict3cliques.hashgraph = function(G){
     subgraph(G, hsh_keys( in_clique ) )
 }
 
-
 intersect.hashgraph = function(x, y){
     in.both = intersect( nodes(x), nodes(y) )
     subgraph( G, in.both )
 }
 
+minimum.degree = function(G, min.n){
+    if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
+    else{ UseMethod("minimum.degree") }
+}
+
+minimum.degree.hashgraph = function(G, min.n){
+    is.done=F
+    count = 1
+    while(! is.done ){
+        print(paste("Iteration",count,"N =",length(G)))
+        count = count+1
+        deg = degree(G, do.sort=F)
+        if(min(deg$degree) >= min.n){
+            is.done=T
+        }
+        else{
+            G = subgraph( G, deg$node[deg$degree>=min.n] )
+        }
+        if( length(G)==0 ){
+            is.done=T
+        }
+    }
+    G
+}
 
 #######################
 ### BEGIN UTILITIES ###
@@ -3975,7 +4971,7 @@ set.union = function(A, B){
 }
 
 
-count.appearances = function(V){
+count.appearances=function(V, order.by="values"){
     h = hsh_new()
     for(i in 1:length(V)){
         if( hsh_in(h, V[i] ) ){
@@ -3987,9 +4983,69 @@ count.appearances = function(V){
         }
     }
     kv = hsh_keys_values(h)
-    kv[order(kv$values, decreasing=T),]
+    if(order.by=="values")
+        kv[order(kv$values, decreasing=T),]
+    else
+        kv[order(kv$keys),]
+}
+    
+get.split.col = function(v, string, col=0, last=F, first=F){
+    if( last & first )
+        stop("Cannot request both last and first column")
+    if( col==0 & !last & !first)
+        stop("Must request either a column by index, first, or last")
+        
+    for(i in 1:length(v)){
+        x = strsplit( v[i], string, fixed=T)[[1]]
+        if(last){
+            v[i] = x[length(x)]
+        }
+        else if(first){
+            v[i] = x[1]
+        }
+        else{
+            v[i] = x[col]
+        }
+    }
+    v
 }
 
+standardize = function(D){
+    D = data.matrix(D)
+    library(matrixStats)
+    sds = rep(0, dim(D)[1])
+    for(i in 1:length(sds)){
+        sds[i] = sd(D[i,], na.rm=T)
+    }
+    (D-rowMeans(D, na.rm=T))/sds
+}
+
+compress.probes = function( D, idx, min.cor=0.8 ){
+    # Given a set of probe indexes idx, look for those with correlation >= min.cor
+    # Report mean values across all probes with correlation >= min.cor
+    # If no genes pairs meet these criteria, default to mean value
+    ee = D[ idx, ]
+    if( length(idx)==1 ){
+        ee
+    }
+    else{
+        ee.strong = cor(t(ee), use="complete") >= min.cor
+        keep = rep(F, length(idx) )
+        for(row in 1:(dim(ee)[1]-1) ){
+            for(col in (row+1):dim(ee)[1] ){
+                if(ee.strong[row,col]){
+                    keep[row]=T
+                    keep[col]=T
+                }
+            }
+        }
+        if(sum(keep)==0){
+           # No two probes with sufficient correlation; default to mean of all
+           keep[!keep]=T
+        }
+        colMeans(ee[keep,], na.rm=T)
+    }
+}
 
 match.idx = function(A, B){
     # return dataframe of indices into A and B restricted to perfect matches
@@ -4003,6 +5059,18 @@ match.idx = function(A, B){
     C
 }
 
+match.idx.first = function( A, B ){
+    # for intersection, returns first index of B in first index of A
+    in.both = intersect(A, B)
+    n.intersect = length(in.both)
+    idx.A = rep(0, n.intersect )
+    idx.B = rep(0, n.intersect )
+    for(i in 1:n.intersect ){
+        idx.A[i] = min( which(A==in.both[i]) )
+        idx.B[i] = min( which(B==in.both[i]) )    
+    }
+    data.frame(idx.A, idx.B)
+}
 
 mean.by.symbol = function( expr, all.symbols, symbols ){
     # find all occurences of each element in symbols in all.symbols; return mean of those values in expr
