@@ -1,0 +1,77 @@
+This software was written by David Quigley in the Balmain Lab at UCSF.
+
+***********************************
+* The CARMEN software data format *
+***********************************
+
+The CARMEN software suite expects data to be formatted into three tab-delimited 
+text files: 
+
+1) an expression file
+2) a probe attributes file
+3) a sample attributes file
+
+It is STRONGLY recommended that neither attribute names nor sample names
+contain a space. It is recommended that attribute values do not contain a 
+space, simply to make your life easier.
+
+-----------------------------------
+The format of the expression file:
+-----------------------------------
+Column one:
+The first row is the word IDENTIFIER.
+Subsequent rows contain one unique identifier (e.g. a microarray probeset identifier). 
+
+Columns two and beyond:
+The first row is the name of a sample. Each sample name must be unique.
+Subsequent rows contain the values that identifier-sample pair.
+Missing values are allowed. Missing values should be coded with NA.
+
+Example:
+
+IDENTIFIER	RU109_1000_tail	RU109_1001_tail	RU109_1002_tail
+10344624	11.106	10.989	10.748
+10344633	9.858	NA	9.467
+10344637	10.453	10.332	10.378
+
+----------------------------------------
+The format of the probe attributes file:
+----------------------------------------
+Column one:
+The first row is the word IDENTIFIER.
+Subsequent rows contain one unique identifier (e.g. a microarray probeset identifier). 
+These probe identifiers should match the identifiers in the expression file.
+
+Columns two and beyond:
+The first row is the name of an attribute. Each attribute name must be unique.
+Example attributes: Chromosome, transcription.start.location, is.refseq
+Subsequent rows in each column contain the values for a given identifier-sample pair.
+Missing values are allowed. Missing values should be coded with NA.
+
+Example:
+
+IDENTIFIER	Chromosome	transcription.start	strand	symbol
+10344624	chr1	4807893	+	Lypla1
+10344633	chr1	4858328	+	Tcea1
+10344637	chr1	5083173	+	Atp6v1h
+
+------------------------------------------
+The format of the sample attributes file:
+------------------------------------------
+Column one:
+The first row is the word IDENTIFIER.
+Subsequent rows contain one unique sample.
+These sample identifiers should match the identifiers in the expression file.
+
+Columns two and beyond:
+The first row is the name of an attribute. Each attribute name must be unique.
+Example attributes: p53.mutant, tissue.type
+Subsequent rows in each column contain the values for a given identifier-sample pair.
+Missing values are allowed. Missing values should be coded with NA.
+
+Example:
+
+IDENTIFIER	scan.date	sex
+RU109_1000_tail	june.2012	F
+RU109_1001_tail	june.2012	F
+RU109_1002_tail	june.2012	M

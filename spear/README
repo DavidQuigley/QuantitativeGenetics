@@ -1,0 +1,5 @@
+spear is the command-line wrapper around the spear library functions
+in the carmen library. Spear requires the boost C++ library (boost.org).
+In April 2013 spear was built with boost 1.46.1.
+
+For usage, type spear --help
