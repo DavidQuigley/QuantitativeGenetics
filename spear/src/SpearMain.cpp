@@ -40,9 +40,9 @@ int main(int argc, char *argv[]){
 
     vector<Option*>* options = new vector<Option*>();
 	options->push_back( new Option("data_file", "d", "Path to file with raw data.  Defaults to expr.txt", "expr.txt", OPT_OPTIONAL));
-	options->push_back( new Option("sample_file", "f", "Path to sample attributes file. Default: sample_attributes.txt", "sample_attributes.txt", OPT_OPTIONAL));
-	options->push_back( new Option("gene_file", "g", "Path to gene attributes file. Default: gene_attributes.txt", "gene_attributes.txt", OPT_OPTIONAL));
-	options->push_back( new Option("symbol_column", "y", "Column in gene attributes file indicating symbol to display, defaults 'Gene Name'", "", OPT_OPTIONAL));
+	options->push_back( new Option("sample_file", "f", "Path to sample attributes file. Default: sample_attributes.txt", "sample_attributes.txt", OPT_REQUIRED));
+	options->push_back( new Option("gene_file", "g", "Path to gene attributes file. Default: gene_attributes.txt", "gene_attributes.txt", OPT_REQUIRED));
+	options->push_back( new Option("symbol_column", "y", "Column in gene attributes file indicating symbol to display, defaults 'Gene Name'", "", OPT_REQUIRED));
 	options->push_back( new Option("class_a_limit", "a", "Sample definition for class A, comma sep. list attrib=value, defaults to all", "", OPT_OPTIONAL));
 	options->push_back( new Option("class_b_limit", "b", "Sample definition for class A, comma sep. list attrib=value, defaults to none", "", OPT_OPTIONAL));
     options->push_back( new Option("corr_type", "t", "Method of correlation, {spearman,pearson}, default spearman", "spearman", OPT_OPTIONAL));

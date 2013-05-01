@@ -1,0 +1,2 @@
+Executable code for Association Rule Mining, called by CARMEN
+The Xcode project is set to build a 64-bit OS X binary which will run on 10.7 or higher.

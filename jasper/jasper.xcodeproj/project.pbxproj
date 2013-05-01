@@ -1,0 +1,476 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 45;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		E235B0AD135BDDE6004141B6 /* DlgAnnotate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B06A135BDDE6004141B6 /* DlgAnnotate.cpp */; };
+		E235B0AE135BDDE6004141B6 /* DlgClassificationApply.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B06C135BDDE6004141B6 /* DlgClassificationApply.cpp */; };
+		E235B0AF135BDDE6004141B6 /* DlgClassificationViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B06E135BDDE6004141B6 /* DlgClassificationViewer.cpp */; };
+		E235B0B0135BDDE6004141B6 /* DlgClassifier.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B070135BDDE6004141B6 /* DlgClassifier.cpp */; };
+		E235B0B1135BDDE6004141B6 /* DlgCorrelation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B072135BDDE6004141B6 /* DlgCorrelation.cpp */; };
+		E235B0B2135BDDE6004141B6 /* DlgCorrelationGWER.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B074135BDDE6004141B6 /* DlgCorrelationGWER.cpp */; };
+		E235B0B3135BDDE6004141B6 /* DlgCorrelationNetwork.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B076135BDDE6004141B6 /* DlgCorrelationNetwork.cpp */; };
+		E235B0B4135BDDE6004141B6 /* DlgCorrelationOneProbe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B078135BDDE6004141B6 /* DlgCorrelationOneProbe.cpp */; };
+		E235B0B5135BDDE6004141B6 /* DlgCorrelationViewer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B07A135BDDE6004141B6 /* DlgCorrelationViewer.cpp */; };
+		E235B0B6135BDDE6004141B6 /* DlgDifference.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B07C135BDDE6004141B6 /* DlgDifference.cpp */; };
+		E235B0B7135BDDE6004141B6 /* DlgDiscretization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B07E135BDDE6004141B6 /* DlgDiscretization.cpp */; };
+		E235B0B8135BDDE6004141B6 /* DlgGenesToProbes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B080135BDDE6004141B6 /* DlgGenesToProbes.cpp */; };
+		E235B0B9135BDDE6004141B6 /* DlgInvestigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B082135BDDE6004141B6 /* DlgInvestigation.cpp */; };
+		E235B0BA135BDDE6004141B6 /* DlgInvestigationChooser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B084135BDDE6004141B6 /* DlgInvestigationChooser.cpp */; };
+		E235B0BB135BDDE6004141B6 /* DlgInvestigationEditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B086135BDDE6004141B6 /* DlgInvestigationEditor.cpp */; };
+		E235B0BC135BDDE6004141B6 /* DlgMergeRules.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B088135BDDE6004141B6 /* DlgMergeRules.cpp */; };
+		E235B0BD135BDDE6004141B6 /* DlgNewAnnotation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B08A135BDDE6004141B6 /* DlgNewAnnotation.cpp */; };
+		E235B0BE135BDDE6004141B6 /* DlgNicknameSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B08C135BDDE6004141B6 /* DlgNicknameSet.cpp */; };
+		E235B0BF135BDDE6004141B6 /* DlgPlot.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B08E135BDDE6004141B6 /* DlgPlot.cpp */; };
+		E235B0C0135BDDE6004141B6 /* DlgProgress.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B090135BDDE6004141B6 /* DlgProgress.cpp */; };
+		E235B0C1135BDDE6004141B6 /* DlgProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B092135BDDE6004141B6 /* DlgProperties.cpp */; };
+		E235B0C2135BDDE6004141B6 /* DlgRuleset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B094135BDDE6004141B6 /* DlgRuleset.cpp */; };
+		E235B0C3135BDDE6004141B6 /* DlgTmev.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B096135BDDE6004141B6 /* DlgTmev.cpp */; };
+		E235B0C4135BDDE6004141B6 /* GridClassifierResults.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B099135BDDE6004141B6 /* GridClassifierResults.cpp */; };
+		E235B0C5135BDDE6004141B6 /* GridCorrelation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B09B135BDDE6004141B6 /* GridCorrelation.cpp */; };
+		E235B0C6135BDDE6004141B6 /* Investigation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B09D135BDDE6004141B6 /* Investigation.cpp */; };
+		E235B0C7135BDDE6004141B6 /* Jasper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B09F135BDDE6004141B6 /* Jasper.cpp */; };
+		E235B0C8135BDDE6004141B6 /* JasperTree.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B0A1135BDDE6004141B6 /* JasperTree.cpp */; };
+		E235B0C9135BDDE6004141B6 /* PanelDiscretization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B0A3135BDDE6004141B6 /* PanelDiscretization.cpp */; };
+		E235B0CA135BDDE6004141B6 /* PanelInvestigationProperties.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B0A5135BDDE6004141B6 /* PanelInvestigationProperties.cpp */; };
+		E235B0CB135BDDE6004141B6 /* PanelLimits.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B0A7135BDDE6004141B6 /* PanelLimits.cpp */; };
+		E235B0CC135BDDE6004141B6 /* PanelPlotter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E235B0A9135BDDE6004141B6 /* PanelPlotter.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		8DD76F6C0486A84900D96B5E /* jasper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jasper; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6859E8B029090EE04C91782 /* jasper.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = jasper.1; sourceTree = "<group>"; };
+		E235B069135BDDE6004141B6 /* control_ids.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = control_ids.h; path = src/control_ids.h; sourceTree = "<group>"; };
+		E235B06A135BDDE6004141B6 /* DlgAnnotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgAnnotate.cpp; path = src/DlgAnnotate.cpp; sourceTree = "<group>"; };
+		E235B06B135BDDE6004141B6 /* DlgAnnotate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgAnnotate.h; path = src/DlgAnnotate.h; sourceTree = "<group>"; };
+		E235B06C135BDDE6004141B6 /* DlgClassificationApply.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgClassificationApply.cpp; path = src/DlgClassificationApply.cpp; sourceTree = "<group>"; };
+		E235B06D135BDDE6004141B6 /* DlgClassificationApply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgClassificationApply.h; path = src/DlgClassificationApply.h; sourceTree = "<group>"; };
+		E235B06E135BDDE6004141B6 /* DlgClassificationViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgClassificationViewer.cpp; path = src/DlgClassificationViewer.cpp; sourceTree = "<group>"; };
+		E235B06F135BDDE6004141B6 /* DlgClassificationViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgClassificationViewer.h; path = src/DlgClassificationViewer.h; sourceTree = "<group>"; };
+		E235B070135BDDE6004141B6 /* DlgClassifier.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgClassifier.cpp; path = src/DlgClassifier.cpp; sourceTree = "<group>"; };
+		E235B071135BDDE6004141B6 /* DlgClassifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgClassifier.h; path = src/DlgClassifier.h; sourceTree = "<group>"; };
+		E235B072135BDDE6004141B6 /* DlgCorrelation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgCorrelation.cpp; path = src/DlgCorrelation.cpp; sourceTree = "<group>"; };
+		E235B073135BDDE6004141B6 /* DlgCorrelation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgCorrelation.h; path = src/DlgCorrelation.h; sourceTree = "<group>"; };
+		E235B074135BDDE6004141B6 /* DlgCorrelationGWER.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgCorrelationGWER.cpp; path = src/DlgCorrelationGWER.cpp; sourceTree = "<group>"; };
+		E235B075135BDDE6004141B6 /* DlgCorrelationGWER.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgCorrelationGWER.h; path = src/DlgCorrelationGWER.h; sourceTree = "<group>"; };
+		E235B076135BDDE6004141B6 /* DlgCorrelationNetwork.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgCorrelationNetwork.cpp; path = src/DlgCorrelationNetwork.cpp; sourceTree = "<group>"; };
+		E235B077135BDDE6004141B6 /* DlgCorrelationNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgCorrelationNetwork.h; path = src/DlgCorrelationNetwork.h; sourceTree = "<group>"; };
+		E235B078135BDDE6004141B6 /* DlgCorrelationOneProbe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgCorrelationOneProbe.cpp; path = src/DlgCorrelationOneProbe.cpp; sourceTree = "<group>"; };
+		E235B079135BDDE6004141B6 /* DlgCorrelationOneProbe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgCorrelationOneProbe.h; path = src/DlgCorrelationOneProbe.h; sourceTree = "<group>"; };
+		E235B07A135BDDE6004141B6 /* DlgCorrelationViewer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgCorrelationViewer.cpp; path = src/DlgCorrelationViewer.cpp; sourceTree = "<group>"; };
+		E235B07B135BDDE6004141B6 /* DlgCorrelationViewer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgCorrelationViewer.h; path = src/DlgCorrelationViewer.h; sourceTree = "<group>"; };
+		E235B07C135BDDE6004141B6 /* DlgDifference.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgDifference.cpp; path = src/DlgDifference.cpp; sourceTree = "<group>"; };
+		E235B07D135BDDE6004141B6 /* DlgDifference.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgDifference.h; path = src/DlgDifference.h; sourceTree = "<group>"; };
+		E235B07E135BDDE6004141B6 /* DlgDiscretization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgDiscretization.cpp; path = src/DlgDiscretization.cpp; sourceTree = "<group>"; };
+		E235B07F135BDDE6004141B6 /* DlgDiscretization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgDiscretization.h; path = src/DlgDiscretization.h; sourceTree = "<group>"; };
+		E235B080135BDDE6004141B6 /* DlgGenesToProbes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgGenesToProbes.cpp; path = src/DlgGenesToProbes.cpp; sourceTree = "<group>"; };
+		E235B081135BDDE6004141B6 /* DlgGenesToProbes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgGenesToProbes.h; path = src/DlgGenesToProbes.h; sourceTree = "<group>"; };
+		E235B082135BDDE6004141B6 /* DlgInvestigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgInvestigation.cpp; path = src/DlgInvestigation.cpp; sourceTree = "<group>"; };
+		E235B083135BDDE6004141B6 /* DlgInvestigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgInvestigation.h; path = src/DlgInvestigation.h; sourceTree = "<group>"; };
+		E235B084135BDDE6004141B6 /* DlgInvestigationChooser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgInvestigationChooser.cpp; path = src/DlgInvestigationChooser.cpp; sourceTree = "<group>"; };
+		E235B085135BDDE6004141B6 /* DlgInvestigationChooser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgInvestigationChooser.h; path = src/DlgInvestigationChooser.h; sourceTree = "<group>"; };
+		E235B086135BDDE6004141B6 /* DlgInvestigationEditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgInvestigationEditor.cpp; path = src/DlgInvestigationEditor.cpp; sourceTree = "<group>"; };
+		E235B087135BDDE6004141B6 /* DlgInvestigationEditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgInvestigationEditor.h; path = src/DlgInvestigationEditor.h; sourceTree = "<group>"; };
+		E235B088135BDDE6004141B6 /* DlgMergeRules.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgMergeRules.cpp; path = src/DlgMergeRules.cpp; sourceTree = "<group>"; };
+		E235B089135BDDE6004141B6 /* DlgMergeRules.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgMergeRules.h; path = src/DlgMergeRules.h; sourceTree = "<group>"; };
+		E235B08A135BDDE6004141B6 /* DlgNewAnnotation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgNewAnnotation.cpp; path = src/DlgNewAnnotation.cpp; sourceTree = "<group>"; };
+		E235B08B135BDDE6004141B6 /* DlgNewAnnotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgNewAnnotation.h; path = src/DlgNewAnnotation.h; sourceTree = "<group>"; };
+		E235B08C135BDDE6004141B6 /* DlgNicknameSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgNicknameSet.cpp; path = src/DlgNicknameSet.cpp; sourceTree = "<group>"; };
+		E235B08D135BDDE6004141B6 /* DlgNicknameSet.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgNicknameSet.h; path = src/DlgNicknameSet.h; sourceTree = "<group>"; };
+		E235B08E135BDDE6004141B6 /* DlgPlot.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgPlot.cpp; path = src/DlgPlot.cpp; sourceTree = "<group>"; };
+		E235B08F135BDDE6004141B6 /* DlgPlot.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgPlot.h; path = src/DlgPlot.h; sourceTree = "<group>"; };
+		E235B090135BDDE6004141B6 /* DlgProgress.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgProgress.cpp; path = src/DlgProgress.cpp; sourceTree = "<group>"; };
+		E235B091135BDDE6004141B6 /* DlgProgress.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgProgress.h; path = src/DlgProgress.h; sourceTree = "<group>"; };
+		E235B092135BDDE6004141B6 /* DlgProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgProperties.cpp; path = src/DlgProperties.cpp; sourceTree = "<group>"; };
+		E235B093135BDDE6004141B6 /* DlgProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgProperties.h; path = src/DlgProperties.h; sourceTree = "<group>"; };
+		E235B094135BDDE6004141B6 /* DlgRuleset.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgRuleset.cpp; path = src/DlgRuleset.cpp; sourceTree = "<group>"; };
+		E235B095135BDDE6004141B6 /* DlgRuleset.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgRuleset.h; path = src/DlgRuleset.h; sourceTree = "<group>"; };
+		E235B096135BDDE6004141B6 /* DlgTmev.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgTmev.cpp; path = src/DlgTmev.cpp; sourceTree = "<group>"; };
+		E235B097135BDDE6004141B6 /* DlgTmev.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DlgTmev.h; path = src/DlgTmev.h; sourceTree = "<group>"; };
+		E235B098135BDDE6004141B6 /* generate_annotation_files.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; name = generate_annotation_files.py; path = src/generate_annotation_files.py; sourceTree = "<group>"; };
+		E235B099135BDDE6004141B6 /* GridClassifierResults.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridClassifierResults.cpp; path = src/GridClassifierResults.cpp; sourceTree = "<group>"; };
+		E235B09A135BDDE6004141B6 /* GridClassifierResults.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridClassifierResults.h; path = src/GridClassifierResults.h; sourceTree = "<group>"; };
+		E235B09B135BDDE6004141B6 /* GridCorrelation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = GridCorrelation.cpp; path = src/GridCorrelation.cpp; sourceTree = "<group>"; };
+		E235B09C135BDDE6004141B6 /* GridCorrelation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GridCorrelation.h; path = src/GridCorrelation.h; sourceTree = "<group>"; };
+		E235B09D135BDDE6004141B6 /* Investigation.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Investigation.cpp; path = src/Investigation.cpp; sourceTree = "<group>"; };
+		E235B09E135BDDE6004141B6 /* Investigation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Investigation.h; path = src/Investigation.h; sourceTree = "<group>"; };
+		E235B09F135BDDE6004141B6 /* Jasper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Jasper.cpp; path = src/Jasper.cpp; sourceTree = "<group>"; };
+		E235B0A0135BDDE6004141B6 /* Jasper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Jasper.h; path = src/Jasper.h; sourceTree = "<group>"; };
+		E235B0A1135BDDE6004141B6 /* JasperTree.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JasperTree.cpp; path = src/JasperTree.cpp; sourceTree = "<group>"; };
+		E235B0A2135BDDE6004141B6 /* JasperTree.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JasperTree.h; path = src/JasperTree.h; sourceTree = "<group>"; };
+		E235B0A3135BDDE6004141B6 /* PanelDiscretization.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelDiscretization.cpp; path = src/PanelDiscretization.cpp; sourceTree = "<group>"; };
+		E235B0A4135BDDE6004141B6 /* PanelDiscretization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelDiscretization.h; path = src/PanelDiscretization.h; sourceTree = "<group>"; };
+		E235B0A5135BDDE6004141B6 /* PanelInvestigationProperties.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelInvestigationProperties.cpp; path = src/PanelInvestigationProperties.cpp; sourceTree = "<group>"; };
+		E235B0A6135BDDE6004141B6 /* PanelInvestigationProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelInvestigationProperties.h; path = src/PanelInvestigationProperties.h; sourceTree = "<group>"; };
+		E235B0A7135BDDE6004141B6 /* PanelLimits.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelLimits.cpp; path = src/PanelLimits.cpp; sourceTree = "<group>"; };
+		E235B0A8135BDDE6004141B6 /* PanelLimits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelLimits.h; path = src/PanelLimits.h; sourceTree = "<group>"; };
+		E235B0A9135BDDE6004141B6 /* PanelPlotter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = PanelPlotter.cpp; path = src/PanelPlotter.cpp; sourceTree = "<group>"; };
+		E235B0AA135BDDE6004141B6 /* PanelPlotter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = PanelPlotter.h; path = src/PanelPlotter.h; sourceTree = "<group>"; };
+		E235B0AB135BDDE6004141B6 /* sample.xpm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = sample.xpm; path = src/sample.xpm; sourceTree = "<group>"; };
+		E235B0AC135BDDE6004141B6 /* StringHash.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringHash.h; path = src/StringHash.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F660486A84900D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* jasper */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				C6859E8C029090F304C91782 /* Documentation */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = jasper;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				E235B069135BDDE6004141B6 /* control_ids.h */,
+				E235B06A135BDDE6004141B6 /* DlgAnnotate.cpp */,
+				E235B06B135BDDE6004141B6 /* DlgAnnotate.h */,
+				E235B06C135BDDE6004141B6 /* DlgClassificationApply.cpp */,
+				E235B06D135BDDE6004141B6 /* DlgClassificationApply.h */,
+				E235B06E135BDDE6004141B6 /* DlgClassificationViewer.cpp */,
+				E235B06F135BDDE6004141B6 /* DlgClassificationViewer.h */,
+				E235B070135BDDE6004141B6 /* DlgClassifier.cpp */,
+				E235B071135BDDE6004141B6 /* DlgClassifier.h */,
+				E235B072135BDDE6004141B6 /* DlgCorrelation.cpp */,
+				E235B073135BDDE6004141B6 /* DlgCorrelation.h */,
+				E235B074135BDDE6004141B6 /* DlgCorrelationGWER.cpp */,
+				E235B075135BDDE6004141B6 /* DlgCorrelationGWER.h */,
+				E235B076135BDDE6004141B6 /* DlgCorrelationNetwork.cpp */,
+				E235B077135BDDE6004141B6 /* DlgCorrelationNetwork.h */,
+				E235B078135BDDE6004141B6 /* DlgCorrelationOneProbe.cpp */,
+				E235B079135BDDE6004141B6 /* DlgCorrelationOneProbe.h */,
+				E235B07A135BDDE6004141B6 /* DlgCorrelationViewer.cpp */,
+				E235B07B135BDDE6004141B6 /* DlgCorrelationViewer.h */,
+				E235B07C135BDDE6004141B6 /* DlgDifference.cpp */,
+				E235B07D135BDDE6004141B6 /* DlgDifference.h */,
+				E235B07E135BDDE6004141B6 /* DlgDiscretization.cpp */,
+				E235B07F135BDDE6004141B6 /* DlgDiscretization.h */,
+				E235B080135BDDE6004141B6 /* DlgGenesToProbes.cpp */,
+				E235B081135BDDE6004141B6 /* DlgGenesToProbes.h */,
+				E235B082135BDDE6004141B6 /* DlgInvestigation.cpp */,
+				E235B083135BDDE6004141B6 /* DlgInvestigation.h */,
+				E235B084135BDDE6004141B6 /* DlgInvestigationChooser.cpp */,
+				E235B085135BDDE6004141B6 /* DlgInvestigationChooser.h */,
+				E235B086135BDDE6004141B6 /* DlgInvestigationEditor.cpp */,
+				E235B087135BDDE6004141B6 /* DlgInvestigationEditor.h */,
+				E235B088135BDDE6004141B6 /* DlgMergeRules.cpp */,
+				E235B089135BDDE6004141B6 /* DlgMergeRules.h */,
+				E235B08A135BDDE6004141B6 /* DlgNewAnnotation.cpp */,
+				E235B08B135BDDE6004141B6 /* DlgNewAnnotation.h */,
+				E235B08C135BDDE6004141B6 /* DlgNicknameSet.cpp */,
+				E235B08D135BDDE6004141B6 /* DlgNicknameSet.h */,
+				E235B08E135BDDE6004141B6 /* DlgPlot.cpp */,
+				E235B08F135BDDE6004141B6 /* DlgPlot.h */,
+				E235B090135BDDE6004141B6 /* DlgProgress.cpp */,
+				E235B091135BDDE6004141B6 /* DlgProgress.h */,
+				E235B092135BDDE6004141B6 /* DlgProperties.cpp */,
+				E235B093135BDDE6004141B6 /* DlgProperties.h */,
+				E235B094135BDDE6004141B6 /* DlgRuleset.cpp */,
+				E235B095135BDDE6004141B6 /* DlgRuleset.h */,
+				E235B096135BDDE6004141B6 /* DlgTmev.cpp */,
+				E235B097135BDDE6004141B6 /* DlgTmev.h */,
+				E235B098135BDDE6004141B6 /* generate_annotation_files.py */,
+				E235B099135BDDE6004141B6 /* GridClassifierResults.cpp */,
+				E235B09A135BDDE6004141B6 /* GridClassifierResults.h */,
+				E235B09B135BDDE6004141B6 /* GridCorrelation.cpp */,
+				E235B09C135BDDE6004141B6 /* GridCorrelation.h */,
+				E235B09D135BDDE6004141B6 /* Investigation.cpp */,
+				E235B09E135BDDE6004141B6 /* Investigation.h */,
+				E235B09F135BDDE6004141B6 /* Jasper.cpp */,
+				E235B0A0135BDDE6004141B6 /* Jasper.h */,
+				E235B0A1135BDDE6004141B6 /* JasperTree.cpp */,
+				E235B0A2135BDDE6004141B6 /* JasperTree.h */,
+				E235B0A3135BDDE6004141B6 /* PanelDiscretization.cpp */,
+				E235B0A4135BDDE6004141B6 /* PanelDiscretization.h */,
+				E235B0A5135BDDE6004141B6 /* PanelInvestigationProperties.cpp */,
+				E235B0A6135BDDE6004141B6 /* PanelInvestigationProperties.h */,
+				E235B0A7135BDDE6004141B6 /* PanelLimits.cpp */,
+				E235B0A8135BDDE6004141B6 /* PanelLimits.h */,
+				E235B0A9135BDDE6004141B6 /* PanelPlotter.cpp */,
+				E235B0AA135BDDE6004141B6 /* PanelPlotter.h */,
+				E235B0AB135BDDE6004141B6 /* sample.xpm */,
+				E235B0AC135BDDE6004141B6 /* StringHash.h */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76F6C0486A84900D96B5E /* jasper */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C6859E8C029090F304C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				C6859E8B029090EE04C91782 /* jasper.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F620486A84900D96B5E /* jasper */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "jasper" */;
+			buildPhases = (
+				8DD76F640486A84900D96B5E /* Sources */,
+				8DD76F660486A84900D96B5E /* Frameworks */,
+				E235B10F135C0808004141B6 /* ShellScript */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = jasper;
+			productInstallPath = "$(HOME)/bin";
+			productName = jasper;
+			productReference = 8DD76F6C0486A84900D96B5E /* jasper */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "jasper" */;
+			compatibilityVersion = "Xcode 3.1";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
+			mainGroup = 08FB7794FE84155DC02AAC07 /* jasper */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8DD76F620486A84900D96B5E /* jasper */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E235B10F135C0808004141B6 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cp /Users/dquigley/Documents/notebook/code/jasper/build/Release/jasper /Users/dquigley/Documents/notebook/code/release/Carmen.app/Contents/MacOS/Carmen";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F640486A84900D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E235B0AD135BDDE6004141B6 /* DlgAnnotate.cpp in Sources */,
+				E235B0AE135BDDE6004141B6 /* DlgClassificationApply.cpp in Sources */,
+				E235B0AF135BDDE6004141B6 /* DlgClassificationViewer.cpp in Sources */,
+				E235B0B0135BDDE6004141B6 /* DlgClassifier.cpp in Sources */,
+				E235B0B1135BDDE6004141B6 /* DlgCorrelation.cpp in Sources */,
+				E235B0B2135BDDE6004141B6 /* DlgCorrelationGWER.cpp in Sources */,
+				E235B0B3135BDDE6004141B6 /* DlgCorrelationNetwork.cpp in Sources */,
+				E235B0B4135BDDE6004141B6 /* DlgCorrelationOneProbe.cpp in Sources */,
+				E235B0B5135BDDE6004141B6 /* DlgCorrelationViewer.cpp in Sources */,
+				E235B0B6135BDDE6004141B6 /* DlgDifference.cpp in Sources */,
+				E235B0B7135BDDE6004141B6 /* DlgDiscretization.cpp in Sources */,
+				E235B0B8135BDDE6004141B6 /* DlgGenesToProbes.cpp in Sources */,
+				E235B0B9135BDDE6004141B6 /* DlgInvestigation.cpp in Sources */,
+				E235B0BA135BDDE6004141B6 /* DlgInvestigationChooser.cpp in Sources */,
+				E235B0BB135BDDE6004141B6 /* DlgInvestigationEditor.cpp in Sources */,
+				E235B0BC135BDDE6004141B6 /* DlgMergeRules.cpp in Sources */,
+				E235B0BD135BDDE6004141B6 /* DlgNewAnnotation.cpp in Sources */,
+				E235B0BE135BDDE6004141B6 /* DlgNicknameSet.cpp in Sources */,
+				E235B0BF135BDDE6004141B6 /* DlgPlot.cpp in Sources */,
+				E235B0C0135BDDE6004141B6 /* DlgProgress.cpp in Sources */,
+				E235B0C1135BDDE6004141B6 /* DlgProperties.cpp in Sources */,
+				E235B0C2135BDDE6004141B6 /* DlgRuleset.cpp in Sources */,
+				E235B0C3135BDDE6004141B6 /* DlgTmev.cpp in Sources */,
+				E235B0C4135BDDE6004141B6 /* GridClassifierResults.cpp in Sources */,
+				E235B0C5135BDDE6004141B6 /* GridCorrelation.cpp in Sources */,
+				E235B0C6135BDDE6004141B6 /* Investigation.cpp in Sources */,
+				E235B0C7135BDDE6004141B6 /* Jasper.cpp in Sources */,
+				E235B0C8135BDDE6004141B6 /* JasperTree.cpp in Sources */,
+				E235B0C9135BDDE6004141B6 /* PanelDiscretization.cpp in Sources */,
+				E235B0CA135BDDE6004141B6 /* PanelInvestigationProperties.cpp in Sources */,
+				E235B0CB135BDDE6004141B6 /* PanelLimits.cpp in Sources */,
+				E235B0CC135BDDE6004141B6 /* PanelPlotter.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB923208733DC60010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = /usr/local/bin;
+				PRODUCT_NAME = jasper;
+				SDKROOT = macosx10.7;
+			};
+			name = Debug;
+		};
+		1DEB923308733DC60010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_MODEL_TUNING = G5;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/wxMac-2.8.12/build-carbon/lib/wx/include/mac-ansi-release-static-2.8",
+					"/usr/local/wxMac-2.8.12/include",
+					"/usr/local/wxMac-2.8.12/contrib/include",
+					/usr/local/boost_1_46_1,
+					/Users/dquigley/Documents/notebook/code/src,
+				);
+				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/wxMac-2.8.12/build-carbon/lib",
+					/usr/local/boost_1_46_1/stage/lib32,
+					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release,
+				);
+				PRODUCT_NAME = jasper;
+				SDKROOT = macosx10.7;
+			};
+			name = Release;
+		};
+		1DEB923608733DC60010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PREBINDING = NO;
+				SDKROOT = macosx10.6;
+			};
+			name = Debug;
+		};
+		1DEB923708733DC60010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = i386;
+				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"/usr/local/wxMac-2.8.12/build-carbon/lib/wx/include/mac-ansi-release-static-2.8",
+					"/usr/local/wxMac-2.8.12/include",
+					"/usr/local/wxMac-2.8.12/contrib/include",
+					/usr/local/boost_1_46_1,
+					/Users/dquigley/Documents/notebook/code,
+				);
+				INSTALL_PATH = "";
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/wxMac-2.8.12/build-carbon/lib",
+					/usr/local/boost_1_46_1/stage/lib32,
+					/Users/dquigley/Documents/notebook/code/carmen/build/Release,
+				);
+				OTHER_CPLUSPLUSFLAGS = (
+					"-mmacosx-version-min=10.5",
+					"-D_FILE_OFFSET_BITS=64",
+					"-D_LARGE_FILES",
+					"-D__WXMAC__",
+					"$(OTHER_CFLAGS)",
+				);
+				OTHER_LDFLAGS = (
+					"-framework",
+					IOKit,
+					"-framework",
+					Carbon,
+					"-framework",
+					Cocoa,
+					"-framework",
+					System,
+					"-framework",
+					QuickTime,
+					"-framework",
+					OpenGL,
+					"-framework",
+					AGL,
+					"-framework",
+					WebKit,
+					"-lwx_mac-2.8",
+					"-lwxtiff-2.8",
+					"-lwxjpeg-2.8",
+					"-lwxpng-2.8",
+					"-lz",
+					"-lpthread",
+					"-liconv",
+					"-lboost_system",
+					"-lboost_filesystem",
+					"-lboost_regex",
+					"-lcarmen",
+				);
+				PREBINDING = NO;
+				PRODUCT_NAME = Carmen;
+				SDKROOT = macosx10.5;
+				SECTORDER_FLAGS = "";
+				VALID_ARCHS = i386;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "jasper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB923208733DC60010E9CD /* Debug */,
+				1DEB923308733DC60010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "jasper" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB923608733DC60010E9CD /* Debug */,
+				1DEB923708733DC60010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}

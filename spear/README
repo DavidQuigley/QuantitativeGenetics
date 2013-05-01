@@ -1,5 +1,18 @@
 spear is the command-line wrapper around the spear library functions
-in the carmen library. Spear requires the boost C++ library (boost.org).
+in the carmen library. The primary use for this code is to calculate 
+spearman rank correlation, thus the name. Spear has numerous parameters
+which let the user compare one probe vs. all of the rest, perform all-vs-all,
+calculate the Genome-Wide Error Rate as in Churchill & Doerge Genetics 1994 
+(http://www.ncbi.nlm.nih.gov/pubmed/7851788), calculate differential 
+correlation between two groups of samples, etc.
+
+BUILDING SPEAR
+
+Spear requires the boost C++ library (boost.org).
 In April 2013 spear was built with boost 1.46.1.
 
-For usage, type spear --help
+USAGE
+type ./spear --help
+
+Spear expects input from three files, the expression/probe/sample file 
+set described at https://github.com/DavidQuigley/QuantitativeGenetics/README

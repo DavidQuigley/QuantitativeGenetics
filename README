@@ -75,3 +75,27 @@ IDENTIFIER	scan.date	sex
 RU109_1000_tail	june.2012	F
 RU109_1001_tail	june.2012	F
 RU109_1002_tail	june.2012	M
+
+******************
+* BUILDING BOOST *
+******************
+
+Boost is well-documented at boost.org. For our purposes, we need to build 
+boost_filesystem and boost_system with 32-bit and 64-bit address models to 
+accomodate wxWidgets 2.8.12, which is 32-bit. For my OS X build I have put 
+these libraries into /usr/local/boost_1_48_0/stage/lib32 and lib64 respectively.
+Note that I remove the dynamically linked version of the libraries because I 
+want to distribute a single static object.
+
+# Download boost from boost.org. Put in /usr/local
+cd /usr/local
+sudo tar -xf boost_1_48_0.tar
+cd /usr/local/boost_1_48_0
+sudo ./bootstrap.sh --with-libraries=system,filesystem,regex,thread
+sudo ./b2
+sudo mv /usr/local/boost_1_48_0/stage/lib /usr/local/boost_1_48_0/stage/lib64
+sudo rm /usr/local/boost_1_48_0/stage/lib64/*.dylib
+sudo ./bjam cflags=-m32 cxxflags=-m32 address-model=32 threading=multi architecture=x86 instruction-set=i686
+sudo mv /usr/local/boost_1_48_0/stage/lib /usr/local/boost_1_48_0/stage/lib32
+sudo rm /usr/local/boost_1_48_0/stage/lib32/*.dylib
+

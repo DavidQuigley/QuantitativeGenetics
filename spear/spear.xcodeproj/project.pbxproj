@@ -136,6 +136,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -147,7 +148,7 @@
 				);
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/boost_1_46_1/stage/lib32,
+					/usr/local/boost_1_46_1/stage/lib64,
 					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release64,
 				);
 				OTHER_LDFLAGS = (
@@ -158,6 +159,7 @@
 				);
 				PRODUCT_NAME = spear;
 				SDKROOT = macosx10.7;
+				VALID_ARCHS = x86_64;
 			};
 			name = Debug;
 		};
@@ -165,6 +167,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
@@ -172,8 +175,13 @@
 					/Users/dquigley/Documents/notebook/code/src/carmen/src,
 				);
 				INSTALL_PATH = /usr/local/bin;
+				LIBRARY_SEARCH_PATHS = (
+					/usr/local/boost_1_46_1/stage/lib64,
+					/Users/dquigley/Documents/notebook/code/carmen/build/Release64,
+				);
 				PRODUCT_NAME = spear;
 				SDKROOT = macosx10.7;
+				VALID_ARCHS = x86_64;
 			};
 			name = Release;
 		};
