@@ -83,33 +83,35 @@ chrom.MM[ m$idx.A ] = s2loc.MM$chrom[m$idx.B]
 loc.start.MM[ m$idx.A ] = s2loc.MM$loc.start[m$idx.B]
 m = match.idx(symbols.MM, s2n.MM$symbol)
 fullname.MM[ m$idx.A ] = s2n.MM$name[m$idx.B]
-
+fullname.MM[fullname.MM=="-"] = symbols.MM[fullname.MM=="-"]
 
 m = match.idx(symbols.HS, s2loc.HS$symbol)
 chrom.HS[ m$idx.A ] = s2loc.HS$chrom[m$idx.B]
 loc.start.HS[ m$idx.A ] = s2loc.HS$loc.start[m$idx.B]
 m = match.idx(symbols.HS, s2n.HS$symbol)
 fullname.HS[ m$idx.A ] = s2n.HS$name[m$idx.B]
+fullname.HS[fullname.HS=="-"] = symbols.HS[fullname.HS=="-"]
 
 for(i in 1:length(symbols.MM)){
-    go = paste(s2go.MM$GO[s2go.MM$symbol==symbols.MM[i]], collapse=",")
+    go = paste( unique(s2go.MM$GO[s2go.MM$symbol==symbols.MM[i]]), collapse=",")
     if( go != "" ){
         go.MM[i] = go
     }
 }
 
 for(i in 1:length(symbols.HS)){
-    go = paste(s2go.HS$GO[s2go.HS$symbol==symbols.HS[i]], collapse=",")
+    go = paste( unique(s2go.HS$GO[s2go.HS$symbol==symbols.HS[i]]), collapse=",")
     if( go != "" ){
         go.HS[i] = go
     }
 }
 
-mm = data.frame(symbol=symbols.MM, chr=get.split.col(chrom.MM,"chr",last=T), ucsc_chr=chrom.MM, loc_start=loc.start.MM, fullname=fullname.MM)
-hs = data.frame(symbol=symbols.HS, chr=get.split.col(chrom.HS,"chr",last=T), ucsc_chr=chrom.HS, loc_start=loc.start.HS, fullname=fullname.HS)
-write.matrix(mm, 'mouse_annotation.txt')
-write.matrix(hs, 'human_annotation.txt')
+mm = data.frame(symbol=symbols.MM, chr=get.split.col(chrom.MM,"chr",last=T), ucsc_chr=chrom.MM, loc_start=loc.start.MM, fullname=fullname.MM, GO=go.MM)
+hs = data.frame(symbol=symbols.HS, chr=get.split.col(chrom.HS,"chr",last=T), ucsc_chr=chrom.HS, loc_start=loc.start.HS, fullname=fullname.HS, GO=go.HS)
+write.table(mm, 'mouse_annotation.txt', row.names=F, sep="\t", col.names=T, quote=F)
+write.table(hs, 'human_annotation.txt', row.names=F, sep="\t", col.names=T,quote=F)
 quit()
+n
 
 # BACK IN THE SHELL. CLEAN UP
 rm Mus_musculus.gene_info
