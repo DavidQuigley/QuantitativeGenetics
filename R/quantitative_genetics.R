@@ -248,6 +248,10 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # cor.test.row.vs.all = function( ids, expr.row, expr.all, percent.present=0.90, method="spearman", verbose=F){
 #    Calculate correlation value of first row of expr.row vs. all rows in expr.all
 #
+# cor.test.probe.vs.all = function( expr, symbols, probe, percent.present=0.9, method="spearman", verbose=F)
+#    Correlation of one probe vs the whole dataset.
+#    **This is probably the one you want.**
+#
 # cor.sa.columns = function( sa, method="spearman" )
 #    correlation of all numeric columns in data frame sa
 #
@@ -287,7 +291,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 #
 ### SURVIVAL ANALYSIS
 #
-# km = function( times, had.events, conditions, legends=NULL, fn_out=NULL)
+# km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T, legend.x=3, legend.y=0.25)
 #    General Kaplan-meier plotting and p-value calculation
 #
 # km.multi = function( times, had.events, conditions, legends=NULL, fn_out=NULL)
@@ -2965,6 +2969,57 @@ cor.test.all.rows.vs.genes = function(ids, expr.A, expr.B, ga.genes, percent.pre
     d
 }
 
+cor.test.probe.vs.all=function( expr, symbols, probe, percent.present=0.90, method="spearman", verbose=F){
+    # Calculate correlation 
+    # percent.present is minimum percent of measurements present required in expr.matrix
+    # method is spearman or pearson
+    # if verbose==T, report progress
+    #
+    # RETURNS: data frame of index in expr.matrix, r-value, p-value
+    if( percent.present > 1 || percent.present < 0 ){ stop("percent.present not between 0 and 1") }
+    
+    D = data.matrix(expr)
+    vals.row = D[ which(rownames(expr)==probe),]
+    N.genes = dim(D)[1]
+    N = dim(D)[2]
+    threshold = floor( N * percent.present )
+    n.NA = rowSums(is.na(D))
+    if( N - sum( is.na(vals.row) ) < threshold ){
+        warning("Skipping row due to insufficient number of present measurements")
+        d=data.frame( 1:N.genes, rep(NA,N.genes), rep(NA,N.genes))
+        names(d) = c('genes', 'rhos', 'pvals')
+        d
+    }
+    else{
+        options(warn=-1)
+        genes = vector(mode="integer", N.genes)
+        pvals = vector(mode="numeric", N.genes)
+        rhos = vector(mode="numeric", N.genes)
+        for(i in 1:N.genes){
+            if( N - n.NA[i] >= threshold ){
+                result = cor.test(vals.row, D[i,], method=method, rm.na=T)
+                pval = result$p.value
+                genes[i] = i
+                pvals[i] = pval
+                rhos[i] = as.numeric(result$estimate)
+            }
+            else{
+                genes[i] = i
+                pvals[i] = NA
+                rhos[i] = NA
+            }
+            if( verbose && i %% 5000==0 ){
+                print(paste("Gene", i, "of", N.genes) )
+            }
+        }
+        options(warn=0)
+        d = data.frame(symbols, rho=round(rhos,3), pval=signif(pvals,4))
+        rownames(d) = rownames(expr)
+        d = d[ order(d$pval, d$rho), ]
+        d
+    }
+}
+
 cor.test.row.vs.all = function( ids, expr.row, expr.all, percent.present=0.90, method="spearman", verbose=F){
     # Calculate spearman value of first row of expr.row vs. all rows in expr.all
     #
@@ -4021,7 +4076,7 @@ SAM.convert.siggenes = function(T){
 }
 
 
-km = function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T){
+km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T, legend.x=3, legend.y=0.25){
     # Wrapper for Kaplan-meier analysis (using library "survival")
     # If fn_out is passed, the plot is saved to the specified file as a png
     # returns the coxph object
@@ -4044,7 +4099,7 @@ km = function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NU
     if( !is.null(fn_out) ){
         png(fn_out)
     }
-    color.list =c("black", "gray", "darkblue", "red", "darkgreen", "orange")
+    color.list =c("black", "blue", "gray", "red", "darkgreen", "orange")
     if( is.null(main) )
         main.title=paste('KM curve')
     else
@@ -4057,10 +4112,10 @@ km = function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NU
         main=main.title, las=1,
         xlab="time")
     if( !is.null(legends) ){
-        legend(3,.25,legends, col=color.list,lty=1,lwd=3)
+        legend(legend.x,legend.y, legends, col=color.list,lty=1,lwd=3)
     }
     else{
-        legend(3,.25,sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3)
+        legend(legend.x, legend.y, sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3)
     }
     if( !is.null(fn_out) ){
         i=dev.off()
@@ -4073,7 +4128,6 @@ km = function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NU
     }
     cox
 }
-
 
 km.multi = function( times, had.events, conditions ){
     #    General Kaplan-meier plotting and p-value calculation, allowing multiple conditions to be passed
