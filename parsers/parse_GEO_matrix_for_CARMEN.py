@@ -49,9 +49,26 @@ for fn in fn_in.split(","):
                     for accession in accessions:
                         s2prop2v[accession] = {}
                     
-                elif a[0] == "!Sample_characteristics_ch1":
-                    property = a[1].split(": ")[0]
-                    values = [ x.split(": ")[1] for x in a[1:]]
+                elif a[0] == "!Sample_characteristics_ch1" or a[0] == "!Sample_characteristics_ch2":
+                    # GEO is not very consistent in how it encodes this field.
+                    # the value of a column here may be blank so we need to check all 
+                    # of the values to find the first case where the name of this characteristic
+                    # is listed; store that as property
+                    # The value may also be "property:" lacking a space.
+                    for x in a[1:]:
+                        if x.count(": ")>0:
+                            property = x.split(": ")[0]        
+                            break
+                    property = property.replace(" ", "_")
+                    print "Read property: " + property
+                    values = []
+                    for x in a[1:]:
+                        value = "NA"
+                        if x != "":
+                            x = x.split(":")
+                            if len(x)==2 and x[1] != "":
+                                value= x[1].lstrip()
+                        values.append(value)
                     for accession, value in zip(accessions, values):
                         s2prop2v[accession][property] = value
                     
