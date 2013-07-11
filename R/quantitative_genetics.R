@@ -99,6 +99,17 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # find.dupes = function(fn){
 #  identify the duplicates in column one
 #
+# pathway.change.score = function(D, symbols, pathway.symbols, samples.a, samples.b, return.only.score=F )
+#   called by calculate.pathway.change.scores, calculate pathway change for one pathway
+#
+# calculate.pathway.change.scores= function(D, symbols, pathways, pathway2symbols, samples.a, samples.b, return.only.score=T, n.perms=0 )
+#   calculate a pathway change score for each pathway in vector pathways.
+#   pathway->symbol vector mapping in pathway2symbols, expecting symbols to be space-separated
+#   conditions specified in boolean vectors samples.a, samples.b
+#
+# pathway.summarize.result = function(R)
+#   summarize a pathway change score result 
+#
 #####################################
 # Protein quantification
 #####################################
@@ -194,10 +205,10 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # plot.alterations.on.chr( M, name, chr.size.in.mb, marker.interval.size=1,  upper.bound=0.3, lower.bound=0.3, color=T)
 #    Plot a single chromosome, label x axis with Mb
 #
-# plot.rows = function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F)
+# plot.rows = function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, ymin=NULL, ymax=NULL)
 #    general multiple probe plotting function
 #
-# plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l')
+# plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', ymin=NULL, ymax=NULL)
 #    Convenience function to allow us to plot with a simple probe list.
 #    dataset is list of {expr, sa, ga}
 #
@@ -226,10 +237,10 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 #   This is the utility function that just plots what it's given without labels.
 #   Intended for use in figures
 #
-# sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, symbol=NULL, scale=F, y.min=NULL, y.max=NULL )
+# sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, symbol=NULL, scale=F, y.min=NULL, y.max=NULL, groups=NULL )
 #   Given a matrix and a list of gene names and symbol, plot gene names sorted by symbol
 #
-# do.pca = function( D, pca=NULL, labels=NULL)
+# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main=NULL)
 #    Helper function for quick visualization of PCA. Automatically colors based on labels.
 #
 ########################
@@ -472,13 +483,14 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # standardize = function(D)
 #   standardize matrix by rows
 #
-# compress.probes = function( D, idx, min.cor=0.8 )
+# compress.probes = function( D, idx, min.cor=0.8, min.var=0.1 )
 #   Given a set of probe indexes idx, look for those with correlation >= min.cor
 #   Report mean values across all probes with correlation >= min.cor
 #   If no genes pairs meet these criteria, default to mean value
 #
-# count.appearances = function(V, order.by="values")
+# count.appearances = function(V, W, order.by="values")
 #   return dataframe how how many times each item in V appears
+#   if W is passed, returns a matrix of V x W appearances
 #
 # match.idx = function(A, B)
 #   return dataframe of indices into A and B restricted to perfect matches between A and B, 
@@ -1165,6 +1177,136 @@ find.dupes = function(fn){
     freq = count.appearances(x[,1])
     freq$keys[freq$values>1]
 }
+
+
+################################
+# Begin pathway code           #
+################################
+
+pathway.summarize.result = function(R){
+    x=data.frame( 
+        sum.lm.a=round( rowSums( (R$tstats.a) ) ,2), 
+        sum.lm.b=round( rowSums( (R$tstats.b) ) ,2),
+        score.lm.diff=round(R$score.lm,2),         
+        ttest.statistic=round(R$ttest.statistic, 2),
+        ttest.mean.diff=round(R$ttest.mean.diff, 2),
+        score.ttest=round(R$score.ttest,2),
+        stringsAsFactors=F
+    )
+    rownames(x) = R$symbols.used
+    print(paste( "pathway score (P):", R$pathway.score, "(", R$pathway.pvalue, ")" ) )
+    x
+}
+
+
+pathway.change.score = function(D, symbols, pathway.symbols, samples.a, samples.b, return.only.score=F ){
+    # The score from ttests and linear models needs to be adjusted for the number 
+    # of symbols used, because otherwise a large number of symbols with no meaningful 
+    # t statistic will have a high score.
+    
+    if( length(symbols) != dim(D)[1] )
+        stop("symbols must have same length as number of rows in D")
+    m=match.idx(symbols, pathway.symbols)
+    idx = m$idx.A
+    symbols.used = pathway.symbols[m$idx.B]
+    N = length(idx)
+    if( N==0 )
+        stop("No symbols from pathway found as row names in D")
+    
+    # Differential expression by t test
+    # score for each symbol = abs(tstat / N)
+    idx.a = which(samples.a)
+    idx.b = which(samples.b)
+    Dab = cbind(D[idx, idx.a], D[idx, idx.b])
+    ttest.factor = rep("b", dim(Dab)[2])
+    ttest.factor[1:length(idx.a)] = "a"
+    
+    tt = rowttests( Dab, factor(ttest.factor), tstatOnly=T)
+    #ttest.vec = (tt$statistic)^2 / N * abs(tt$dm)
+    #ttest.vec = abs(tt$statistic )
+    ttest.vec = tt$statistic 
+
+    tstats.a = matrix(0, nrow=N, ncol=N)
+    tstats.b = matrix(0, nrow=N, ncol=N)
+    for(i in 1:N){
+        P.a = D[idx, samples.a] 
+        P.b = D[idx, samples.b] 
+        tstats.a[,i] = as.numeric(calculate.lm.tstat(lm( t(P.a) ~ P.a[i,] ))[2,])
+        tstats.b[,i] = as.numeric(calculate.lm.tstat(lm( t(P.b) ~ P.b[i,] ))[2,])
+    }
+    diag(tstats.a) = 0
+    diag(tstats.b) = 0
+    #tstats.diff = ( rowSums( tstats.a -tstats.b )  / (N-1) )^2
+    tstats.diff = ( rowSums( tstats.a -tstats.b )  / (N-1) )
+    
+    pathway.score = sum( ttest.vec )  + sum(tstats.diff )
+    
+    if( return.only.score ){
+        list( pathway.score=pathway.score )
+    }
+    else{
+        list( symbols.used    = symbols.used,
+              pathway.symbols = pathway.symbols,
+              tstats.a = tstats.a,
+              tstats.b = tstats.b,
+              ttest.statistic=tt$statistic,
+              ttest.mean.diff=tt$dm,
+              score.ttest=ttest.vec,
+              score.lm=tstats.diff,
+              pathway.score= round( pathway.score, 2),
+              pathway.score.lm = round( sum(tstats.diff), 2 ),
+              pathway.score.ttest = round( sum(ttest.vec), 2 ),
+              pathway.pvalue = NA
+            )
+    }
+}
+
+calculate.pathway.change.scores= function(D, symbols, pathways, pathway2symbols, 
+                                          samples.a, samples.b, return.only.score=T, n.perms=0 ){
+    #   calculate a pathway change score for each pathway in vector pathways.
+    #   pathway->symbol vector mapping in pathway2symbols, expecting symbols to be space-separated
+    #   conditions specified in boolean vectors samples.a, samples.b
+    path.scores = rep(0, length(pathways))
+    path.pvals = rep(NA, length(pathways))
+    path.ratio = rep(0, length(pathways))
+    results = list()
+    for( path.ctr in 1:length(pathways) ){
+        pathway = pathways[path.ctr]
+        pathway.symbols = strsplit( hsh_get(pathway2symbols, pathway), " ")[[1]]
+        results[[pathway]] = pathway.change.score(D, symbols, pathway.symbols, 
+                                               samples.a, samples.b, return.only.score=return.only.score )
+        path.scores[path.ctr] = results[[pathway]]$pathway.score
+        path.ratio[path.ctr] = sum(results[[pathway]]$score.ttest) / sum(results[[pathway]]$score.lm)
+        score.perm = rep(0, n.perms)
+        if(n.perms>0){
+            for(i in 1:n.perms){
+                idx = sample( c(which(samples.a), which(samples.b)) )
+                idx.samples.a.shuffle = idx[1:sum(samples.a)]
+                idx.samples.b.shuffle = idx[ (sum(samples.a)+1) : length(idx) ]
+                perm.samples.a = rep(F, dim(D)[2])
+                perm.samples.b = rep(F, dim(D)[2])
+                perm.samples.a[idx.samples.a.shuffle]=T
+                perm.samples.b[idx.samples.b.shuffle]=T    
+
+                score.perm[i] = pathway.change.score(D, symbols, pathway.symbols, 
+                                               perm.samples.a, perm.samples.b, return.only.score=T )$pathway.score
+                if( n.perms>1 & i %% 10 == 0 ){
+                    print(paste("...perm", i, "of", n.perms ))
+                }
+            } 
+        }
+        path.pvals[path.ctr] = round( sum(  abs(score.perm)> abs(path.scores[path.ctr]) ) / n.perms, 4 )
+        results[[pathway]]$pathway.pvalue = path.pvals[path.ctr]
+        results[[pathway]]$pathway.scores.perm = sort( abs(score.perm), decreasing=T)
+        print(paste("Pathway",pathway,path.ctr,"of",length(pathways),"score",path.scores[path.ctr],"P",path.pvals[path.ctr]))
+    }
+    summary = data.frame(score=path.scores, p.perm=path.pvals, signal.ratio=round(path.ratio,2) )
+    rownames(summary) = pathways
+    summary = summary[order(summary$p.perm, 1/abs(summary$score)),]
+    results[["summary"]] = summary
+    results
+}
+
 
 
 ################################
@@ -2298,7 +2440,7 @@ plot.alterations = function(M, name, chr.list, upper.bound=0.3, lower.bound=-0.3
 }
 
 
-plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, legend.xy = c()){
+plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, legend.xy = c(), ymin=NULL, ymax=NULL){
     # sa is an attribute file data frame that describes the values in M
     # M is a numeric value data frame with one row per gene to plot
     # legend.labels are friendly names for rows; if NULL, rownames(M) is used
@@ -2363,11 +2505,12 @@ plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plo
     if( no.plot )
         M
     else
-        plot_multiple(M, lbls=x.axis.labels, x_lbl=x.bottom.label, legend.labels, plot.type, legend.xy = legend.xy)
+        plot_multiple(M, lbls=x.axis.labels, x_lbl=x.bottom.label, probe_label_list=legend.labels, plot.type=plot.type, 
+                      legend.xy = legend.xy, ymin=ymin, ymax=ymax)
 }
 
 
-plot.by.identifiers=function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', legend.xy=c() ){
+plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', legend.xy=c(), ymin=NULL, ymax=NULL ){
     # Convenience function to allow us to plot with a simple probe list.
     # dataset is list of {expr, sa, ga}
     if( is.null(dataset$expr) | is.null(dataset$ga) | is.null(dataset$sa))
@@ -2386,9 +2529,11 @@ plot.by.identifiers=function( dataset, probe.list, group.by=NULL, sorted=F, plot
         idx.probes[i] = idx
         legend.labels[i] = paste( dataset$ga[which(rownames(dataset$ga)==probe.list[i]), idx.symbol ], probe.list[i])
     }
-    plot.rows( dataset$expr[idx.probes,], dataset$sa, legend.labels, group.by, sorted, plot.type, legend.xy=legend.xy )
+    plot.rows( dataset$expr[idx.probes,], sa=dataset$sa, legend.labels=legend.labels, group.by=group.by, sorted=sorted, plot.type=plot.type, no.plot=F, legend.xy=legend.xy, ymin=ymin, ymax=ymax )
     abline(0,0)
 }
+
+
 
 
 plot.raw.probe.values2 = function(Data, probe_id){
@@ -2426,19 +2571,23 @@ plot.raw.probe.values2 = function(Data, probe_id){
 
 
 
-plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend.xy = c()){
+plot_multiple = function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend.xy = c(), ymin=NULL, ymax=NULL){
     # This is the utility function that just plots what it's given
     # pass plot.type=='l' for lines, 'p' for points
-    #pch.pool = c(15,16,17,18,19,0,1,2,3,4,5,6)
+        
     pch.pool = c(19)
     col.pool = c('black', 'chartreuse4', 'darkblue', 'firebrick3', 'darkorange', 'blue', 'gray48', 'burlywood')
     n_probes = dim(V)[1]
     n_samples = dim(V)[2]
     X = (1:n_samples)
-    ymax = max(c(1,ceiling(max(V, na.rm=T))))
-    ymin = floor( min(V, na.rm=T) )
-    if(ymin>1)
-        ymin=1
+    if(is.null(ymax)){
+        ymax = max(c(1,ceiling(max(V, na.rm=T))))
+    }
+    if(is.null(ymin)){
+        ymin = floor( min(V, na.rm=T) )
+        if(ymin>1)
+            ymin=1
+    }
     pch.used = c(pch.pool[1]); 
     col.used = c( col.pool[1] )
     plot(X, as.numeric(V[1,]), col=1, type=plot.type, pch=pch.pool[1], cex=0.5, axes=F, xlab=x_lbl, ylim=c(ymin,ymax), ylab='', lwd=2)
@@ -2467,12 +2616,11 @@ plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend.x
         legend.x=legend.xy[1]
         legend.y=legend.xy[2]
     }
-    if(plot.type=='l')
-        legend(legend.x, y=legend.y, probe_label_list, col=col.used, lty=1, lwd=2, cex=0.75,y.intersp=0.5)
-    else
-        legend(legend.x, y=legend.y,  probe_label_list, col=col.used, lty=1, lwd=2, pch=pch.used, cex=1,y.intersp=0.75)
+#    if(plot.type=='l')
+        legend(legend.x, y=legend.y-1, probe_label_list, col=col.used, lty=1, lwd=2, y.intersp=0.5)
+#    else
+#        legend(legend.x)
 }
-
 
 plot.geno.expr = function(ids, expr.g, expr.e, probe.g, probe.e, main=NULL, show.lm.pval=FALSE){
     # used to plot genotype or SNP copy number vs. real-valued data
@@ -2778,7 +2926,7 @@ plot.clean=function( V, ymin=NA, ymax=NA, colors=c(), cex=0.25, y.axis=T ){
 }
 
 
-sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, y.min=NULL, y.max=NULL ){
+sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, y.min=NULL, y.max=NULL, groups=NULL ){
     library(ggplot2)
     # passing a list of probes uses the probe IDs to pick exact targets.
     # If symbol==NULL, sorted by first symbol.
@@ -2807,19 +2955,25 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     }
     DT = data.matrix( D[match.idx(probes, rownames(D))$idx.B,] )
     
+    if(!is.null(groups)){
+        if( !is.numeric(groups) ){
+            stop("groups parameter must consist entirely of numbers")
+        }
+    }
     if(!is.null(sort.by)){
         idx.s = which(symbols==sort.by)[1]
         idx.n = which(names(D)==sort.by)[1]
-        print(idx.s)
-        print(idx.n)
-        
         if(!is.na(idx.s)){
-            DT = DT[,order(DT[idx.s,])]
+            if( is.null(groups) ){
+                groups = rep(1, dim(DT)[2] ) # dummy same number of columns
+            }
+            DT = DT[,order(groups, DT[idx.s,])]
         }
         else if(!is.na(idx.n)){
-            print(DT[1:4,1:4])
-            DT = DT[order(DT[,idx.n]),]
-            print(DT[1:4,1:4])            
+            if( is.null(groups) ){
+                groups = rep(1, dim(DT)[1] ) # dummy same number of rows
+            }
+            DT = DT[order(groups, DT[,idx.n]),]         
         }
         else{
             stop("Cannot find sort.by parameter in names or rownames of matrix")
@@ -2854,11 +3008,14 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     df = expand.grid(y = 1:dim(DT)[1], x = 1:dim(DT)[2] )
     df = cbind(df, v=as.numeric(DT) )
     y.mid = mean(c(y.max, y.min))
-    scg = scale_fill_gradient2(low = "darkblue", high = "red2", midpoint=y.mid, limits=c(y.min,y.max))
+    col.low="blue3"
+    col.high="yellow"
+    scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high =col.high )
     ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + theme_bw() 
 }
 
-do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL){
+
+do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main=""){
     if(is.null(colors))
         color.wheel = c("black", "blue", "gold", "darkgreen", "slategray1", "gray", "magenta", "darkblue",
         "violetred", "bisque", "chartreuse3", "orange", "darksalmon", "green1", "red","pink")
@@ -2897,7 +3054,7 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
     if(is.null(ylim))
         ylim = c(y.min, y.max)
     
-    plot(pca$x[,1], pca$x[,2], col=colors, pch=19, cex=plot.cex, xlim=xlim, ylim=ylim )  
+    plot(pca$x[,1], pca$x[,2], col=colors, pch=19, cex=plot.cex, xlim=xlim, ylim=ylim, main=main )  
     
     if( show.legend & !is.null(labels) ){
         if( is.null(legend.xy) )
@@ -3671,6 +3828,16 @@ calculate.linear.model.se = function(linear.model){
     sqrt(se)
 }
 
+calculate.lm.tstat=function(linear.model){
+    # Given a solved linear model, return the t statistic of the coefficients
+    #print(linear.model$coefficients)
+    n.obs = dim(linear.model$residuals)[1]
+    n.models = dim(linear.model$coefficients)[2]
+    cc = matrix(coef(linear.model), nrow=linear.model$rank, ncol=n.models)
+    se = calculate.linear.model.se(linear.model)
+    t.stat = cc/se
+    t.stat
+}
 calculate.lm.pval=function(linear.model){
     # Given a solved linear model, return the p-values of the coefficients
     #print(linear.model$coefficients)
@@ -3840,8 +4007,6 @@ write.rqtl.csv=function( expr, probe.list, sa.geno, sa.col.matching.expr, geno.c
 
     expr.top = t(expr[ match.idx(probe.list, rownames(expr))$idx.B, ])
     rqtl.pheno = rbind( rep("", dim(expr.top)[2] ), expr.top )
-    if(sum(rownames(ga.geno)!=rownames(calls.geno))>0)
-        stop("WARNING: gene attributes not equal to calls")
     calls.geno = t(calls.geno[,m$idx.A])
     rqtl.geno = rbind( geno.chrom, calls.geno )
     rownames(rqtl.geno) = rownames(rqtl.pheno)
@@ -4034,9 +4199,11 @@ SAM.data = function(expr, ga, valid.p, s1, s2, nperms=100){
     list(x=M,y=labels, geneid=gene.ids, genenames = gene.names, logged2=TRUE)
 }
 
-SAM.convert.siggenes = function(T){
+SAM.convert.siggenes=function(T){
    # combine nasty SAM output into a single dataframe
    #     Row     Gene ID    Gene Name      Score(d)            Numerator(r)        Denominator(s+s0)   Fold Change          q-value(%)
+   # I have to make the data frames explicitly to deal with an awful R edge case where there is
+   # only one row; the shape of the data frames becomes transposed and the function breaks
    no.lo = is.null(T$genes.lo)
    no.up = is.null(T$genes.up)   
    if( !no.lo ){
@@ -4046,19 +4213,36 @@ SAM.convert.siggenes = function(T){
       rownames(T$genes.up) = paste('up', 1:dim(T$genes.up)[1], sep='' )
    }
    if( !no.lo & !no.up ){
-      genes = data.frame( rbind( T$genes.lo[,c(2,3)], T$genes.up[,c(2,3)]), stringsAsFactors=F )
-      names(genes) = c("symbol", "probe.id")
-      values = data.frame( rbind( T$genes.lo[,c(4:8)], T$genes.up[,c(4:8)] ) )
+      genes.up = data.frame( symbol=T$genes.up[,2], probe.id=T$genes.up[,3], stringsAsFactors=F )
+      values.up = data.frame( score=T$genes.up[,4], 
+                           numerator.r=T$genes.up[,5], 
+                           denominator.s.plus.s0=T$genes.up[,6], 
+                           fold.change=T$genes.up[,7], 
+                           q.value.percent=T$genes.up[,8] )
+      genes.lo = data.frame( symbol=T$genes.lo[,2], probe.id=T$genes.lo[,3], stringsAsFactors=F )
+      values.lo = data.frame( score=T$genes.lo[,4], 
+                           numerator.r=T$genes.lo[,5], 
+                           denominator.s.plus.s0=T$genes.lo[,6], 
+                           fold.change=T$genes.lo[,7], 
+                           q.value.percent=T$genes.lo[,8] )                                     
+      genes = rbind(genes.lo, genes.up)
+      values = rbind(values.lo, values.up)
    }
    else if( no.lo & !no.up){
-      genes = data.frame( T$genes.up[,c(2,3)], stringsAsFactors=F )
-      names(genes) = c("symbol", "probe.id")
-      values = data.frame( T$genes.up[,c(4:8)] )
+      genes = data.frame( symbol=T$genes.up[,2], probe.id=T$genes.up[,3], stringsAsFactors=F )
+      values = data.frame( score=T$genes.up[,4], 
+                           numerator.r=T$genes.up[,5], 
+                           denominator.s.plus.s0=T$genes.up[,6], 
+                           fold.change=T$genes.up[,7], 
+                           q.value.percent=T$genes.up[,8] )
    }   
    else if( no.up & !no.lo){
-      genes = data.frame( T$genes.lo[,c(2,3)], stringsAsFactors=F )   
-      names(genes) = c("symbol", "probe.id")
-      values = data.frame( T$genes.lo[,c(4:8)] )      
+      genes = data.frame( symbol=T$genes.lo[,2], probe.id=T$genes.lo[,3], stringsAsFactors=F )
+      values = data.frame( score=T$genes.lo[,4], 
+                           numerator.r=T$genes.lo[,5], 
+                           denominator.s.plus.s0=T$genes.lo[,6], 
+                           fold.change=T$genes.lo[,7], 
+                           q.value.percent=T$genes.lo[,8] )     
    }
    if( !no.up | !no.lo){
       values[,1] = round( as.numeric( as.character(values[,1]) ), 3)
@@ -4074,6 +4258,7 @@ SAM.convert.siggenes = function(T){
       data.frame(score=c(), numerator.r=c(), denominator.s.plus.s0=c(), fold.change=c(), q.value.percent=c())
    }
 }
+
 
 
 km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T, legend.x=3, legend.y=0.25){
@@ -5025,22 +5210,45 @@ set.union = function(A, B){
 }
 
 
-count.appearances=function(V, order.by="values"){
-    h = hsh_new()
-    for(i in 1:length(V)){
-        if( hsh_in(h, V[i] ) ){
-            cnt = hsh_get(h, V[i])
-            hsh_set(h, V[i], cnt+1)
+count.appearances=function(V, W=NULL, order.by="values"){
+    if(is.null(W)){
+        h = hsh_new()
+        for(i in 1:length(V)){
+            if( hsh_in(h, V[i] ) ){
+                cnt = hsh_get(h, V[i])
+                hsh_set(h, V[i], cnt+1)
+            }
+            else{
+                hsh_set(h, V[i], 1)
+            }
         }
-        else{
-            hsh_set(h, V[i], 1)
-        }
+        kv = hsh_keys_values(h)
+        if(order.by=="values")
+            kv[order(kv$values, decreasing=T),]
+        else
+            kv[order(kv$keys),]
     }
-    kv = hsh_keys_values(h)
-    if(order.by=="values")
-        kv[order(kv$values, decreasing=T),]
-    else
-        kv[order(kv$keys),]
+    else{
+        nuke = is.na(V) | is.na(W)    
+        V = as.character(V[!nuke])
+        W = as.character(W[!nuke])
+        if(length(V)!=length(W))
+            stop("Length of V and W not equal")
+        Vs = sort(unique(V))
+        Ws = sort(unique(W))
+        m = matrix( nrow=length(Vs), ncol=length(Ws), 0 )
+        idxV = hsh_from_vectors(Vs, 1:length(Vs))
+        idxW = hsh_from_vectors(Ws, 1:length(Ws))
+        for(i in 1:length(V)){
+            y=hsh_get( idxV, V[i] )
+            x=hsh_get( idxW, W[i] )
+            m[y,x]=m[y,x]+1
+        }
+        m = data.frame(m)
+        rownames(m) = Vs
+        names(m) = Ws
+        m
+    }
 }
     
 get.split.col = function(v, string, col=0, last=F, first=F){
@@ -5074,7 +5282,7 @@ standardize = function(D){
     (D-rowMeans(D, na.rm=T))/sds
 }
 
-compress.probes = function( D, idx, min.cor=0.8 ){
+compress.probes=function( D, idx, min.cor=0.8, min.var=0.1 ){
     # Given a set of probe indexes idx, look for those with correlation >= min.cor
     # Report mean values across all probes with correlation >= min.cor
     # If no genes pairs meet these criteria, default to mean value
@@ -5083,6 +5291,21 @@ compress.probes = function( D, idx, min.cor=0.8 ){
         ee
     }
     else{
+        var.high.enough = as.numeric(rowVars( ee, na.rm=T )) >= min.var
+
+        if( sum(var.high.enough)==0 ){
+            # no probes with minimal variance, so don't threshold 
+            
+        }
+        else if( sum(var.high.enough)==1 ){
+            # only one probe with minimal variance, so return it
+            ee
+        }
+        else{
+            #restict compression to those probes with variance above minimal required
+            ee = ee[var.high.enough,]
+            idx = idx[var.high.enough]
+        }
         ee.strong = cor(t(ee), use="complete") >= min.cor
         keep = rep(F, length(idx) )
         for(row in 1:(dim(ee)[1]-1) ){
@@ -5100,6 +5323,7 @@ compress.probes = function( D, idx, min.cor=0.8 ){
         colMeans(ee[keep,], na.rm=T)
     }
 }
+
 
 match.idx = function(A, B){
     # return dataframe of indices into A and B restricted to perfect matches

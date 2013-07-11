@@ -16,7 +16,10 @@ if path_out !="":
     path_out = pathout + '/'
 
 if fn_in=="":
-    print "REQUIRED: -f parameter specifying the name(s) of the matrix files"
+    print "parse_GEO_matrix_for_CARMEN, David Quigley, 2013"
+    print "Given one or more matrix files, extracts the expression data and sample attributes"
+    print "into two files suitable for reading in CARMEN\n"
+    print "ERROR: did not pass REQUIRED parameter -f specifying the name(s) of the matrix files"
     sys.exit(0)
 
 file_idx = 1
@@ -28,11 +31,16 @@ identifiers = []
 for fn in fn_in.split(","):    
     in_expression_data = False
     print "opening " + fn
-    if( fn.count(".gz") > 0 ):
-        f = gzip.open(fn, 'rb')
+    try:
+        if( fn.count(".gz") > 0 ):
+            f = gzip.open(fn, 'rb')
     
-    else:
-        f = open(fn, 'r')
+        else:
+            f = open(fn, 'r')
+    
+    except IOError:
+        print "ERROR: could not open file " + fn
+        sys.exit(0)
     
     for line in f:
         a = line.replace('"', '').rstrip('\n').split("\t")

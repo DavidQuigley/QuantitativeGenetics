@@ -12,7 +12,9 @@
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
          startingLineNumber = "1568"
-         endingLineNumber = "1568">
+         endingLineNumber = "1568"
+         landmarkName = "QTL_Calculator::calculate_genome_wide(int cis_interval, bool genomewide_by_chromosome)"
+         landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

@@ -218,7 +218,7 @@ int main(int argc, char *argv[]){
 		sp->set_seeds( seeds );
 	if(include_seed_neighbors)
 		sp->set_include_seed_neighbor_correlations(true);
-	sp->set_include_seed_neighbor_correlations(true);
+	//sp->set_include_seed_neighbor_correlations(true);
 	sp->set_limit_network_to_seeds(limit_to_seeds);
 
 	// CORRELATION SETTINGS
