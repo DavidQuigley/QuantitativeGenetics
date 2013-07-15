@@ -177,7 +177,7 @@
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					/usr/local/boost_1_46_1/stage/lib64,
-					/Users/dquigley/Documents/notebook/code/carmen/build/Release64,
+					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release64,
 				);
 				PRODUCT_NAME = spear;
 				SDKROOT = macosx10.7;
