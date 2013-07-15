@@ -1289,12 +1289,26 @@ void Spearman::find_spears(){
 	// on group 1 and group 2", but that would require we make two clones of the matrix
 	// subsetted by column; this would make permutation very expensive. Could implement later if
 	// speed is an issue.
+	
+    
+    // This graph is used to avoid adding redundant comparisons (e.g. {12, 32} and {32, 12} )
+    // required in the case where we (1) pass seeds and (2) do not restrict the comparison just to
+    // those seeds, because the seed list is not going to be in the same order as the full list of genes.
+    Graph seen;
+    double edge_weight; // not set, need for function call
+    std::vector<int>* seed_idx;
+    
+    if( this->seeds.size()>0 ){
+        seed_idx = new std::vector<int>();
+        for(int i=0; i<(int)this->seeds.size(); i++){
+            seed_idx->push_back( this->data->raw_data->identifier2idx[seeds.at(i)] );
+        }
+    }
+	else{
+		seed_idx = &(this->idx); // set seed_idx to all valid probesets
+	}
+    int N = (int)seed_idx->size();
 
-    int N = int(this->idx.size());
-    if( this->verbose ){
-        std::cout << "MESSAGE: Calculating correlations with " << N << " seed probes.\n";
-        std::cout.flush();
-    }	
     if( is_spearman ){
 		std::vector<int> valid_cols;
 		this->find_ranks(this->data->raw_data->data, *(this->data->a_idx), ranks_a);
@@ -1303,12 +1317,16 @@ void Spearman::find_spears(){
 		}
 	}
 	for(i=0; i<N; i++){
-        row1 = this->idx.at(i);
+        row1 = seed_idx->at(i);
         hsh_neighbors[row1] = 1;
-        for(j=i+1; j<(int)idx.size(); j++){
+        for(j=0; j<(int)idx.size(); j++){ // intersect(seed_idx, idx) may be (1) a subset of idx or (2) equal to idx.
             row2 = idx.at(j);
             if(row1==row2)
-                continue; // required because seeds is a subset of idx, so row1 could be equal to row2
+                continue;
+            if( seen.has_edge(row1, row2, edge_weight ) ) // avoiding  {12, 32} and {32, 12}, see note above
+                continue;
+            else
+                seen.add_edge(row1, row2, 0.0);
             if( is_spearman )
                 rho_a = this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
             else
@@ -1380,6 +1398,10 @@ void Spearman::find_spears(){
 	}
 	delete ranks_a;
 	delete ranks_b;
+	
+    if( this->seeds.size()>0 )
+        delete seed_idx; // if seeds.size()==0, this is a pointer to this->idx and shouldn't be deleted.
+    
 }
 
 void Spearman::find_DC_distribution(){
