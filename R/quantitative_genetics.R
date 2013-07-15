@@ -4260,8 +4260,7 @@ SAM.convert.siggenes=function(T){
 }
 
 
-
-km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T, legend.x=3, legend.y=0.25){
+km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, x.max=NULL, verbose=T){
     # Wrapper for Kaplan-meier analysis (using library "survival")
     # If fn_out is passed, the plot is saved to the specified file as a png
     # returns the coxph object
@@ -4284,7 +4283,7 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
     if( !is.null(fn_out) ){
         png(fn_out)
     }
-    color.list =c("black", "blue", "gray", "red", "darkgreen", "orange")
+    color.list =c("black", "darkblue", "gray",  "red", "darkgreen", "orange")
     if( is.null(main) )
         main.title=paste('KM curve')
     else
@@ -4292,15 +4291,23 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
     if( length(unique(conditions))== 2 ){
         main.title = paste(main.title,'P =', p.val, sep=' ')
     }
-
+    
+    if(is.null(x.max)){
+        x.max = max(times)
+    }
     plot(surv.all, lwd=3, col=color.list,
         main=main.title, las=1,
-        xlab="time")
+        xlab="time", cex.axis=1.5, bty="n", xlim=c(0,x.max))
+    legend.x = max(times)*0.05
+    if(length(legends)<5)
+        legend.y=0.3
+    else
+        legend.y=0.4
     if( !is.null(legends) ){
-        legend(legend.x,legend.y, legends, col=color.list,lty=1,lwd=3)
+        legend(legend.x,legend.y,legends, col=color.list,lty=1,lwd=3,cex=1.5)
     }
     else{
-        legend(legend.x, legend.y, sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3)
+        legend(legend.x,legend.y,sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3,cex=1.5)
     }
     if( !is.null(fn_out) ){
         i=dev.off()
