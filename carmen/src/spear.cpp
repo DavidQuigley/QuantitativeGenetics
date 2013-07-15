@@ -1289,17 +1289,8 @@ void Spearman::find_spears(){
 	// on group 1 and group 2", but that would require we make two clones of the matrix
 	// subsetted by column; this would make permutation very expensive. Could implement later if
 	// speed is an issue.
-	std::vector<int>* seed_idx;
-	if( this->seeds.size()>0 ){
-		seed_idx = new std::vector<int>();
-		for(int i=0; i<(int)this->seeds.size(); i++){
-			seed_idx->push_back( this->data->raw_data->identifier2idx[seeds.at(i)] );
-		}
-	}
-	else{
-		seed_idx = &(this->idx); // set seed_idx to all valid probesets
-	}
-    int N = (int)seed_idx->size();
+
+    int N = int(this->idx.size());
     if( this->verbose ){
         std::cout << "MESSAGE: Calculating correlations with " << N << " seed probes.\n";
         std::cout.flush();
@@ -1312,25 +1303,24 @@ void Spearman::find_spears(){
 		}
 	}
 	for(i=0; i<N; i++){
-		row1 = seed_idx->at(i);
+        row1 = this->idx.at(i);
         hsh_neighbors[row1] = 1;
-		for(j=i+1; j<(int)idx.size(); j++){
-			//row2 = seed_idx->at(j); // line replaced with line below 2/29/2012
-            row2 = idx.at(j); 
-			if(row1==row2)
-				continue; // required because seeds is a subset of idx, so row1 could be equal to row2
-			if( is_spearman )
-				rho_a = this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
-			else
-				rho_a = this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
-			if( n_B == 0 ){
+        for(j=i+1; j<(int)idx.size(); j++){
+            row2 = idx.at(j);
+            if(row1==row2)
+                continue; // required because seeds is a subset of idx, so row1 could be equal to row2
+            if( is_spearman )
+                rho_a = this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
+            else
+                rho_a = this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
+            if( n_B == 0 ){
 				z_score = this->fisher_zscore(rho_a, 0, n_A, n_A);
 				if( abs(rho_a) >= this->corr_abs_a && abs(z_score) >= this->min_zscore ){
 					this->spears.push_back(new Spear(rho_a, 0, row1, row2, z_score ) );
 					hsh_neighbors[row2] = 1;
 				}
-			}
-			else{
+            }
+            else{
 				if( is_spearman )
 					rho_b = this->find_spearman_from_ranks( ranks_b, row1, ranks_b, row2);
 				else
@@ -1342,7 +1332,7 @@ void Spearman::find_spears(){
 						hsh_neighbors[row2]=1;                        
 					}
 				}
-			}
+            }
 		}
 		if(this->verbose && i % 100==0){
 			std::cout << "MESSAGE: Completed row " << i+1 << " of " << N << "...\n";
@@ -1390,8 +1380,6 @@ void Spearman::find_spears(){
 	}
 	delete ranks_a;
 	delete ranks_b;
-	if( this->seeds.size()>0 )
-		delete seed_idx; // if seeds.size()==0, this is a pointer to this->idx and shouldn't be deleted.
 }
 
 void Spearman::find_DC_distribution(){
@@ -2092,10 +2080,10 @@ void Spearman::prune_data_by_seeds(){
 	// seeds which pass muster
 	//
 	// Should be called AFTER load_data_for_run()
-
+    
 	if( seeds.size() > 0 ){
         if(this->verbose){
-            std::cout << "MESSAGE: Processing "  << seeds.size() << " seed probes.\n";
+            std::cout << "MESSAGE: Called with "  << seeds.size() << " seed probes.\n";
 			std::cout.flush();
         }
 		// remove any empty probes, and check that probes specified by user exist in raw data file
@@ -2363,12 +2351,13 @@ void Spearman::run_DC(Rowpair_iterator* RPI, std::vector<int>* pvalue_distributi
 
 
 void Spearman::run(){
+    std::cout.flush();
+    
 	this->success=false;
 	for(int i=0; i<(int)spears.size(); i++){
 		delete spears.at(i);
 	}
 	spears.clear();
-
 	// Following two initialization functions are shared with run_DC()
 	load_data_for_run();
 	prune_data_by_seeds();
@@ -2579,8 +2568,7 @@ void Spearman::prepare_graphs( Graph* G, Graph* G_QTL, HASH_I_VECTOR_STR& g2p, d
 			G_QTL->subgraph(nodes_keep_eqtl);
 		}
 		if( this->seeds.size()>0 && this->limit_network_to_seeds ){
-            std::cout << "Debug limiting to seeds\n";
-            HASH_S_I seed_hsh;
+           HASH_S_I seed_hsh;
 			for(int i=0; i<int(seeds.size()); i++)
 				seed_hsh[seeds.at(i)]=1;
 			for(int i=0; i<int(nodes_eqtl.size()); i++){

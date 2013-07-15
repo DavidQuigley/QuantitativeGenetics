@@ -168,7 +168,7 @@ int main(int argc, char *argv[]){
     if(options->at(r++)->value.compare("T")==0)
     	do_distribution=true;
     sp.set_do_distribution(do_distribution);
-    //sp.set_GWER_method(GWER_method);
+    
     try{
 		sp.set_min_var(min_var);
 		sp.set_percent_required(percent_required);
