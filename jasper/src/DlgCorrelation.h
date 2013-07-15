@@ -2,6 +2,7 @@ enum{
 	ID_CORR_TXT_FILE_NAME = 1000,
 	ID_CORR_TXT_MIN_VAR,
 	ID_CORR_TXT_MIN_CORR,
+    ID_CORR_TXT_MIN_ZSCORE,
 	ID_CORR_TXT_DELTA_CORR,
 	ID_CORR_TXT_MIN_PRESENT,
 	ID_CORR_CHK_DIFFERENTIAL,
@@ -36,6 +37,7 @@ private:
 	wxTextCtrl* txt_file_name;
 	wxTextCtrl* txt_min_var;
 	wxTextCtrl* txt_min_corr;
+	wxTextCtrl* txt_min_zscore;    
 	wxTextCtrl* txt_min_delta_corr;
 	wxChoice* cho_method;
 	wxStaticText* lbl_min_delta_corr;

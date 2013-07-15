@@ -288,16 +288,24 @@ void JasperGrid::Update(std::string filename){
         }
     }
 	else if(extension.compare("difference")==0){
-		this->AppendCols(6);
-		this->SetColLabelValue(0, wxString::FromAscii("Rule"));
 		cp.get_value("Class_A", 0, lblA);
 		cp.get_value("Class_B", 0, lblB);
-		this->SetColLabelValue(0, wxString::FromAscii("Name") );
-		this->SetColLabelValue(1, wxString::FromAscii("ID") );
+        std::string n_perms;
+        cp.get_value("N_Permutations", 0, n_perms);
+        bool did_perms = n_perms.compare(std::string("1")) != 0;
+        if(did_perms)
+            this->AppendCols(6);
+        else {
+            this->AppendCols(5);
+        }
+		this->SetColLabelValue(0, wxString::FromAscii("symbol") );
+		this->SetColLabelValue(1, wxString::FromAscii("probe") );
 		this->SetColLabelValue(2, wxString::FromAscii(lblA.c_str()));
 		this->SetColLabelValue(3, wxString::FromAscii(lblB.c_str()));
-		this->SetColLabelValue(4, wxString::FromAscii("t-stat"));
-		this->SetColLabelValue(5, wxString::FromAscii("p-value"));
+		this->SetColLabelValue(4, wxString::FromAscii("t stat"));
+		if(did_perms){
+            this->SetColLabelValue(5, wxString::FromAscii("p-value"));
+        }
 		int n_rules = cp.CountValueLines();
 		cp.PrepareToReadValues();
 		this->AppendRows(n_rules);
@@ -307,7 +315,9 @@ void JasperGrid::Update(std::string filename){
 			this->SetCellValue(i, 2, wxString::FromAscii( values.at(2).c_str() ) );
 			this->SetCellValue(i, 3, wxString::FromAscii( values.at(4).c_str() ) );
 			this->SetCellValue(i, 4, wxString::FromAscii( values.at(6).c_str() ) );
-			this->SetCellValue(i, 5, wxString::FromAscii( values.at(7).c_str() ) );
+			if(did_perms){
+                this->SetCellValue(i, 5, wxString::FromAscii( values.at(7).c_str() ) );
+            }
 			++i;
 		}
 	}
@@ -316,29 +326,31 @@ void JasperGrid::Update(std::string filename){
 		cp.get_value("Class_B", 0, lblB);
 		bool show_full = false;
 		if( lblA.size() > 0 && lblB.size() > 0 ){
-			this->AppendCols(7);
-			this->SetColLabelValue(0, wxString::FromAscii("Name"));
-			this->SetColLabelValue(1, wxString::FromAscii("ID"));
-			this->SetColLabelValue(2, wxString::FromAscii("Name"));
-			this->SetColLabelValue(3, wxString::FromAscii("ID"));
+			this->AppendCols(8);
+			this->SetColLabelValue(0, wxString::FromAscii("symbol 1"));
+			this->SetColLabelValue(1, wxString::FromAscii("probe 1"));
+			this->SetColLabelValue(2, wxString::FromAscii("symbol 2"));
+			this->SetColLabelValue(3, wxString::FromAscii("probe 2"));
 			std::stringstream ss;
-			ss << "r " << lblA;
+			ss << "r (" << lblA << ")";
 			this->SetColLabelValue(4, wxString::FromAscii(ss.str().c_str()));
 			std::stringstream ss2;
-			ss2 << "r " << lblB;
+			ss2 << "r (" << lblB << ")";
 			this->SetColLabelValue(5, wxString::FromAscii(ss2.str().c_str()));
-			this->SetColLabelValue(6, wxString::FromAscii("r change"));
+			this->SetColLabelValue(6, wxString::FromAscii("r (change)"));
+            this->SetColLabelValue(7, wxString::FromAscii("Z score"));
 			show_full = true;
 		}
 		else{
-			this->AppendCols(5);
+			this->AppendCols(6);
 			std::stringstream ss;
-			this->SetColLabelValue(0, wxString::FromAscii("Name"));
-			this->SetColLabelValue(1, wxString::FromAscii("ID"));
-			this->SetColLabelValue(2, wxString::FromAscii("Name"));
-			this->SetColLabelValue(3, wxString::FromAscii("ID"));
-			ss << "r-value " << lblA;
+			this->SetColLabelValue(0, wxString::FromAscii("symbol 1"));
+			this->SetColLabelValue(1, wxString::FromAscii("probe 1"));
+			this->SetColLabelValue(2, wxString::FromAscii("symbol 2"));
+			this->SetColLabelValue(3, wxString::FromAscii("probe 2"));
+			ss << "r (" << lblA << ")";
 			this->SetColLabelValue(4, wxString::FromAscii(ss.str().c_str()));
+            this->SetColLabelValue(5, wxString::FromAscii("Z score"));
 		}
 		int i=0;
 		int n_spear = cp.CountValueLines();
@@ -357,7 +369,11 @@ void JasperGrid::Update(std::string filename){
 			if( show_full ){
 				this->SetCellValue(i, 5, wxString::FromAscii( values.at(5).c_str() ) );
 				this->SetCellValue(i, 6, wxString::FromAscii( values.at(6).c_str() ) );
+                this->SetCellValue(i, 7, wxString::FromAscii( values.at(8).c_str() ) ); // values.at(7) is perm_p
 			}
+            else{
+                this->SetCellValue(i, 5, wxString::FromAscii( values.at(8).c_str() ) ); // values.at(7) is perm_p
+            }
 			++i;
 			if( truncate==wxYES && i>100000 )
 				break;

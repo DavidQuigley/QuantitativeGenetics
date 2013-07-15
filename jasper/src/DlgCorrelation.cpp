@@ -75,9 +75,16 @@ void CorrelationDialog::CreateControls(){
 	}
 	this->txt_file_name = new wxTextCtrl( this, ID_CORR_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 20) );
 	this->txt_file_name->ChangeValue(wxString::FromAscii(timebuf));
-	wxStaticText* lbl_min_corr = new wxStaticText( this, wxID_ANY, wxT("Minimum Correlation: +/-"));
-	this->txt_min_corr = new wxTextCtrl( this, ID_CORR_TXT_MIN_CORR, wxT("0.7"), wxDefaultPosition, wxSize(50, 20) );
-	this->txt_min_corr->SetValue( wxT("0.7") );
+	wxStaticText* lbl_min_corr = new wxStaticText( this, wxID_ANY, wxT("Minimum Correlation"));
+    wxStaticText* lbl_min_zscore = new wxStaticText( this, wxID_ANY, wxT("Minimum Z score"));
+    
+    wxStaticText* lbl_plus_minus_corr = new wxStaticText( this, wxID_ANY, wxT("+/-"));
+    wxStaticText* lbl_plus_minus_zscore = new wxStaticText( this, wxID_ANY, wxT("+/-"));
+    
+	this->txt_min_corr = new wxTextCtrl( this, ID_CORR_TXT_MIN_CORR, wxT("0.0"), wxDefaultPosition, wxSize(50, 20) );
+    this->txt_min_zscore = new wxTextCtrl( this, ID_CORR_TXT_MIN_ZSCORE, wxT("0.0"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_min_corr->SetValue( wxT("0.0") );
+    this->txt_min_zscore->SetValue( wxT("0.0") );
 	wxArrayString methods;
 	methods.Add(wxString::FromAscii("Spearman rank correlation") );
 	methods.Add(wxString::FromAscii("Pearson correlation") );
@@ -120,8 +127,8 @@ void CorrelationDialog::CreateControls(){
 		font_small.SetPointSize(wxSMALL_FONT->GetPointSize());
 		lbl_file_name->SetFont( font_small );
 		cho_method->SetFont( font_small );
-		//rdo_single->SetFont( font_small );
 		lbl_min_corr->SetFont( font_small );
+        lbl_min_zscore->SetFont( font_small );
 		lbl_probe_id->SetFont( font_small );
 		lbl_differential->SetFont( font_small );
 		lbl_min_delta_corr->SetFont( font_small );
@@ -148,11 +155,17 @@ void CorrelationDialog::CreateControls(){
 
 
 	// CORRELATION SETTINGS
-	wxBoxSizer* sizer_min_corr = new wxBoxSizer(wxHORIZONTAL);
-	sizer_min_corr->Add(lbl_min_corr, 0, FLAGS, BORDER_PXL);
-	sizer_min_corr->Add(this->txt_min_corr, 0, FLAGS, 0);
+    wxFlexGridSizer* sizer_min_corr = new wxFlexGridSizer(2, 3, 0, 0);
+    sizer_min_corr->Add(lbl_min_corr, 0, FLAGS, BORDER_PXL);
+	sizer_min_corr->Add(lbl_plus_minus_corr, 0, FLAGS, BORDER_PXL);
+
+    sizer_min_corr->Add(this->txt_min_corr, 0, FLAGS, 0);
+    sizer_min_corr->Add(lbl_min_zscore, 0, FLAGS, BORDER_PXL);
+	sizer_min_corr->Add(lbl_plus_minus_zscore, 0, FLAGS, BORDER_PXL);
+
+    sizer_min_corr->Add(this->txt_min_zscore, 0, FLAGS, 0);
 	static_correlation_sizer->Add(sizer_min_corr, 0, FLAGS, BORDER_PXL);
-	static_correlation_sizer->Add(this->cho_method, 0, FLAGS, BORDER_PXL);
+    static_correlation_sizer->Add(this->cho_method, 0, FLAGS, BORDER_PXL);
 
 	// radio, seed probe, probe list
 	static_correlation_sizer->Add(this->rdo_single, 0, FLAGS, BORDER_PXL);
@@ -274,6 +287,7 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 	std::string o( this->txt_file_name->GetValue().ToAscii() );
 	std::string m( this->txt_min_var->GetValue().ToAscii() );
 	std::string s( this->txt_min_corr->GetValue().ToAscii() );
+    std::string x( this->txt_min_zscore->GetValue().ToAscii() );
 	std::string c( this->txt_min_delta_corr->GetValue().ToAscii() );
 	std::string present( this->txt_min_present->GetValue().ToAscii() );
 	std::string p("");
@@ -332,9 +346,7 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 			p = aProbes.Item(0).ToAscii();
 		}
 		else{
-			//wxString chosen_probe = wxGetSingleChoice(wxString::FromAscii("Choose a probe"), wxString::FromAscii("Choose a probe"), aProbes).ToAscii();
-            wxString chosen_probe = wxT(wxGetSingleChoice(wxString(wxT("Choose a probe")), wxString(wxT("Choose a probe")), aProbes));
-
+			wxString chosen_probe = wxT(wxGetSingleChoice(wxString(wxT("Choose a probe")), wxString(wxT("Choose a probe")), aProbes));
 			if( chosen_probe.Len()==0 ){
 				return;
 			}
@@ -352,15 +364,16 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 		ss << this->investigation->dir_results << "\\" << o;
 	attempted_filename = ss.str();
 
-	float m_f, c_f, s_f, present_f;
+	float m_f, c_f, s_f, present_f, min_zscore;
 	try{
 		m_f = boost::lexical_cast<float>(m);
 		c_f = boost::lexical_cast<float>(c);
 		s_f = boost::lexical_cast<float>(s);
+        min_zscore = boost::lexical_cast<float>(x);
 		present_f = boost::lexical_cast<float>(present);
 	}
 	catch( ... ){
-		wxMessageBox(wxString::FromAscii("Min Var, Min Corr, Min Corr Change, and Precent Present must all be real-valued numbers."), _T("Not Ready"), wxOK | wxICON_EXCLAMATION, this);
+		wxMessageBox(wxString::FromAscii("Min Var, Min Corr, Min Corr Change, Min Z score, and Precent Present must all be real-valued numbers."), _T("Not Ready"), wxOK | wxICON_EXCLAMATION, this);
 		return;
 	}
 	if( m_f >1 || m_f < 0 ){
@@ -379,6 +392,10 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 		wxMessageBox(wxString::FromAscii("Minimum percent present must be between 0 and 100 (inclusive)."), _T("Not Ready"), wxOK | wxICON_EXCLAMATION, this);
 		return;
 	}
+    if( min_zscore<0 ){
+        wxMessageBox(wxString::FromAscii("Minimum Z score must be greater than 0."), _T("Not Ready"), wxOK | wxICON_EXCLAMATION, this);
+		return;
+    }
 	std::vector<std::string> cmd;
 	cmd.push_back( "spear" );
 	cmd.push_back("-d" + d );
@@ -389,6 +406,7 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 	cmd.push_back("-m" + m );
 	cmd.push_back("-r" + r );
 	cmd.push_back("-l" + l );
+    cmd.push_back("-x" + x );
 	present = boost::lexical_cast<std::string>(present_f / 100);
 	cmd.push_back("-n" + present);
 	cmd.push_back("-c" + c );

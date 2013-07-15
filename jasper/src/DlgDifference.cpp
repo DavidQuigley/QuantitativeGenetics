@@ -262,10 +262,14 @@ void DifferenceDialog::redraw(){
 	if( this->chk_doperms->IsChecked() ){
 		this->txt_perms->Enable(true);
 		this->txt_max_p->Enable(true);
+        this->txt_perms->SetBackgroundColour(*wxWHITE);
+        this->txt_max_p->SetBackgroundColour(*wxWHITE);
 	}
 	else{
 		this->txt_perms->Enable(false);
 		this->txt_max_p->Enable(false);
+        this->txt_perms->SetBackgroundColour(*wxLIGHT_GREY);
+        this->txt_max_p->SetBackgroundColour(*wxLIGHT_GREY);
 	}
 	//std::string lim_A = this->limit_A->get_limits();
 	//std::string lim_B = this->limit_A->get_limits();

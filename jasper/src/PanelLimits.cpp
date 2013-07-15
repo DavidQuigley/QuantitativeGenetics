@@ -575,4 +575,5 @@ void PanelLimits::set_limits(std::string limits){
 			this->lbx_limits->Append( wxString::FromAscii( lim.at(i).c_str()) );
 		}
 	}
+    this->redraw();
 }
