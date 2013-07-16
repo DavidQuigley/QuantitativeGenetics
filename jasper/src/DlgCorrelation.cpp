@@ -40,17 +40,20 @@ using namespace std;
 IMPLEMENT_CLASS( CorrelationDialog, wxDialog )
 
 CorrelationDialog::CorrelationDialog( Investigation* investigation ){
-	this->investigation = investigation;
+    std::cout << "DEBUG: ENTERED CorrelationDialog\n";
+    this->investigation = investigation;
 	SetExtraStyle(wxWANTS_CHARS);
 	wxDialog::Create( NULL, wxID_ANY, wxT("Calculate Correlation"), wxDefaultPosition, wxDefaultSize, wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
 	CreateControls();
 	GetSizer()->Fit(this); 
 	GetSizer()->SetSizeHints(this); 
 	Centre();
-	redraw();
+	std::cout << "DEBUG: calling redraw from CorrelationDialog\n";
+    redraw();
 }
 
 void CorrelationDialog::CreateControls(){
+    std::cout << "DEBUG: ENTERED CreateControls\n";
 	char timebuf[80];
 	struct tm* newtime;
 	time_t long_time;
@@ -213,8 +216,7 @@ void CorrelationDialog::CreateControls(){
 	this->sizer_top->Add( sizer_ok, 0, FLAGS_RIGHT, BORDER_PXL);
 	this->sizer_top->Layout();
 	this->SetSizer(this->sizer_top);
-
-	this->redraw();
+    this->redraw();
 }
 
 void CorrelationDialog::OnChar(wxKeyEvent& event){
@@ -245,6 +247,7 @@ void CorrelationDialog::redraw(){
 	else{
 		this->txt_probe_id->Show(true);
 		this->lbl_probe_id->Show(true);
+        this->txt_probe_list->SetValue(wxString::FromAscii(""));
 	}
 	if( this->chk_differential->IsChecked() ){
 		this->limit_B->Show(true);
@@ -265,7 +268,7 @@ void CorrelationDialog::OnClickGO(wxCommandEvent& event){
 	if (dialog.ShowModal() == wxID_OK){
 		this->txt_probe_list->AppendText( wxString::FromAscii(dialog.get_probe_list().c_str()) );
 	}
-	this->redraw();
+    this->redraw();
 }
 
 void CorrelationDialog::OnClickOk(wxCommandEvent& event){
@@ -424,13 +427,14 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 }
 
 void CorrelationDialog::OnUpdateLabel(wxCommandEvent& evt){
-	redraw();
+    // removed call to redraw to avoid an infinite loop
+    //redraw();
 }
 
 void CorrelationDialog::OnClickSingle(wxCommandEvent& evt){
-	redraw();
+    redraw();
 }
 
 void CorrelationDialog::OnCheckDifferential(wxCommandEvent& evt){
-	redraw();
+    redraw();
 }
