@@ -42,7 +42,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8DD76F6C0486A84900D96B5E /* jasper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = jasper; sourceTree = BUILT_PRODUCTS_DIR; };
+		8DD76F6C0486A84900D96B5E /* Carmen */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Carmen; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6859E8B029090EE04C91782 /* jasper.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = jasper.1; sourceTree = "<group>"; };
 		E235B069135BDDE6004141B6 /* control_ids.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = control_ids.h; path = src/control_ids.h; sourceTree = "<group>"; };
 		E235B06A135BDDE6004141B6 /* DlgAnnotate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DlgAnnotate.cpp; path = src/DlgAnnotate.cpp; sourceTree = "<group>"; };
@@ -128,14 +128,14 @@
 		08FB7794FE84155DC02AAC07 /* jasper */ = {
 			isa = PBXGroup;
 			children = (
-				08FB7795FE84155DC02AAC07 /* Source */,
+				08FB7795FE84155DC02AAC07 /* src */,
 				C6859E8C029090F304C91782 /* Documentation */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
 			);
 			name = jasper;
 			sourceTree = "<group>";
 		};
-		08FB7795FE84155DC02AAC07 /* Source */ = {
+		08FB7795FE84155DC02AAC07 /* src */ = {
 			isa = PBXGroup;
 			children = (
 				E235B069135BDDE6004141B6 /* control_ids.h */,
@@ -207,13 +207,13 @@
 				E235B0AB135BDDE6004141B6 /* sample.xpm */,
 				E235B0AC135BDDE6004141B6 /* StringHash.h */,
 			);
-			name = Source;
+			name = src;
 			sourceTree = "<group>";
 		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8DD76F6C0486A84900D96B5E /* jasper */,
+				8DD76F6C0486A84900D96B5E /* Carmen */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -235,7 +235,7 @@
 			buildPhases = (
 				8DD76F640486A84900D96B5E /* Sources */,
 				8DD76F660486A84900D96B5E /* Frameworks */,
-				E235B10F135C0808004141B6 /* ShellScript */,
+				E235B10F135C0808004141B6 /* Run Script */,
 			);
 			buildRules = (
 			);
@@ -244,7 +244,7 @@
 			name = jasper;
 			productInstallPath = "$(HOME)/bin";
 			productName = jasper;
-			productReference = 8DD76F6C0486A84900D96B5E /* jasper */;
+			productReference = 8DD76F6C0486A84900D96B5E /* Carmen */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -272,18 +272,19 @@
 /* End PBXProject section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		E235B10F135C0808004141B6 /* ShellScript */ = {
+		E235B10F135C0808004141B6 /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
+			name = "Run Script";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp /Users/dquigley/Documents/notebook/code/jasper/build/Release/jasper /Users/dquigley/Documents/notebook/code/release/Carmen.app/Contents/MacOS/Carmen";
+			shellScript = "cp /Users/dquigley/Documents/notebook/code/src/jasper/DerivedData/jasper/Build/Products/Release/Carmen /Users/dquigley/Documents/notebook/code/release/Carmen.app/Contents/MacOS/Carmen";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -334,14 +335,23 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				INSTALL_PATH = /usr/local/bin;
-				PRODUCT_NAME = jasper;
-				SDKROOT = macosx10.7;
+				LIBRARY_SEARCH_PATHS = (
+					"/usr/local/wxMac-2.8.12/build-carbon/lib",
+					/usr/local/boost_1_54_0/stage/lib32,
+					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release,
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = Carmen;
+				SDKROOT = macosx10.6;
+				VALID_ARCHS = i386;
 			};
 			name = Debug;
 		};
@@ -349,62 +359,85 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
 				HEADER_SEARCH_PATHS = (
 					"/usr/local/wxMac-2.8.12/build-carbon/lib/wx/include/mac-ansi-release-static-2.8",
 					"/usr/local/wxMac-2.8.12/include",
 					"/usr/local/wxMac-2.8.12/contrib/include",
-					/usr/local/boost_1_46_1,
+					/usr/local/boost_1_54_0,
+					/Users/dquigley/Documents/notebook/code/src,
+				);
+				"HEADER_SEARCH_PATHS[arch=*]" = (
+					"/usr/local/wxMac-2.8.12/build-carbon/lib/wx/include/mac-ansi-release-static-2.8",
+					"/usr/local/wxMac-2.8.12/include",
+					"/usr/local/wxMac-2.8.12/contrib/include",
+					/usr/local/boost_1_54_0,
 					/Users/dquigley/Documents/notebook/code/src,
 				);
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
 					"/usr/local/wxMac-2.8.12/build-carbon/lib",
-					/usr/local/boost_1_46_1/stage/lib32,
+					/usr/local/boost_1_54_0/stage/lib32,
 					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release,
 				);
-				PRODUCT_NAME = jasper;
-				SDKROOT = macosx10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
+				OTHER_CPLUSPLUSFLAGS = (
+					"-mmacosx-version-min=10.6",
+					"-D_FILE_OFFSET_BITS=64",
+					"-D_LARGE_FILES",
+					"-D__WXMAC__",
+					"$(OTHER_CFLAGS)",
+				);
+				PRODUCT_NAME = Carmen;
+				SDKROOT = macosx10.6;
 			};
 			name = Release;
 		};
 		1DEB923608733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				ONLY_ACTIVE_ARCH = YES;
 				PREBINDING = NO;
 				SDKROOT = macosx10.6;
+				VALID_ARCHS = i386;
 			};
 			name = Debug;
 		};
 		1DEB923708733DC60010E9CD /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = i386;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				CONFIGURATION_BUILD_DIR = "$(BUILD_DIR)/$(CONFIGURATION)";
 				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 2;
+				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"/usr/local/wxMac-2.8.12/build-carbon/lib/wx/include/mac-ansi-release-static-2.8",
 					"/usr/local/wxMac-2.8.12/include",
 					"/usr/local/wxMac-2.8.12/contrib/include",
-					/usr/local/boost_1_46_1,
-					/Users/dquigley/Documents/notebook/code,
+					/usr/local/boost_1_54_0,
+					/Users/dquigley/Documents/notebook/code/src,
 				);
 				INSTALL_PATH = "";
 				LIBRARY_SEARCH_PATHS = (
 					"/usr/local/wxMac-2.8.12/build-carbon/lib",
-					/usr/local/boost_1_46_1/stage/lib32,
-					/Users/dquigley/Documents/notebook/code/carmen/build/Release,
+					/usr/local/boost_1_54_0/stage/lib32,
+					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.6;
 				OTHER_CPLUSPLUSFLAGS = (
 					"-mmacosx-version-min=10.5",
 					"-D_FILE_OFFSET_BITS=64",
@@ -443,7 +476,7 @@
 				);
 				PREBINDING = NO;
 				PRODUCT_NAME = Carmen;
-				SDKROOT = macosx10.5;
+				SDKROOT = macosx10.6;
 				SECTORDER_FLAGS = "";
 				VALID_ARCHS = i386;
 			};
