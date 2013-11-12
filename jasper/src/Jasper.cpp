@@ -604,14 +604,12 @@ void JasperFrame::SetUpMenu(){
 	wxMenu* helpMenu = new wxMenu;
 	menubar->Append(helpMenu, _T("&Help"));
 	helpMenu->Append(Menu_Help_Documentation, _T("&Documentation"), _T("Show Documentation"));
-#ifdef WIN32
 	helpMenu->Append(wxID_ABOUT, _T("&About\tF1"), _T("Show about dialog"));
-#endif
-	Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnQuit));
 	Connect(wxID_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnAbout));
+	Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnQuit));
 	Connect(wxID_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnNewInvestigation));
 	Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnOpenInvestigation));
-	Connect(Menu_File_Edit_Investigation, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnFileEditInvestigation));
+    Connect(Menu_File_Edit_Investigation, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnFileEditInvestigation));
 	Connect(wxID_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnFileEditProperties));
 	Connect(Menu_File_Show_Properties, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnFileShowProperties));
 	Connect(Menu_File_Remove, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnFileRemove));
@@ -660,8 +658,7 @@ void JasperFrame::OnQuit(wxCommandEvent& WXUNUSED(event)){
 }
 
 void JasperFrame::OnAbout(wxCommandEvent& WXUNUSED(event)){
-	std::vector<std::string> cmd;
-	wxMessageBox(wxString::FromAscii("CARMEN 1.2\n\nDavid Quigley\nBalmain Lab\nUCSF\n2010"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(wxString::FromAscii("CARMEN 1.2\nDavid Quigley\nBalmain Lab, UCSF\n2013"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
 }
 
 
