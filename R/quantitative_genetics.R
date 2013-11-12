@@ -4,7 +4,7 @@
 # Title: Functions for Quantitative Genetics
 # Author: David Quigley <dquigley@cc.ucsf.edu>
 # Maintainer: David Quigley <dquigley@cc.ucsf.edu>
-# Depends: R (>= 1.8.0), survival, aroma.affymetrix, affy
+# Depends: R (>= 1.8.0), survival, aroma.affymetrix, affy, ggplot2
 # Suggests:
 # Description: Functions for Quantitative Genetics
 # License: Unlimited
@@ -14,6 +14,7 @@
 # USEFUL REFERENCES        #
 ############################
 CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,149517037,152524553,131738871,124076172,129993255,121843856,121257530,120284312,125194864,103494974,98319150,95272651,90772031,61342430,166650296,15902555)
+COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblue", "darkgrey")
 #
 ############################
 # LOADING AND WRITING DATA #
@@ -78,7 +79,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # write.dataset=function(sa, gene.symbols, E, fn)
 #   writes out dataset in a format readable by TMEV or suitable for Excel.
 #
-# do.sam = function(E, ga, A, B, med.FDR){
+# do.sam = function(E, ga, A, B, med.FDR, is.log2=T){
 #   Perform a turn-key SAM analysis returning values with FDR<med.FDR
 #
 # do.sam.paired = function(E, ga, A, B, med.FDR)
@@ -302,7 +303,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 #
 ### SURVIVAL ANALYSIS
 #
-# km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, verbose=T, legend.x=3, legend.y=0.25)
+# km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, x.max=NULL, legend.xy = NULL, verbose=T)
 #    General Kaplan-meier plotting and p-value calculation
 #
 # km.multi = function( times, had.events, conditions, legends=NULL, fn_out=NULL)
@@ -351,6 +352,10 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 #     find the closest SNP in the validation dataset
 #     find the set of gene probes in validation with the same entrez ID
 #     return the lowest P value for an eQTL in validation
+#
+#
+# identify.causal.candidates = function(Q, D, min.cor=0.35, max.dist=50000000)
+#
 #
 ### DIFFERENTIAL EXPRESSION (SAM)
 #
@@ -430,7 +435,7 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # hsh_keys_values = function( H )
 #   Returns data frame of keys and values(H)
 #
-# hsh_from_vectors = function( key, value )
+# hsh_from_vectors = function( key, value=NULL )
 #   create hash key -> value
 #
 #
@@ -478,6 +483,9 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 # UTILITY FUNCTIONS #
 #####################
 #
+# assign.colors = function(V){
+#   assign unique colors to each unique value in V
+#
 # get.split.col = function(v, string, col=0, last=F, first=F)
 #
 # standardize = function(D)
@@ -492,12 +500,15 @@ CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,14951703
 #   return dataframe how how many times each item in V appears
 #   if W is passed, returns a matrix of V x W appearances
 #
-# match.idx = function(A, B)
+# match.idx = function(A, B )
 #   return dataframe of indices into A and B restricted to perfect matches between A and B, 
 #   where idx.A[i] == idx.B[i] for each i in matched pairs. 
+#   if allow.multiple.B, expects a unique A but can have more than one B
 #
-# match.idx.first = function( A, B )
+# match.idx.first = function( A, B, allow.multiple.B=F){
 #   for intersection, returns first index of B in first index of A
+#   If allow.multiple.B, any time we have more than one copy of a value in B
+#   return the index of the first matching A
 #
 #  mean.by.symbol = function( expr, all.symbols, symbols )
 #   find all occurences of each element in symbols in all.symbols; return mean of those values in expr
@@ -942,42 +953,36 @@ annotate.eqtl.with.locations=function(E, snp2idx, gene2idx, G.snp.c, G.snp.l, G.
     chr.expr = rep(0, dim(E)[1])
     loc.snp = rep(0, dim(E)[1])
     loc.expr = rep(0, dim(E)[1])
+    E.probe = as.character(E$probe)
     for(i in 1:dim(E)[1]){
         chr.snp[i] = G.snp.c[ hsh_get( snp2idx, E$snp[i] ) ]
         loc.snp[i] = G.snp.l[ hsh_get( snp2idx, E$snp[i] ) ]
-        chr.expr[i] = G.expr.c[ hsh_get( gene2idx, as.character(E$probe[i] ) ) ]
-        loc.expr[i] = G.expr.l[ hsh_get( gene2idx, as.character(E$probe[i] ) ) ]                        
+        chr.expr[i] = G.expr.c[ hsh_get( gene2idx, E.probe[i] ) ]
+        loc.expr[i] = G.expr.l[ hsh_get( gene2idx, E.probe[i] ) ]                        
     }
     same.chr=chr.snp==chr.expr
     chr.snp.num = chr.snp
     chr.snp.num[chr.snp.num=="X"] = 23
     chr.snp.num = as.numeric(chr.snp.num)
-    E$aa = round(E$aa,3)
-    E$ab = round(E$ab,3)
-    E$bb = round(E$bb,3)
+    if( length(which( E$names=="aa"))>0 ){
+        E$aa = round(E$aa,3)
+        E$ab = round(E$ab,3)
+        E$bb = round(E$bb,3)
+        E$t.stat = round(E$t.stat,3)
+    }
     E$raw.p = signif(E$raw.p,3)
-    E$t.stat = round(E$t.stat,3)
     data.frame( E, chr.snp, chr.expr, loc.snp, loc.expr, same.chr, chr.snp.num, stringsAsFactors=F )
 }
-    
-   
-annotate.eqtl.old = function(E, fn.ga.snp, fn.ga.expr, cis.window.size=1000000){
-    ga.snp = load.matrix(fn.ga.snp)
-    ga.expr = load.matrix(fn.ga.expr)
-    cc = ga.snp$chromosome; cc[cc=='X'] = 23; cc[cc=='Y'] = 24
-    rs2chr = hsh_from_vectors(rownames(ga.snp), as.numeric(cc))
-    rs2loc = hsh_from_vectors(rownames(ga.snp), as.numeric(ga.snp$loc_start))
-    cc = ga.expr$chromosome; cc[cc=='X'] = 23; cc[cc=='Y'] = 24
-    g2chr = hsh_from_vectors(ga.expr$symbol, as.numeric(cc))
-    g2loc = hsh_from_vectors(ga.expr$symbol, as.numeric(ga.expr$loc_start))
-    gene.chr = hsh_get(g2chr, E$symbol, T )
-    gene.loc = hsh_get(g2loc, E$symbol, T )
-    snp.loc = hsh_get(rs2loc, E$probe.snp, T)
-    snp.chr = hsh_get(rs2chr, E$probe.snp, T)
-    cis.trans = rep('unknown', length(snp.chr) )
-    cis.trans[ snp.chr == gene.chr & abs( snp.loc - gene.loc ) < cis.window.size ] = 'cis'
-    cis.trans[ snp.chr != gene.chr | (snp.chr == gene.chr & abs( snp.loc - gene.loc ) >= cis.window.size) ] = 'trans'
-    cbind(E, gene.chr, gene.loc, snp.chr, snp.loc, cis.trans)
+
+annotate.cor.with.locations=function(E, gene2idx, G.expr.c, G.expr.l){
+    chr.expr = rep(0, dim(E)[1])
+    loc.expr = rep(0, dim(E)[1])
+    E.probe = rownames(E)
+    for(i in 1:dim(E)[1]){
+        chr.expr[i] = G.expr.c[ hsh_get( gene2idx, E.probe[i] ) ]
+        loc.expr[i] = G.expr.l[ hsh_get( gene2idx, E.probe[i] ) ]                        
+    }
+    data.frame( E, chr.expr, loc.expr, stringsAsFactors=F )
 }
 
 
@@ -1107,6 +1112,59 @@ validate.eqtl = function( source, ids, ga.source, ga.valid, ga.expr.source, ga.e
     v = v[order(v$valid.raw.p),]
     v
 }
+
+
+identify.causal.candidates = function(Q, D, min.cor=0.35, rho.threshold=0.1, max.dist=50000000, max.candidates=50){
+    is.first=T
+    for(i in 1:dim(Q)[1]){
+        if( i %% 100 == 0 )
+            print(i)
+        if(! Q$same.chr[i] ){
+            snp.upstream = Q$snp[i]
+            probe.downstream = Q$probe[i]
+            Q.candidates = Q[Q$same.chr & Q$snp==snp.upstream & abs(Q$loc.snp-Q$loc.expr)<=max.dist,
+                             c("symbol","probe","raw.p","perm.p","loc.expr")]
+            names(Q.candidates) = paste(names(Q.candidates), "us", sep=".")
+            probe.candidates = Q.candidates$probe
+            if(length(probe.candidates)>0){
+                cors = rep(0, length(probe.candidates))
+                expr.downstream = D[which(rownames(D)==probe.downstream),]
+                for(j in 1:length(cors)){
+                    cors[j] = as.numeric(cor.test( expr.downstream, D[which(rownames(D)==probe.candidates[j]),] )$estimate)
+                }
+                Q.candidates = cbind(Q.candidates, rho=cors, stringsAsFactors=F)
+                Q.candidates = Q.candidates[abs(cors)>=min.cor,]
+                if(sum(abs(cors)>=min.cor)>0){
+                    abs.rhos = abs(Q.candidates$rho)
+                    best.rho = max( abs.rhos )
+                    # keep candidates within rho.threshold of strongest rho
+                    Q.candidates = Q.candidates[ best.rho - abs.rhos < rho.threshold ,]
+                    N = dim(Q.candidates)[1]
+                    if( N<max.candidates){
+                        Q.ds = data.frame(symbol.ds = rep(Q$symbol[i],  N),
+                                          probe.ds = rep(probe.downstream,  N),
+                                          raw.p.ds = rep(Q$raw.p[i],  N),
+                                          perm.p.ds = rep(Q$perm.p[i],  N),
+                                          snp.us=rep(snp.upstream, N),
+                                          stringsAsFactors=F)
+                        found = cbind(Q.ds, Q.candidates)
+                        if(is.first){
+                            results=found
+                            is.first=F
+                        }
+                        else{
+                            results = rbind(results, found)
+                        }
+                    }
+                }  
+            }          
+        }
+    }
+    results$rho = round(results$rho,3)
+    results=results[order(results$snp.us, results$symbol.ds ),]
+    results
+}
+
 
 write.dataset=function(sa, gene.symbols, E, fn){
     col.1 = c("PROBE_ID", rep('', (dim(sa)[2])+1), rownames(E))
@@ -2857,7 +2915,7 @@ plot.cluster = function(M, labels=names(M), d=NULL, main=NULL, direction="sample
         else
             stop("direction must be one of: samples, probes")
     }
-    plot(hclust(d), hang=-1, cex=cex, labels=as.character(labels), main=main )
+    plot(hclust(d), hang=-1, cex=cex, labels=as.character(labels), main=main, xlab="",sub="" )
 }
 
 
@@ -2926,8 +2984,9 @@ plot.clean=function( V, ymin=NA, ymax=NA, colors=c(), cex=0.25, y.axis=T ){
 }
 
 
-sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, y.min=NULL, y.max=NULL, groups=NULL ){
-    library(ggplot2)
+sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, 
+                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", labels=F, bottom.bar.values=NULL ){
+
     # passing a list of probes uses the probe IDs to pick exact targets.
     # If symbol==NULL, sorted by first symbol.
     probes =  c()
@@ -2938,13 +2997,14 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     if( !is.null(target.probes) & !is.null(target.symbols) )
         stop( "Cannot pass both target.probes and target.symbols" )
     if( !is.null(target.probes) ){
-        m = match.idx( target.probes, rownames(ga))
+        m = match.idx.first(  rownames(ga), target.probes, allow.multiple.B=T)
         if( dim(m)[1] != length(target.probes) ){
+            print(paste("Found", dim(m)[1],"of",length(target.probes),"probes"))
             stop("Not all target probes found in gene attributes.")
         }
         else{
             probes = target.probes
-            symbols = ga$symbol[m$idx.B]
+            symbols = ga$symbol[m$idx.A]
         }
     }
     else{
@@ -2953,7 +3013,7 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
             symbols = c(symbols, ga$symbol[ga$symbol==target.symbols[i]][1])
         }
     }
-    DT = data.matrix( D[match.idx(probes, rownames(D))$idx.B,] )
+    DT = data.matrix( D[match.idx.first( rownames(D), probes, allow.multiple.B=T)$idx.A,] )
     
     if(!is.null(groups)){
         if( !is.numeric(groups) ){
@@ -3004,15 +3064,30 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     if(is.null(y.min) | is.null(y.max)){
         y.min=min(DT, na.rm=T)
         y.max=max(DT, na.rm=T)
-    }    
+    }
+    if(!is.null(bottom.bar.values)){
+        if( !length(bottom.bar.values)==dim(DT)[2])
+            stop("bottom bar values must be same length as the number of samples")
+        DT = rbind(bottom.bar.values, DT)
+        symbols = c(symbols, "extra")
+    }
     df = expand.grid(y = 1:dim(DT)[1], x = 1:dim(DT)[2] )
     df = cbind(df, v=as.numeric(DT) )
     y.mid = mean(c(y.max, y.min))
-    col.low="blue3"
-    col.high="yellow"
-    scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high =col.high )
-    ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + theme_bw() 
+    scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high =col.high, na.value="black" )
+    if(labels){
+        syc = scale_y_continuous(expand=c(0,0),breaks=dim(DT)[1]:1,labels=symbols)
+        sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[1],labels=symbols )
+        ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + 
+            theme(axis.title.x = element_blank()) + 
+            opts(axis.text.x = theme_text(angle = 90, hjust = 1) )
+    }
+    else{
+        ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank()
+    }
 }
+
+
 
 
 do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main=""){
@@ -3172,7 +3247,7 @@ cor.test.probe.vs.all=function( expr, symbols, probe, percent.present=0.90, meth
         options(warn=0)
         d = data.frame(symbols, rho=round(rhos,3), pval=signif(pvals,4))
         rownames(d) = rownames(expr)
-        d = d[ order(d$pval, d$rho), ]
+        d = d[ order(d$pval, 1-abs(d$rho)), ]
         d
     }
 }
@@ -3508,6 +3583,70 @@ write.spear.to.cytoscape=function( fn.base, DF, DF.node.attr=NULL ){
             }
         }
     }
+    print(paste("Wrote to", paste( fn.base, '.sh', sep='') ) )
+}
+
+
+write.causal.candidates.to.cytoscape=function( fn.base, CC ){
+    CYTOSCAPE = '/Applications/Cytoscape_v2.8.1/cytoscape.sh'
+    VIZ = '/notebook/code/release/Correlation.props'
+    fn.sif = paste( fn.base, '.sif', sep='')
+    fn.symbols = paste( fn.base, '_symbols.noa', sep='')
+    fn.rho = paste( fn.base, '_rho.eda', sep='')
+    fn.type = paste( fn.base, "_node_type.noa", sep="")
+    
+    sh = paste(CYTOSCAPE, "-N", fn.sif, "-V", VIZ, sep=" ")
+    unlink(fn.sif)
+    N = dim(CC)[1]
+    write.table(data.frame(  CC$probe.us, CC$probe.ds), 
+                        file=fn.sif, sep=" ud ", 
+                        quote=F, col.names=F, row.names=F)
+    write.table(data.frame(  CC$snp.us, CC$probe.us), 
+                        file=fn.sif, sep=" sg ", 
+                        quote=F, col.names=F, row.names=F, append=T)
+    
+    # probe->type NOA
+    sh = paste(sh, "-n", fn.type, sep=" ")
+    probes = unique( as.character(c(CC$probe.ds, CC$probe.us) ))
+    types.probes = rep("gene", length(probes))
+    snps = unique( CC$snp.us )
+    types.snps = rep("locus", length(snps) )
+     
+    vector.to.file(c("type (java.lang.String)"), fn.type)
+    write.table(data.frame( c(probes,snps), c(types.probes, types.snps)),
+                        file=fn.type, sep=" = ", 
+                        quote=F, append=T, col.names=F, row.names=F)
+    
+    # probe->symbol NOA
+    sh = paste(sh, "-n", fn.symbols, sep=" ")
+    ga.p2s = hsh_from_vectors(as.character(c(CC$probe.ds, CC$probe.us)),
+    c(CC$symbol.ds, CC$symbol.us))
+    probes = unique( as.character(c(CC$probe.ds, CC$probe.us) ))
+    symbols = hsh_get(ga.p2s, probes)
+    snps = unique( CC$snp.us )
+    probes = c(probes, snps )
+    snps.short = paste(get.split.col( snps, ".", first=T),
+                       get.split.col( snps, ".", col=2), sep='.')
+    snps.short = get.split.col(snps.short, "E", last=T)
+    symbols = c(symbols, snps.short)
+    vector.to.file(c("symbol (java.lang.String)"), fn.symbols)
+    write.table(data.frame(probes, symbols),
+                        file=fn.symbols, sep=" = ", 
+                        quote=F, append=T, col.names=F, row.names=F)
+    
+    # gene -> gene correlation EDA
+    sh = paste(sh, "-e", fn.rho, sep=" ")
+    output = c("rho (java.lang.Double)")
+    output = c(output, "FOO = 1.0" )# get around cytoscape bug
+    vector.to.file(output, fn.rho)
+    col.gg = rep('(ud)', N )
+    col.eq = rep('=', N)
+    write.table(data.frame( CC$probe.us, col.gg, CC$probe.ds, col.eq, CC$rho ), 
+            file=fn.rho, sep=" ", append=T, 
+            quote=F, col.names=F, row.names=F)
+    
+
+    write( sh, file=paste( fn.base, '.sh', sep='') )
     print(paste("Wrote to", paste( fn.base, '.sh', sep='') ) )
 }
 
@@ -3998,17 +4137,24 @@ eqtl.filter = function(eqtl, snp, ga.chr.snp, ga.loc.snp, gene, ga.chr.gene, ga.
 }
 
 
-write.rqtl.csv=function( expr, probe.list, sa.geno, sa.col.matching.expr, geno.chrom, calls.geno, fn.rqtl ){
+write.rqtl.csv=function( expr, probe.list, sa.geno, sa.col.matching.expr, geno.chrom, geno.cM=NULL, calls.geno, fn.rqtl ){
     # write all probes in probe.list as phenotypes for an RQTL CSV file
     sa.match = sa.geno[,which(names(sa.geno)==sa.col.matching.expr)]
     m = match.idx(sa.match, names(expr))
     expr = expr[,m$idx.B]
     sa.geno = sa.geno[m$idx.A,]
-
+    
     expr.top = t(expr[ match.idx(probe.list, rownames(expr))$idx.B, ])
-    rqtl.pheno = rbind( rep("", dim(expr.top)[2] ), expr.top )
     calls.geno = t(calls.geno[,m$idx.A])
-    rqtl.geno = rbind( geno.chrom, calls.geno )
+    
+    if(is.null(geno.cM)){
+        rqtl.pheno = rbind( rep("", dim(expr.top)[2] ), expr.top )    
+        rqtl.geno = rbind( geno.chrom, calls.geno )
+    }
+    else{
+        rqtl.pheno = rbind( rep("", dim(expr.top)[2] ), rep("", dim(expr.top)[2] ), expr.top )
+        rqtl.geno = rbind( geno.chrom, geno.cM, calls.geno )
+    } 
     rownames(rqtl.geno) = rownames(rqtl.pheno)
     rqtl.csv = cbind(rqtl.pheno, rqtl.geno)
     rownames = append( 'IDENTIFIER', dimnames(rqtl.csv)[[2]] )
@@ -4023,7 +4169,7 @@ generate.rQTL.matrix=function( pheno.ids, pheno, e.snp, ga.snp, sa.snp, fn.out){
     #
     # pheno.ids and pheno should have the same order (taken from the same data frame)
     #
-    common.ids = set.intersection(rownames(sa.snp), pheno.ids)
+    common.ids = intersect(rownames(sa.snp), pheno.ids)
     pheno.idx = vector()
     geno.idx = vector()
     sexes = rep("NA", length(common.ids) )
@@ -4035,15 +4181,18 @@ generate.rQTL.matrix=function( pheno.ids, pheno, e.snp, ga.snp, sa.snp, fn.out){
         	sexes[i] = sa.snp$sex[ which(rownames(sa.snp)==common.ids[i]) ]
         }
     }
+    print(paste("Found",length(pheno.idx), "intersecting sample IDs"))
     if( length(geno.idx)==0 | length(pheno.idx)==0 )
         stop("No genotypes selected; check that e.snp sample names match pheno.ids")
     if( is.vector(pheno) ){
         pheno.names = c('pheno')
         pheno = pheno[pheno.idx]
+        print("Passed one phenotype as vector")
     }
     else{
         pheno.names = names(pheno)
         pheno = pheno[pheno.idx, ]
+        print(paste("Passed",dim(pheno)[2],"phenotypes"))
     }
     n.col=dim(ga.snp)[1] + 2 + length(pheno.names)
     has.cM = F
@@ -4075,9 +4224,6 @@ generate.rQTL.matrix=function( pheno.ids, pheno, e.snp, ga.snp, sa.snp, fn.out){
         M[geno.rows,3] = pheno 					    # If only one pheno ID, third column
     }
     else{
-        print(dim(M))
-        print( 3:(2+dim(pheno)[2]) )
-        print( dim(data.matrix(pheno)))
         M[ geno.rows, 3:(2+dim(pheno)[2]) ] = data.matrix(pheno) # else, third through X columns
     }
     genotypes = t(e.snp[,geno.idx])
@@ -4115,16 +4261,18 @@ genotype.for.expression.ids = function( probe.snp, expr, expr.SNP, sa.SNP, sa.SN
     out
 }
 
-do.sam = function(E, ga, A, B, med.FDR=10){
+do.sam = function(E, ga, A, B, med.FDR=10, is.log2=T){
     # Perform a turn-key SAM analysis returning values with FDR<med.FDR
     if( length(A) != length(B) | length(A) != dim(E)[2] )
+        stop( "incorrectly formatted input: bad dimensions")
+    if( dim(E)[1] != dim(ga)[1])
         stop( "incorrectly formatted input: bad dimensions")
     labels = rep(0, dim(E)[2])
     labels[A] = 1
     labels[B] = 2
     E = E[,A|B]
     labels = labels[A|B]
-    data = list(x=data.matrix(E), y=labels, geneid=rownames(ga), genenames = ga$symbol, logged2=TRUE)
+    data = list(x=data.matrix(E), y=labels, geneid=rownames(ga), genenames = ga$symbol, logged2=is.log2)
     samr.obj = samr(data, resp.type="Two class unpaired", nperms=100)
     delta.table = samr.compute.delta.table(samr.obj)
     print(delta.table)
@@ -4260,7 +4408,7 @@ SAM.convert.siggenes=function(T){
 }
 
 
-km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, x.max=NULL, verbose=T){
+km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, x.max=NULL, legend.xy = NULL, verbose=T){
     # Wrapper for Kaplan-meier analysis (using library "survival")
     # If fn_out is passed, the plot is saved to the specified file as a png
     # returns the coxph object
@@ -4283,7 +4431,7 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
     if( !is.null(fn_out) ){
         png(fn_out)
     }
-    color.list =c("black", "darkblue", "gray",  "red", "darkgreen", "orange")
+    color.list =c("black", "cornflowerblue", "gray",  "red", "darkgreen", "orange")
     if( is.null(main) )
         main.title=paste('KM curve')
     else
@@ -4298,11 +4446,17 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
     plot(surv.all, lwd=3, col=color.list,
         main=main.title, las=1,
         xlab="time", cex.axis=1.5, bty="n", xlim=c(0,x.max))
-    legend.x = max(times)*0.05
-    if(length(legends)<5)
-        legend.y=0.3
-    else
-        legend.y=0.4
+    if( is.null( legend.xy ) ){
+        legend.x = max(times)*0.05
+        if(length(legends)<5)
+            legend.y=0.3
+        else
+            legend.y=0.4
+    }
+    else{
+        legend.x = legend.xy[1]
+        legend.y = legend.xy[2]
+    }
     if( !is.null(legends) ){
         legend(legend.x,legend.y,legends, col=color.list,lty=1,lwd=3,cex=1.5)
     }
@@ -4313,8 +4467,12 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
         i=dev.off()
     }
     if( verbose ){
+        if( sum(conditions>1 | conditions < 0, na.rm=T)>0) {
+            warning("Conditions not all 0 or 1")
+        }
         print( summary(cox) )
         print( paste( sum(had.events), " subjects had the event", sep='' ) )
+        print(table(conditions, had.events))
         print( paste( length(times)-sum(conditions), " subjects had condition=0", sep='' ) )
         print( paste( sum(conditions), " subjects had condition=1", sep='' ) )
     }
@@ -4840,8 +4998,11 @@ hsh_keys_values = function( H ){
   data.frame( keys, values, stringsAsFactors=F)
 }
 
-hsh_from_vectors = function( v1, v2 ){
+hsh_from_vectors = function( v1, v2=NULL ){
     # Create a hash from vectors v1, v2 with keys from v1 and values from v2
+    # if v2 is null, set it to 1:length(v1)
+    if( is.null(v2) )
+        v2 = 1:length(v1)
     if( length(v1) != length(v2) ){
         stop("Length of v1 != length of v2")
     }
@@ -5159,7 +5320,7 @@ intersect.hashgraph = function(x, y){
     subgraph( G, in.both )
 }
 
-minimum.degree = function(G, min.n){
+minimum.degree = function(x, min.n){
     if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
     else{ UseMethod("minimum.degree") }
 }
@@ -5279,6 +5440,22 @@ get.split.col = function(v, string, col=0, last=F, first=F){
     v
 }
 
+
+assign.colors = function(V){
+    colors = rep(COLOR.WHEEL[1], length(V))
+    uniques = sort(unique(V))
+    cur.color=1
+    for(i in 1:length(uniques)){
+        if( cur.color>length(COLOR.WHEEL) ){
+            cur.color=1
+            print("Colors wrapped around")
+        }
+        colors[V==uniques[i]] = COLOR.WHEEL[cur.color]
+        cur.color=cur.color+1
+    }
+    colors
+}
+
 standardize = function(D){
     D = data.matrix(D)
     library(matrixStats)
@@ -5332,7 +5509,7 @@ compress.probes=function( D, idx, min.cor=0.8, min.var=0.1 ){
 }
 
 
-match.idx = function(A, B){
+match.idx = function(A, B, allow.multiple.B=False){
     # return dataframe of indices into A and B restricted to perfect matches
     # between A and B, where idx.A[i] == idx.B[i] for each i in matched pairs
     in.both = intersect(A,B)
@@ -5344,17 +5521,33 @@ match.idx = function(A, B){
     C
 }
 
-match.idx.first = function( A, B ){
+match.idx.first = function( A, B, allow.multiple.B=F){
     # for intersection, returns first index of B in first index of A
-    in.both = intersect(A, B)
-    n.intersect = length(in.both)
-    idx.A = rep(0, n.intersect )
-    idx.B = rep(0, n.intersect )
-    for(i in 1:n.intersect ){
-        idx.A[i] = min( which(A==in.both[i]) )
-        idx.B[i] = min( which(B==in.both[i]) )    
+    # If allow.multiple.B, any time we have more than one copy of a value in B
+    # return the index of the first matching A
+    if(allow.multiple.B){
+        idx.A = rep(0, length(B) )
+        idx.B = 1:length(B)
+        for(i in 1:length(B)){
+            idx.in.a = which(A==B[i])
+            if(length(idx.in.a)>0 ){
+                idx.A[i] = min( idx.in.a )
+            }
+        }
+        df=data.frame(idx.A, idx.B)
+        df[df$idx.A>0,]
     }
-    data.frame(idx.A, idx.B)
+    else{
+        in.both = intersect(A, B)
+        n.intersect = length(in.both)
+        idx.A = rep(0, n.intersect )
+        idx.B = rep(0, n.intersect )
+        for(i in 1:n.intersect ){
+            idx.A[i] = min( which(A==in.both[i]) )
+            idx.B[i] = min( which(B==in.both[i]) )    
+        }
+        data.frame(idx.A, idx.B)
+    }
 }
 
 mean.by.symbol = function( expr, all.symbols, symbols ){
