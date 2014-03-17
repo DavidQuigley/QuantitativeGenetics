@@ -374,7 +374,7 @@
 				E235AF70135B7567004141B6 /* Release64 */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Release64;
 		};
 		1DEB91EF08733DB70010E9CD /* Build configuration list for PBXProject "carmen" */ = {
 			isa = XCConfigurationList;
@@ -384,7 +384,7 @@
 				E235AF6F135B7567004141B6 /* Release64 */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Release64;
 		};
 /* End XCConfigurationList section */
 	};
