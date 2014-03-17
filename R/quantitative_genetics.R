@@ -14,7 +14,7 @@
 # USEFUL REFERENCES        #
 ############################
 CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,149517037,152524553,131738871,124076172,129993255,121843856,121257530,120284312,125194864,103494974,98319150,95272651,90772031,61342430,166650296,15902555)
-COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblue", "darkgrey")
+COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblue", "darkgrey")
 #
 ############################
 # LOADING AND WRITING DATA #
@@ -206,10 +206,10 @@ COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblu
 # plot.alterations.on.chr( M, name, chr.size.in.mb, marker.interval.size=1,  upper.bound=0.3, lower.bound=0.3, color=T)
 #    Plot a single chromosome, label x axis with Mb
 #
-# plot.rows = function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, ymin=NULL, ymax=NULL)
+# plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1.5, cex=cex)
 #    general multiple probe plotting function
 #
-# plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', ymin=NULL, ymax=NULL)
+# plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', pch=1, show.axis=T, cex.axis=1.5, ymin=NULL, ymax=NULL, cex=cex)
 #    Convenience function to allow us to plot with a simple probe list.
 #    dataset is list of {expr, sa, ga}
 #
@@ -238,10 +238,12 @@ COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblu
 #   This is the utility function that just plots what it's given without labels.
 #   Intended for use in figures
 #
-# sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, symbol=NULL, scale=F, y.min=NULL, y.max=NULL, groups=NULL )
+# sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, 
+#                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", col.na="black", labels=F, bottom.bar.values=NULL )
 #   Given a matrix and a list of gene names and symbol, plot gene names sorted by symbol
 #
-# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main=NULL)
+# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2){
+#
 #    Helper function for quick visualization of PCA. Automatically colors based on labels.
 #
 ########################
@@ -285,6 +287,8 @@ COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblu
 #
 # overlap.spear.pairs = function(A, B, p2s )
 #   find probe pairs in two spear files
+#
+# fisher.zscore = function(D1, n1, D2, n2){
 #
 ### ANOVA AND REGRESSION
 #
@@ -449,6 +453,9 @@ COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblu
 # addEdge = function(x, e1, e2, ...)
 #   add edge e1, e2 to x
 #
+# hasNode(x, n)
+#   return boolean for whether n exists in x 
+#
 # hasEdge(x, e1, e2)
 #   return boolean for whether e1,e2 exists in x 
 #
@@ -491,10 +498,10 @@ COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblu
 # standardize = function(D)
 #   standardize matrix by rows
 #
-# compress.probes = function( D, idx, min.cor=0.8, min.var=0.1 )
+# compress.probes=function( D, idx, vars, min.cor=0.8, min.var=0.1 )
 #   Given a set of probe indexes idx, look for those with correlation >= min.cor
 #   Report mean values across all probes with correlation >= min.cor
-#   If no genes pairs meet these criteria, default to mean value
+#   If no genes pairs meet these criteria, default to max var
 #
 # count.appearances = function(V, W, order.by="values")
 #   return dataframe how how many times each item in V appears
@@ -538,12 +545,11 @@ COLOR.WHEEL = c("black", "cornflowerblue", "darkgreen", "orange", "red","darkblu
 # nearest.ten = function( x )
 #   find the nearest factor of 10 for x between 10 and 100, rounding up
 #
-# plot_multiple = function(V, lbls, x_lbl, probe_label_list, plot.type='l')
+# plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1, cex=1)
 #   utility function to actually draw plots
 #
 # convert.to.ranks = function(M)
 #   Convert columns in M to their rank
-#
 #
 # make_list = function(keys, vals)
 #   Convert pairs to a list
@@ -2498,7 +2504,8 @@ plot.alterations = function(M, name, chr.list, upper.bound=0.3, lower.bound=-0.3
 }
 
 
-plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, legend.xy = c(), ymin=NULL, ymax=NULL){
+plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, 
+                    legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1.5, cex=1){
     # sa is an attribute file data frame that describes the values in M
     # M is a numeric value data frame with one row per gene to plot
     # legend.labels are friendly names for rows; if NULL, rownames(M) is used
@@ -2564,11 +2571,12 @@ plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plo
         M
     else
         plot_multiple(M, lbls=x.axis.labels, x_lbl=x.bottom.label, probe_label_list=legend.labels, plot.type=plot.type, 
-                      legend.xy = legend.xy, ymin=ymin, ymax=ymax)
+                      legend.xy = legend.xy, ymin=ymin, ymax=ymax, pch=pch, show.axis=show.axis, cex.axis=cex.axis, 
+                      cex=cex)
 }
 
 
-plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', legend.xy=c(), ymin=NULL, ymax=NULL ){
+plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', legend.xy=c(), pch=1, show.axis=T, cex.axis=1.5, ymin=NULL, ymax=NULL, cex=1){
     # Convenience function to allow us to plot with a simple probe list.
     # dataset is list of {expr, sa, ga}
     if( is.null(dataset$expr) | is.null(dataset$ga) | is.null(dataset$sa))
@@ -2587,12 +2595,11 @@ plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, pl
         idx.probes[i] = idx
         legend.labels[i] = paste( dataset$ga[which(rownames(dataset$ga)==probe.list[i]), idx.symbol ], probe.list[i])
     }
-    plot.rows( dataset$expr[idx.probes,], sa=dataset$sa, legend.labels=legend.labels, group.by=group.by, sorted=sorted, plot.type=plot.type, no.plot=F, legend.xy=legend.xy, ymin=ymin, ymax=ymax )
+    plot.rows( dataset$expr[idx.probes,], sa=dataset$sa, legend.labels=legend.labels, group.by=group.by, 
+               sorted=sorted, plot.type=plot.type, legend.xy=legend.xy, ymin=ymin, ymax=ymax, pch=pch, no.plot=F, 
+               cex.axis=cex.axis, show.axis=show.axis, cex=cex )
     abline(0,0)
 }
-
-
-
 
 plot.raw.probe.values2 = function(Data, probe_id){
     idx.probes = indexProbes(Data, 'pm', genenames=probe_id)[[1]]
@@ -2627,14 +2634,10 @@ plot.raw.probe.values2 = function(Data, probe_id){
     legend(1, ymax-1, rownames(raw), col=col.used, lty=1, lwd=2, pch=pch.used, cex=1,y.intersp=0.75)
 }
 
-
-
-plot_multiple = function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend.xy = c(), ymin=NULL, ymax=NULL){
-    # This is the utility function that just plots what it's given
+plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1, cex=1){
     # pass plot.type=='l' for lines, 'p' for points
-        
-    pch.pool = c(19)
-    col.pool = c('black', 'chartreuse4', 'darkblue', 'firebrick3', 'darkorange', 'blue', 'gray48', 'burlywood')
+    
+    col.pool = COLOR.WHEEL
     n_probes = dim(V)[1]
     n_samples = dim(V)[2]
     X = (1:n_samples)
@@ -2646,9 +2649,8 @@ plot_multiple = function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend
         if(ymin>1)
             ymin=1
     }
-    pch.used = c(pch.pool[1]); 
     col.used = c( col.pool[1] )
-    plot(X, as.numeric(V[1,]), col=1, type=plot.type, pch=pch.pool[1], cex=0.5, axes=F, xlab=x_lbl, ylim=c(ymin,ymax), ylab='', lwd=2)
+    plot(X, as.numeric(V[1,]), col=1, type=plot.type, pch=pch, cex=cex, axes=F, xlab=x_lbl, ylim=c(ymin,ymax), ylab='', lwd=2)
     iter = 2
     if( n_probes>1 ){
         for( i in 2:n_probes){
@@ -2658,27 +2660,26 @@ plot_multiple = function(V, lbls, x_lbl, probe_label_list, plot.type='l', legend
             if(plot.type=='l')
                 lines(X, as.numeric(V[i,]), col=cur.color, lwd=2)
             else{
-                new.pch = i %% length(pch.pool)
-                points(X, as.numeric(V[i,]), pch=19, col=cur.color, lwd=2, cex=0.5)
+                points(X, as.numeric(V[i,]), pch=pch, col=cur.color, lwd=2, cex=cex)
             }
             col.used[length(col.used)+1] = cur.color
-            pch.used[length(pch.used)+1] = 19
         }
     }
     par(ps=8)
-    axis(2, at=(ymin:15), las=1)
-    axis(1, at=(1:length(lbls)), labels=lbls, las=2)
+    if( show.axis ){
+        axis(2, at=(ymin:ymax), las=1, cex.axis=cex.axis)
+        axis(1, at=(1:length(lbls)), labels=lbls, las=2)
+    }
     legend.x = 1
     legend.y = ymax
     if(length(legend.xy)==2){
         legend.x=legend.xy[1]
         legend.y=legend.xy[2]
     }
-#    if(plot.type=='l')
-        legend(legend.x, y=legend.y-1, probe_label_list, col=col.used, lty=1, lwd=2, y.intersp=0.5)
-#    else
-#        legend(legend.x)
+    legend(legend.x, y=legend.y, probe_label_list, col=col.used, lty=1, lwd=2, y.intersp=0.5)
 }
+
+
 
 plot.geno.expr = function(ids, expr.g, expr.e, probe.g, probe.e, main=NULL, show.lm.pval=FALSE){
     # used to plot genotype or SNP copy number vs. real-valued data
@@ -2984,8 +2985,8 @@ plot.clean=function( V, ymin=NA, ymax=NA, colors=c(), cex=0.25, y.axis=T ){
 }
 
 
-sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, 
-                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", labels=F, bottom.bar.values=NULL ){
+sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, 
+                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", col.na="black", labels=F, bottom.bar.values=NULL ){
 
     # passing a list of probes uses the probe IDs to pick exact targets.
     # If symbol==NULL, sorted by first symbol.
@@ -2993,24 +2994,30 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     symbols= c()
     if( is.null(target.probes) & is.null(target.symbols) )
         target.probes = rownames(D)
-        #stop( "Must pass either target.probes or target.symbols" )
-    if( !is.null(target.probes) & !is.null(target.symbols) )
-        stop( "Cannot pass both target.probes and target.symbols" )
-    if( !is.null(target.probes) ){
-        m = match.idx.first(  rownames(ga), target.probes, allow.multiple.B=T)
-        if( dim(m)[1] != length(target.probes) ){
-            print(paste("Found", dim(m)[1],"of",length(target.probes),"probes"))
-            stop("Not all target probes found in gene attributes.")
-        }
-        else{
-            probes = target.probes
-            symbols = ga$symbol[m$idx.A]
-        }
+    
+    if( is.null(ga)){
+        probes = rownames(D)
+        symbols = probes
     }
     else{
-        for(i in 1:length(target.symbols)){
-            probes = c(probes, rownames(ga)[ga$symbol==target.symbols[i]][1])
-            symbols = c(symbols, ga$symbol[ga$symbol==target.symbols[i]][1])
+        if( !is.null(target.probes) & !is.null(target.symbols) )
+            stop( "Cannot pass both target.probes and target.symbols" )
+        if( !is.null(target.probes) ){
+            m = match.idx.first(  rownames(ga), target.probes, allow.multiple.B=T)
+            if( dim(m)[1] != length(target.probes) ){
+                print(paste("Found", dim(m)[1],"of",length(target.probes),"probes"))
+                stop("Not all target probes found in gene attributes.")
+            }
+            else{
+                probes = target.probes
+                symbols = ga$symbol[m$idx.A]
+            }
+        }
+        else{
+            for(i in 1:length(target.symbols)){
+                probes = c(probes, rownames(ga)[ga$symbol==target.symbols[i]][1])
+                symbols = c(symbols, ga$symbol[ga$symbol==target.symbols[i]][1])
+            }
         }
     }
     DT = data.matrix( D[match.idx.first( rownames(D), probes, allow.multiple.B=T)$idx.A,] )
@@ -3074,10 +3081,10 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     df = expand.grid(y = 1:dim(DT)[1], x = 1:dim(DT)[2] )
     df = cbind(df, v=as.numeric(DT) )
     y.mid = mean(c(y.max, y.min))
-    scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high =col.high, na.value="black" )
+    scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high = col.high, na.value=col.na )
     if(labels){
         syc = scale_y_continuous(expand=c(0,0),breaks=dim(DT)[1]:1,labels=symbols)
-        sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[1],labels=symbols )
+        sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[1],labels=symbols ) 
         ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + 
             theme(axis.title.x = element_blank()) + 
             opts(axis.text.x = theme_text(angle = 90, hjust = 1) )
@@ -3087,10 +3094,7 @@ sorted.heatmap=function(D, ga, target.symbols=NULL, target.probes=NULL, sort.by=
     }
 }
 
-
-
-
-do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main=""){
+do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2){
     if(is.null(colors))
         color.wheel = c("black", "blue", "gold", "darkgreen", "slategray1", "gray", "magenta", "darkblue",
         "violetred", "bisque", "chartreuse3", "orange", "darksalmon", "green1", "red","pink")
@@ -3129,7 +3133,7 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
     if(is.null(ylim))
         ylim = c(y.min, y.max)
     
-    plot(pca$x[,1], pca$x[,2], col=colors, pch=19, cex=plot.cex, xlim=xlim, ylim=ylim, main=main )  
+    plot(pca$x[,x.axis], pca$x[,y.axis], col=colors, pch=19, cex=plot.cex, xlim=xlim, ylim=ylim, main=main )  
     
     if( show.legend & !is.null(labels) ){
         if( is.null(legend.xy) )
@@ -3139,6 +3143,7 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
     }
     pca
 }
+
 
 ####################
 # BEGIN STATISTICS #
@@ -3517,7 +3522,7 @@ write.eqtl.to.cytoscape = function( fn.base, EQTL, SPEAR, snps, probes, all.S, S
     print(paste("Wrote to", paste( fn.base, '.sh', sep='') ) )
 }
 
-write.spear.to.cytoscape=function( fn.base, DF, DF.node.attr=NULL ){
+write.spear.to.cytoscape = function( fn.base, DF, DF.node.attr=NULL ){
     CYTOSCAPE = '/Applications/Cytoscape_v2.8.1/cytoscape.sh'
     VIZ = '/notebook/code/release/Correlation.props'
     fn.sif = paste( fn.base, '.sif', sep='')
@@ -3549,9 +3554,9 @@ write.spear.to.cytoscape=function( fn.base, DF, DF.node.attr=NULL ){
                 output = paste( node.attr[j], "(java.lang.String)"  )
                 output = c(output, "FOO = yay" )# get around cytoscape bug
             }
-            print(output)
             vector.to.file(output, fn.node.attr[j])
-            write.table(data.frame(rownames(DF.node.attr), DF.node.attr[, j]), 
+            keep = !is.na( DF.node.attr[,j] )
+            write.table(data.frame(rownames(DF.node.attr)[keep], DF.node.attr[keep, j]), 
                         file=fn.node.attr[j], sep=" = ", 
                         quote=F, append=T, col.names=F, row.names=F)
         }
@@ -3564,15 +3569,21 @@ write.spear.to.cytoscape=function( fn.base, DF, DF.node.attr=NULL ){
                         quote=F, col.names=F, row.names=F)
     if( length(fn.edge.attr)>0){
         for(j in 1:length(fn.edge.attr) ){
-            output = paste( edge.attr[j], "(java.lang.Double)"  )
-            output = c(output, "FOO = 1.0" )# get around cytoscape bug
+            if( numeric.attr[j] ){
+                output = paste( edge.attr[j], "(java.lang.Double)"  )
+                output = c(output, "FOO = 1.0" )# get around cytoscape bug
+            }
+            else{
+                output = paste( edge.attr[j], "(java.lang.String)"  )
+            }
             vector.to.file( output, fn.edge.attr[j] )
             
             col.gg = rep('(gg)', dim(DF)[1])
             col.eq = rep('=', dim(DF)[1])
             
             if( numeric.attr[j] ){
-                write.table(data.frame(  DF$probe.1, col.gg, DF$probe.2, col.eq, signif(DF[,j+4], 5) ), 
+                keep = !is.na( DF[,j+4] )
+                write.table(data.frame(  DF$probe.1[keep], col.gg[keep], DF$probe.2[keep], col.eq[keep], signif(DF[keep, j+4], 5) ), 
                         file=fn.edge.attr[j], sep=" ", append=T, 
                         quote=F, col.names=F, row.names=F)
             }
@@ -3751,6 +3762,14 @@ overlap.spear.pairs = function(A, B, p2s ){
     R$tstat.BC = round( R$tstat.BC, 2)
     R = R[order(R$rho.B, decreasing=T),]
     R
+}
+
+fisher.zscore = function(D1, n1, D2, n2){
+    # D1 and D1 are matrixes of correlation
+    # n1 and n2 are the number of samples that were used to generate the correlations
+    transA = 0.5 * log( (1+D1)/(1-D1) )
+    transB = 0.5 * log( (1+D2)/(1-D2) )
+    (transA - transB) / ( sqrt( (1/(n1-3) ) + (1/(n2-3)) ) )
 }
 
 paired.t.test = function(ids, expr.A, expr.B, method='ttest', percent.present=0.9, verbose=T){
@@ -4330,6 +4349,10 @@ do.sam.paired = function(E, ga, labels, med.FDR=10){
         sgt = samr.compute.siggenes.table( samr.obj, delta, data, delta.table)
         sig = SAM.convert.siggenes( sgt )
         sig = sig[sig$q.value.percent<=med.FDR,]
+        fc = sig$fold.change
+        fc[fc<1] = -1/fc[fc<1]
+        fc[fc==1]=0
+        sig = cbind(sig, fc=round(fc,2), stringsAsFactors=F )        
         sig
     }
 }
@@ -4431,7 +4454,7 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
     if( !is.null(fn_out) ){
         png(fn_out)
     }
-    color.list =c("black", "cornflowerblue", "gray",  "red", "darkgreen", "orange")
+    color.list = COLOR.WHEEL
     if( is.null(main) )
         main.title=paste('KM curve')
     else
@@ -4473,11 +4496,10 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
         print( summary(cox) )
         print( paste( sum(had.events), " subjects had the event", sep='' ) )
         print(table(conditions, had.events))
-        print( paste( length(times)-sum(conditions), " subjects had condition=0", sep='' ) )
-        print( paste( sum(conditions), " subjects had condition=1", sep='' ) )
     }
     cox
 }
+
 
 km.multi = function( times, had.events, conditions ){
     #    General Kaplan-meier plotting and p-value calculation, allowing multiple conditions to be passed
@@ -5070,6 +5092,16 @@ addEdge.hashgraph = function(x, e1, e2, value=NULL, ...){
     }
 }
 
+hasNode <- function(x, n)  {
+  if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
+  else{ UseMethod("hasNode") }
+}
+
+hasNode.hashgraph = function( x, n, ... ){
+    if( !is.character(n) )
+        stop("Node names must be legal variable names in R.")
+    return( exists( n, x ) ) 
+}
 
 hasEdge <- function(x, e1, e2)  {
   if(is.null(attr(x, "class"))){ stop("Must be called on a class") }
@@ -5273,13 +5305,30 @@ difference <- function(x, y)  {
   else{ UseMethod("difference") }
 }
 
-difference = function(x, y){
+difference.hashgraph = function(x, y){
     # return new graph where edges found in x not y
     e.x = edges(x)
     G = hashgraph()
     for(i in 1:dim(e.x)[1] ){
         if( !hasEdge( y, e.x[i,1], e.x[i,2] ) ){
             addEdge( G, e.x[i,1], e.x[i,2], getValue( x, e.x[i,1], e.x[i,2] ) )
+        }
+    }
+    G
+}
+
+unionGraph <- function(x,y){
+  if(is.null(attr(x, "class"))){ stop("Must be called on a class x") }
+  if(is.null(attr(y, "class"))){ stop("Must be called on a class y") }  
+  else{ UseMethod("unionGraph") }
+}
+
+unionGraph.hashgraph = function(x,y){
+    G = x
+    e.y = edges(y)
+    if( dim(e.y)[1] > 0 ){
+        for(i in 1:dim(e.y)[1] ){
+            addEdge( G, e.y[i,1], e.y[i,2], getValue( y, e.y[i,1], e.y[i,2] ) )
         }
     }
     G
@@ -5466,7 +5515,7 @@ standardize = function(D){
     (D-rowMeans(D, na.rm=T))/sds
 }
 
-compress.probes=function( D, idx, min.cor=0.8, min.var=0.1 ){
+compress.probes=function( D, idx, vars, min.cor=0.8, min.var=0.1 ){
     # Given a set of probe indexes idx, look for those with correlation >= min.cor
     # Report mean values across all probes with correlation >= min.cor
     # If no genes pairs meet these criteria, default to mean value
@@ -5475,7 +5524,7 @@ compress.probes=function( D, idx, min.cor=0.8, min.var=0.1 ){
         ee
     }
     else{
-        var.high.enough = as.numeric(rowVars( ee, na.rm=T )) >= min.var
+        var.high.enough = vars[idx] >= min.var
 
         if( sum(var.high.enough)==0 ){
             # no probes with minimal variance, so don't threshold 
@@ -5501,20 +5550,30 @@ compress.probes=function( D, idx, min.cor=0.8, min.var=0.1 ){
             }
         }
         if(sum(keep)==0){
-           # No two probes with sufficient correlation; default to mean of all
-           keep[!keep]=T
+           # No two probes with sufficient correlation; default to maxVar
+           #keep[!keep]=T
+           keep = rep(F, length(idx) )
+           ee[ which( vars[idx] == max(vars[idx]) ), ] 
         }
-        colMeans(ee[keep,], na.rm=T)
+        else{
+            colMeans(ee[keep,], na.rm=T)
+        }
     }
 }
 
 
-match.idx = function(A, B, allow.multiple.B=False){
+match.idx = function(A, B, allow.multiple.B=F){
     # return dataframe of indices into A and B restricted to perfect matches
     # between A and B, where idx.A[i] == idx.B[i] for each i in matched pairs
-    in.both = intersect(A,B)
-    idx.A = match(in.both, A)
-    idx.B = match(in.both, B)
+    if( allow.multiple.B ){
+        idx.B = which(B %in% A)
+        idx.A = match(B[idx.B], A)
+    }
+    else{
+        in.both = intersect(A,B)
+        idx.A = match(in.both, A)
+        idx.B = match(in.both, B)
+    }
     C= data.frame(idx.A, idx.B)
     if( sum( A[ C$idx.A ] != B[ C$idx.B] )>0 )
         stop("ERROR! At least one in idx.A not the same as matched item in idx.B")
