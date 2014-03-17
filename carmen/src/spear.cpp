@@ -1038,6 +1038,9 @@ void Spearman::calculate_ranks( Matrix<float>* raw_data, int row, std::vector<in
 }
 
 
+
+
+
 bool Spearman::get_mean_difference(double& meanA, double& meanB){
 	// calculates the mean correlation coefficients in class A compared to class B
 	double sumA=0, sumB = 0;
@@ -1186,14 +1189,15 @@ double Spearman::find_spearman( Matrix<float>* raw_data1, int row1, std::vector<
 		calculate_ranks( raw_data1, row1, sample_idx1, ranks1 );
 		calculate_ranks( raw_data2, row2, sample_idx2, ranks2 );
 	}
-
 	double sigma_d2=0, d=0;
 	if(N>0){
-		for(int i=0; i<N; i++){
+		double N_dbl = (double)N; // avoid overflow problems incurred with very large N (>15000)
+        for(int i=0; i<N; i++){
 			d = ranks1.at(i) - ranks2.at(i);
 			sigma_d2 += (d * d);
 		}
-		return 1.0 - (6 * sigma_d2 / ( (N*N*N) - N ) );
+        double Ns = (N_dbl*N_dbl*N_dbl)-N_dbl;
+		return 1.0 - (6.0 * sigma_d2 / Ns );
 	}
 	else
 		return 0; // XXX really should return a flag to indicate NA
@@ -1257,6 +1261,96 @@ double Spearman::fisher_zscore(double rhoA, double rhoB, int nA, int nB){
 	double transA = 0.5 * log( (1+rhoA)/(1-rhoA) );
 	double transB = 0.5 * log( (1+rhoB)/(1-rhoB) );
 	return (transA - transB) / ( sqrt( (1/double(nA-3) ) + (1/double(nB-3)) ) );
+}
+
+
+void Spearman::calculate_rewiring_coefficient(){
+    // store results in spears rho_a
+	this->success=false;
+	for(int i=0; i<(int)spears.size(); i++){
+		delete spears.at(i);
+	}
+	spears.clear();
+    load_data_for_run();
+	prune_data_by_seeds();
+    if( this->verbose ){
+        std::cout << "MESSAGE: Data load complete\n";
+        std::cout.flush();
+    }
+
+    bool is_spearman = true;
+	if(this->corr_type.compare("spearman") != 0)
+		is_spearman = false;
+	int i, j=0, row1, row2;
+	double rho_a;
+	Matrix<double>* ranks_a = new Matrix<double>();
+	Matrix<double>* ranks_b = new Matrix<double>();
+    
+    Graph seen;
+    double edge_weight; // not set, need for function call
+    std::vector<int>* seed_idx;
+    
+    if( this->seeds.size()>0 ){
+        seed_idx = new std::vector<int>();
+        for(int i=0; i<(int)this->seeds.size(); i++){
+            seed_idx->push_back( this->data->raw_data->identifier2idx[seeds.at(i)] );
+        }
+    }
+	else{
+		seed_idx = &(this->idx); // set seed_idx to all valid probesets
+	}
+    int N = (int)seed_idx->size();
+    
+    std::vector<int>* all_columns = new std::vector<int>();
+    for(int i=0;i<N;i++){
+        all_columns->push_back(i);
+    }
+    if( is_spearman ){
+		std::vector<int> valid_cols;
+		this->find_ranks(this->data->raw_data->data, *(this->data->a_idx), ranks_a);
+        this->find_ranks(this->data->raw_data->data, *(this->data->b_idx), ranks_b);
+	}
+    
+    // We'd like to re-use the find_spearman() code which is already written and tested.
+    // when we calculate correlation, that is between two rows, meaning a wide matrix
+    // Do this, we will transpose the matrix before
+    Matrix<float>* rhos = new Matrix<float>(2, N);
+    
+    // store correlations in vector of doubles
+    std::vector<double> rhos_a, rhos_b;
+    for(i=0; i<N; i++){
+        row1 = seed_idx->at(i);
+        rhos_a.clear();
+        rhos_b.clear();
+        seen.clear();
+        for(j=0; j<(int)idx.size(); j++){ // intersect(seed_idx, idx) may be (1) a subset of idx or (2) equal to idx.
+            
+            row2 = idx.at(j);
+            if(row1==row2)
+                continue;
+            if( seen.has_edge(row1, row2, edge_weight ) ) // avoiding  {12, 32} and {32, 12}, see note above
+                continue;
+            else
+                seen.add_edge(row1, row2, 0.0);
+            if( is_spearman ){
+                rhos->arr[0][j] = (float)this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
+                rhos->arr[1][j] = (float)this->find_spearman_from_ranks( ranks_b, row1, ranks_b, row2);
+            }
+            else{
+                rhos->arr[0][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
+            	rhos->arr[1][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->b_idx, this->data->raw_data->data, row2, this->data->b_idx);
+            }
+        }
+        rho_a = find_spearman( rhos, 0, all_columns, rhos, 1, all_columns);
+        this->spears.push_back(new Spear(rho_a, 0, row1, row2, 0 ) );
+
+		if(this->verbose && i % 100==0){
+			std::cout << "MESSAGE: Completed row " << i+1 << " of " << N << "...\n";
+			std::cout.flush();
+		}
+	}
+    
+    this->success=true;
 }
 
 
@@ -1958,6 +2052,43 @@ void Spearman::print_distribution(){
 	}
 }
 
+
+void Spearman::write_rewiring_coefficient(){
+    if( this->verbose ){
+        std::cout << "MESSAGE: Writing to " << this->fn_out << "\n";
+        std::cout.flush();
+    }
+    std::ofstream f_out(this->fn_out.c_str());
+	if( !f_out.is_open() )
+		throw std::string( "Unable to open file for writing:" + this->fn_out );
+	std::string header;
+	this->generate_result_header(header);
+	f_out << header;
+    std::string id1;
+	Spear* spear;
+    std::string gene_name_col = this->ga->get_gene_name_column();
+    for(int i=0; i<(int)this->spears.size(); i++){
+        spear = this->spears.at(i);
+        id1 = this->ga->identifiers.at( spear->row_1() );
+        f_out << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << id1 << "\t" << spear->rho_a() << "\n";
+    }
+    f_out.close();
+}
+
+void Spearman::print_rewiring_coefficient(){
+	std::string header;
+	this->generate_result_header(header);
+    std::cout << header;
+    std::string id1;
+	Spear* spear;
+    std::string gene_name_col = this->ga->get_gene_name_column();
+    for(int i=0; i<(int)this->spears.size(); i++){
+        spear = this->spears.at(i);
+        id1 = this->ga->identifiers.at( spear->row_1() );
+        std::cout << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << id1 << "\t" << spear->rho_a() << "\n";
+    }
+}
+
 void Spearman::write_spears(){
 
 	if(this->verbose){
@@ -2369,8 +2500,6 @@ void Spearman::run_DC(Rowpair_iterator* RPI, std::vector<int>* pvalue_distributi
 		delete ranks_perms_b.at(i);
 	}
 }
-
-
 
 void Spearman::run(){
     std::cout.flush();

@@ -86,7 +86,8 @@ public:
 	Spearman();
 	Spearman(std::string fn_in, Attributes* ga);
 	double correlation(Matrix<float>* A, Matrix<float>* B, std::string method);
-	void calculate_differential_correlation_by_probesets(ProbeSets& ps, std::vector<DifferentalCorrelationResult*>& results);
+	void calculate_rewiring_coefficient();
+    void calculate_differential_correlation_by_probesets(ProbeSets& ps, std::vector<DifferentalCorrelationResult*>& results);
 	double find_var(std::vector<double>* C);
 	bool get_mean_difference(double& meanA, double& meanB);
 	int get_n_probes_to_process();
@@ -126,6 +127,8 @@ public:
 	void results(std::vector< Spear* >& spears);
 	void print_spears();
 	void write_spears();
+    void print_rewiring_coefficient();
+	void write_rewiring_coefficient();
 	void print_distribution();
 	void write_distribution();
 	int n_spears();

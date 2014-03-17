@@ -34,6 +34,12 @@ using namespace boost;
  * By passing in only one class, you can find genes that are
  * correlated in a single group.  By passing in two non-intersecting classes,
  * you can find genes whose correlation changes between two groups.
+ * 
+ * The rewiring coefficient_P for each probe P is:
+ * for each probe P
+ *    cors_a = cor( P vs !P ) for samples in A // one entry for each probe
+ *    cors_b = cor( P vs !P ) for samples in B // one entry for each probe
+ *    coefficient_P = cor( cors_a, cors_b )
  */
 
 int main(int argc, char *argv[]){
@@ -48,6 +54,8 @@ int main(int argc, char *argv[]){
     options->push_back( new Option("corr_type", "t", "Method of correlation, {spearman,pearson}, default spearman", "spearman", OPT_OPTIONAL));
 	options->push_back( new Option("probe", "p", "Restrict calculation to first degree neighbors of these seed probes, comma delimited", "", OPT_OPTIONAL));
 	options->push_back( new Option("include_seed_neighbor_corr", "r", "If T, calculate correlation between seed neighbors, default F", "F", OPT_OPTIONAL));
+	options->push_back( new Option("rewiring_coefficient", "w", "If T, calculate rewiring coefficient for all probes in class A and class B, default F", "F", OPT_OPTIONAL));
+    
 	options->push_back( new Option("limit_to_seeds", "l", "If T, limit correlation to those between seeds default F", "F", OPT_OPTIONAL));
 	options->push_back( new Option("min_var", "m", "Minimum variance across all samples", "0", OPT_OPTIONAL));
 	options->push_back( new Option("percent_present", "n", "Require this fraction present in each group, default 0.9", "0.9", OPT_OPTIONAL));
@@ -95,7 +103,15 @@ int main(int argc, char *argv[]){
 	ss << "of use is the correlation coefficient for class A; this represents the single strongest\n";
 	ss << "correlation result in all probe comparisons for one permutation of the true data. To\n";
 	ss << "identify the 5% GWER, report the 50th-highest value when --perms=1000\n";
-
+    
+    ss << "REWIRING COEFFICIENT\n";
+    ss << "To calculate the genome-wide change in correlation for each probe between two conditions,\n";
+    ss << "The rewiring coefficient_P for each probe P is:\n";
+    ss << "for each probe P\n";
+    ss << "  cors_a = cor( P vs !P ) for samples in A\n";
+    ss << "  cors_b = cor( P vs !P ) for samples in B\n";
+    ss << "  coefficient_P = cor( cors_a, cors_b )\n";
+    
 	int retval=read_args(argc, argv, options, ss.str());
 	if( retval==-2 )
 		return(0);
@@ -131,8 +147,11 @@ int main(int argc, char *argv[]){
 
 	bool include_seed_neighbors=false;
 	bool limit_network_to_seeds=false;
+    bool calculate_rewiring_coefficient=false;
 	if(options->at(r++)->value.compare("T")==0)
 		include_seed_neighbors = true;
+	if(options->at(r++)->value.compare("T")==0)
+		calculate_rewiring_coefficient = true;
 	if(options->at(r++)->value.compare("T")==0)
 		limit_network_to_seeds = true;
 	if( (include_seed_neighbors || limit_network_to_seeds) && seeds.size()==0 ){
@@ -181,20 +200,42 @@ int main(int argc, char *argv[]){
 		sp.set_n_permutations( n_perms );
 		if(options->at(r++)->value.compare("T")==0)
 			sp.set_verbose(true);
-		sp.run();
-		if( sp.get_success() ){
-			if( do_distribution ){
-				if( fn_out.length() > 0 )
-					sp.write_distribution();
-				else
-					sp.print_distribution();
-			}
-			else{
-				if( fn_out.length() > 0 )
-					sp.write_spears();
-				else
-					sp.print_spears();
-			}
+        
+        if( calculate_rewiring_coefficient ){
+            if( (int)limit_b.size()==0 ){
+                std::cout << "ERROR: when passing -WT (calculate rewiring coefficient), required to pass class_b_limit";
+                return 0;
+            } 
+            sp.calculate_rewiring_coefficient();
+            if( sp.get_success() ){
+                if( fn_out.length() > 0 ){
+                    sp.write_rewiring_coefficient();
+                }
+                else{
+                    sp.print_rewiring_coefficient();
+                }
+            }
+        }
+        else{
+            sp.run();
+            if( sp.get_success() ){
+                if( do_distribution ){
+                    if( fn_out.length() > 0 ){
+                        sp.write_distribution();
+                    }
+                    else{
+                        sp.print_distribution();
+                    }
+                }
+                else{
+                    if( fn_out.length() > 0 ){
+                        sp.write_spears();
+                    }
+                    else{
+                        sp.print_spears();
+                    }
+                }
+            }
 		}
     }
 
