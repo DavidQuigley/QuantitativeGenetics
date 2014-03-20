@@ -3250,7 +3250,7 @@ cor.test.probe.vs.all=function( expr, symbols, probe, percent.present=0.90, meth
             }
         }
         options(warn=0)
-        d = data.frame(symbols, rho=round(rhos,3), pval=signif(pvals,4))
+        d = data.frame(symbols, rho=round(rhos,3), pval=signif(pvals,4), stringsAsFactors=F)
         rownames(d) = rownames(expr)
         d = d[ order(d$pval, 1-abs(d$rho)), ]
         d
