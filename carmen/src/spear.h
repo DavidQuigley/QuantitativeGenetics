@@ -33,11 +33,10 @@ public:
 
 class RewiringResult{
 public:
-    RewiringResult(int row_1, double rho_a, double z_score, double p_perm, int n_z_lt5, int n_z_5_6, int n_z_6_7, int n_z_7_8, int n_z_8_9, int n_z_gt9 );
+    RewiringResult(int row_1, double z_sum, double p_perm, int n_z_lt5, int n_z_5_6, int n_z_6_7, int n_z_7_8, int n_z_8_9, int n_z_gt9 );
     
-    double rho_a();
     int row_1();
-    double z_score();
+    double z_sum();
     int n_z_lt5();
     int n_z_5_6();
     int n_z_6_7();
@@ -46,7 +45,7 @@ public:
     int n_z_gt9();
     double p_perm();
     void increment_p_perm(double value);
-    double row1, rhoa, zscore, z_lt5, z_5_6, z_6_7, z_7_8, z_8_9, z_gt9, pperm;
+    double row1, rhoa, zsum, z_lt5, z_5_6, z_6_7, z_7_8, z_8_9, z_gt9, pperm;
 };
 
 class Sorter{

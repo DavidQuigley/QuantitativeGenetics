@@ -150,20 +150,16 @@ void CacheHash::clear(int idx){
 	}
 }
 
-RewiringResult::RewiringResult(int row_1, double rho_a, double z_score, double p_perm, int n_z_lt5, int n_z_5_6, int n_z_6_7, int n_z_7_8, int n_z_8_9, int n_z_gt9 ) : row1(row_1), rhoa(rho_a), zscore(z_score), pperm(p_perm), z_lt5(n_z_lt5), z_5_6(n_z_5_6), z_6_7(n_z_6_7), z_7_8(n_z_7_8), z_8_9(n_z_8_9), z_gt9(n_z_gt9){
+RewiringResult::RewiringResult(int row_1, double z_sum, double p_perm, int n_z_lt5, int n_z_5_6, int n_z_6_7, int n_z_7_8, int n_z_8_9, int n_z_gt9 ) : row1(row_1),  zsum(z_sum), pperm(p_perm), z_lt5(n_z_lt5), z_5_6(n_z_5_6), z_6_7(n_z_6_7), z_7_8(n_z_7_8), z_8_9(n_z_8_9), z_gt9(n_z_gt9){
     
-}
-
-double RewiringResult::rho_a(){
-    return this->rhoa;
 }
 
 int RewiringResult::row_1(){
     return this->row1;
 }
 
-double RewiringResult::z_score(){
-    return this->zscore;
+double RewiringResult::z_sum(){
+    return this->zsum;
 }
 
 int RewiringResult::n_z_lt5(){
@@ -1396,17 +1392,11 @@ void Spearman::process_rewiring_in_thread(int thread_id ){
 		seed_idx = &(this->idx);
 	}
     int N = (int)seed_idx->size();
-    int n_probes = int(this->idx.size());
     
     std::vector<int> perm_a_idx, perm_b_idx;
     Matrix<double>* ranks_a_perm = new Matrix<double>();
 	Matrix<double>* ranks_b_perm = new Matrix<double>();
-    std::vector<int>* all_columns = new std::vector<int>();
-    for(int i=0; i<n_probes; i++){
-        all_columns->push_back(i);
-    }
-    Matrix<float>* rhos = new Matrix<float>(2, n_probes); // two rows, one for each condition
-    
+    double rho_a, rho_b;
     bool is_spearman = true;
 	if(this->corr_type.compare("spearman") != 0){
 		is_spearman = false;
@@ -1438,26 +1428,39 @@ void Spearman::process_rewiring_in_thread(int thread_id ){
                 if(row1==row2)
                     continue;
                 if( is_spearman ){
-                    rhos->arr[0][j] = (float)this->find_spearman_from_ranks( ranks_a_perm, row1, ranks_a_perm, row2);
-                    rhos->arr[1][j] = (float)this->find_spearman_from_ranks( ranks_b_perm, row1, ranks_b_perm, row2);
+                    rho_a = (float)this->find_spearman_from_ranks( ranks_a_perm, row1, ranks_a_perm, row2);
+                    rho_b = (float)this->find_spearman_from_ranks( ranks_b_perm, row1, ranks_b_perm, row2);
                 }
                 else{
-                    rhos->arr[0][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, &perm_a_idx, this->data->raw_data->data, row2, &perm_a_idx); // note permutation idx
-                    rhos->arr[1][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, &perm_b_idx, this->data->raw_data->data, row2, &perm_b_idx);
+                    rho_a = (float)this->find_correlation_r( this->data->raw_data->data, row1, &perm_a_idx, this->data->raw_data->data, row2, &perm_a_idx); // note permutation idx
+                    rho_b = (float)this->find_correlation_r( this->data->raw_data->data, row1, &perm_b_idx, this->data->raw_data->data, row2, &perm_b_idx);
                 }
-                z_val = this->fisher_zscore(rhos->arr[0][j], rhos->arr[1][j], this->permutations_idx_a->cols(), this->permutations_idx_b->cols() );
+                z_val = this->fisher_zscore(rho_a, rho_b, this->permutations_idx_a->cols(), this->permutations_idx_b->cols() );
                 if(z_val<0){
-                    z_val = -1.0 * z_val; // had truncation problems with abs()
+                    z_val = -1.0 * z_val; // had trouble with abs()
                 }
-                z_sum_perm += z_val;
+                if( abs(rho_a)<abs(rho_b) ){
+                    z_sum_perm += z_val; // correlation magnitude increased
+                }
+                else{
+                    z_sum_perm -= z_val; // correlation magnitude decreased
+                }
             }
-            if( z_sum_perm > rewiring_results.at(i)->z_score() ){
+            z_sum_perm = z_sum_perm / double( idx.size() ); // normalize by number of probes           
+            if( abs(z_sum_perm) > abs(rewiring_results.at(i)->z_sum()) ){
                 boost::mutex::scoped_lock lock( this->results_mutex );
                 rewiring_results.at(i)->increment_p_perm( 1.0 / double(n_perms) );
             }
-            if(this->verbose & (i % 5000 == 0) ){
+            if(this->verbose & (i>1) & (i % 5000 == 0) ){
                 boost::mutex::scoped_lock lock( this->io_mutex );
-                std::cout << "MESSAGE: Thread " << thread_id+1 << " completed row " << i+1 << " of " << N << " in permutation " << permutation_number+1 << "\n";
+                char timebuf[80];
+                struct tm* newtime;
+                time_t long_time;
+                time( &long_time );
+                newtime = localtime( &long_time );
+                strftime(timebuf, 80, "%H_%M_%S", newtime);
+                std::string timeout(timebuf);
+                std::cout << "MESSAGE: " << timeout << " thread " << thread_id+1 << " completed row " << i+1 << " of " << N << " in permutation " << permutation_number+1 << "\n";
                 std::cout.flush();
             }
         }
@@ -1472,9 +1475,9 @@ void Spearman::process_rewiring_in_thread(int thread_id ){
 
 
 void Spearman::calculate_rewiring_coefficient(){
-    // this code will calculate the correlation between each probe and all others in two separate conditions.
-    // It then compares the correlation values in condition 1 to those in condition 2 by calculating a z score for the
-    // difference in correlations. The null model is no change, which produces a Z of 0.
+    // positive z_sum indicates that on the whole correlation is being created in B compared to A.
+    // negative z_sum indicates that on the whole correlation is being removed in B compared to A.
+    // the null hypothesis is that z_sum is 0.
     
     // Initialize. Store values in this->rewiring_results.
 	this->success=false;
@@ -1490,7 +1493,7 @@ void Spearman::calculate_rewiring_coefficient(){
     }
     
     int i, j=0, row1, row2;
-	double rho_a;
+	double rho_a, rho_b;
 	Matrix<double>* ranks_a = new Matrix<double>(); // stored ranks for spearman rank correlation
 	Matrix<double>* ranks_b = new Matrix<double>();
     std::vector<int> perm_a_idx, perm_b_idx;
@@ -1512,16 +1515,6 @@ void Spearman::calculate_rewiring_coefficient(){
 		seed_idx = &(this->idx);
 	}
     int N = (int)seed_idx->size();
-    int n_probes = int(this->idx.size());
-    
-    
-    // all_columns has same length as number of probes, used to calculate correlation between
-    // Z scores in two conditions.
-    std::vector<int>* all_columns = new std::vector<int>();
-    for(int i=0; i<n_probes; i++){
-        all_columns->push_back(i);
-    }
-    Matrix<float>* rhos = new Matrix<float>(2, n_probes); // two rows, one for each condition
     
     bool is_spearman = true;
 	if(this->corr_type.compare("spearman") != 0){
@@ -1532,11 +1525,6 @@ void Spearman::calculate_rewiring_coefficient(){
         this->find_ranks(this->data->raw_data->data, *(this->data->b_idx), ranks_b);
     }
     std::vector<thread*> threads;
-
-        
-    // We'd like to re-use the find_spearman() code which is already written and tested.
-    // when we calculate correlation, that is between two rows, meaning a wide matrix
-    // Do this, we will transpose the matrix before
       
     for(i=0; i<N; i++){
         row1 = seed_idx->at(i);
@@ -1547,16 +1535,22 @@ void Spearman::calculate_rewiring_coefficient(){
             if(row1==row2)
                 continue;
             if( is_spearman ){
-                rhos->arr[0][j] = (float)this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
-                rhos->arr[1][j] = (float)this->find_spearman_from_ranks( ranks_b, row1, ranks_b, row2);
+                rho_a = (float)this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
+                rho_b = (float)this->find_spearman_from_ranks( ranks_b, row1, ranks_b, row2);
             }
             else{
-                rhos->arr[0][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
-            	rhos->arr[1][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->b_idx, this->data->raw_data->data, row2, this->data->b_idx);
+                rho_a = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
+            	rho_b = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->b_idx, this->data->raw_data->data, row2, this->data->b_idx);
             }
-            z_val = this->fisher_zscore(rhos->arr[0][j], rhos->arr[1][j], n_A, n_B);
+            z_val = this->fisher_zscore(rho_a, rho_b, n_A, n_B);
             if(z_val<0){
                 z_val = -1.0 * z_val; // had trouble with abs()
+            }
+            if( abs(rho_a)<abs(rho_b) ){
+                z_sum += z_val; // correlation magnitude increased
+            }
+            else{
+                z_sum -= z_val; // correlation magnitude decreased
             }
             if(z_val<=5){      n_z_lt5++; }
             else if(z_val<=6){ n_z_5_6++; }
@@ -1564,10 +1558,9 @@ void Spearman::calculate_rewiring_coefficient(){
             else if(z_val<=8){ n_z_7_8++; }
             else if(z_val<=9){ n_z_8_9++; }
             else{              n_z_gt9++; }
-            z_sum += z_val;
         }
-        rho_a = find_spearman( rhos, 0, all_columns, rhos, 1, all_columns);
-        this->rewiring_results.push_back(new RewiringResult(row1, rho_a, z_sum, p_perm, n_z_lt5, n_z_5_6, n_z_6_7, n_z_7_8, n_z_8_9, n_z_gt9 ) );
+        z_sum = z_sum / double( idx.size() ); // normalize by number of probes
+        this->rewiring_results.push_back(new RewiringResult(row1, z_sum, p_perm, n_z_lt5, n_z_5_6, n_z_6_7, n_z_7_8, n_z_8_9, n_z_gt9 ) );
         if(this->verbose & (i % 100 == 0) ){
 			std::cout << "MESSAGE: Completed row " << i+1 << " of " << N << "...\n";
 			std::cout.flush();
@@ -1610,7 +1603,6 @@ void Spearman::calculate_rewiring_coefficient(){
     }
     delete ranks_a;
     delete ranks_b;
-    delete rhos;
     this->success=true;
 }
 /*
@@ -2442,12 +2434,12 @@ void Spearman::write_rewiring_coefficient(){
 	RewiringResult* result;
     std::string gene_name_col = this->ga->get_gene_name_column();
     f_out << "# Analysis rewiring_coefficient\n";
-    f_out << "#probe\tsymbol\trho\tz_sum\tp.perm\tz.lt5\tz.5_6\tz.6_7\tz.7_8\tz.8_9\tz.gt9\n";
+    f_out << "#probe\tsymbol\tz_sum\tp.perm\tz.lt5\tz.5_6\tz.6_7\tz.7_8\tz.8_9\tz.gt9\n";
     for(int i=0; i<(int)this->rewiring_results.size(); i++){
         result = this->rewiring_results.at(i);
         id1 = this->ga->identifiers.at( result->row_1() );
-        f_out << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << std::fixed << std::setprecision(2) << result->rho_a() << "\t";
-        f_out << std::fixed << std::setprecision(0) << result->z_score() << "\t";
+        f_out << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t";
+        f_out << std::fixed << std::setprecision(0) << result->z_sum() << "\t";
         f_out << std::fixed << std::setprecision(5) << result->p_perm() << "\t";
         f_out << result->n_z_lt5() << "\t" << result->n_z_5_6() << "\t" << result->n_z_6_7() << "\t" << result->n_z_7_8() << "\t" << result->n_z_8_9() << "\t" << result->n_z_gt9() << "\n";
     }
@@ -2462,12 +2454,12 @@ void Spearman::print_rewiring_coefficient(){
 	RewiringResult* result;
     std::string gene_name_col = this->ga->get_gene_name_column();
     std::cout << "# Analysis rewiring_coefficient\n";
-    std::cout << "#probe\tsymbol\trho\tz_sum\tz.lt5\tz.5_6\tz.6_7\tz.7_8\tz.8_9\tz.gt9\n";
+    std::cout << "#probe\tsymbol\tz_sum\tp_perm\tz.lt5\tz.5_6\tz.6_7\tz.7_8\tz.8_9\tz.gt9\n";
     for(int i=0; i<(int)this->rewiring_results.size(); i++){
         result = this->rewiring_results.at(i);
         id1 = this->ga->identifiers.at( result->row_1() );
-        std::cout << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << std::fixed << std::setprecision(2) << result->rho_a() << "\t";
-        std::cout << std::fixed << std::setprecision(0) << result->z_score() << "\t";
+        std::cout << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t";
+        std::cout << std::fixed << std::setprecision(3) << result->z_sum() << "\t";
         std::cout << std::fixed << std::setprecision(5) << result->p_perm() << "\t";
         std::cout << result->n_z_lt5() << "\t" << result->n_z_5_6() << "\t" << result->n_z_6_7() << "\t" << result->n_z_7_8() << "\t" << result->n_z_8_9() << "\t" << result->n_z_gt9() << "\n";
     }
