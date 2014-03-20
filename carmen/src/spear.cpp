@@ -2439,7 +2439,7 @@ void Spearman::write_rewiring_coefficient(){
         result = this->rewiring_results.at(i);
         id1 = this->ga->identifiers.at( result->row_1() );
         f_out << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t";
-        f_out << std::fixed << std::setprecision(0) << result->z_sum() << "\t";
+        f_out << std::fixed << std::setprecision(3) << result->z_sum() << "\t";
         f_out << std::fixed << std::setprecision(5) << result->p_perm() << "\t";
         f_out << result->n_z_lt5() << "\t" << result->n_z_5_6() << "\t" << result->n_z_6_7() << "\t" << result->n_z_7_8() << "\t" << result->n_z_8_9() << "\t" << result->n_z_gt9() << "\n";
     }
