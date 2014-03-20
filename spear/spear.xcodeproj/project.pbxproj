@@ -136,26 +136,26 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/boost_1_46_1,
+					/usr/local/boost_1_54_0,
 					/Users/dquigley/Documents/notebook/code/src/carmen/src,
 				);
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/boost_1_46_1/stage/lib64,
+					/usr/local/boost_1_54_0/stage/lib64,
 					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release64,
 				);
 				OTHER_LDFLAGS = (
-					"-l",
-					boost_regex,
-					"-l",
-					carmen,
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_regex",
+					"-lcarmen",
 				);
 				PRODUCT_NAME = spear;
 				SDKROOT = macosx10.7;
@@ -167,17 +167,24 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ARCHS = "$(ARCHS_STANDARD_32_64_BIT)";
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				HEADER_SEARCH_PATHS = (
-					/usr/local/boost_1_46_1,
+					/usr/local/boost_1_54_0,
 					/Users/dquigley/Documents/notebook/code/src/carmen/src,
 				);
 				INSTALL_PATH = /usr/local/bin;
 				LIBRARY_SEARCH_PATHS = (
-					/usr/local/boost_1_46_1/stage/lib64,
+					/usr/local/boost_1_54_0/stage/lib64,
 					/Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release64,
+				);
+				OTHER_LDFLAGS = (
+					"-lboost_system",
+					"-lboost_thread",
+					"-lboost_regex",
+					"-lcarmen",
 				);
 				PRODUCT_NAME = spear;
 				SDKROOT = macosx10.7;

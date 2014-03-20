@@ -321,6 +321,7 @@
 				HEADER_SEARCH_PATHS = /usr/local/boost_1_54_0;
 				INSTALL_PATH = /usr/lib;
 				"LIBRARY_SEARCH_PATHS[arch=i386]" = /usr/local/boost_1_54_0/stage/lib32;
+				"OTHER_LDFLAGS[arch=*]" = "-lboost_thread";
 				PRODUCT_NAME = Carmen;
 				SDKROOT = macosx10.5;
 				SYMROOT = build;

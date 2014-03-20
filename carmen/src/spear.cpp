@@ -7,9 +7,13 @@
 #include <algorithm>
 #include "math.h"
 using namespace std;
+using namespace boost;
 #include <boost/tokenizer.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread/mutex.hpp>
 #include "DataStructures.h"
 #include "ClassMinerOptions.h"
 #include "Rawdata.h"
@@ -22,7 +26,7 @@ using namespace std;
 
 /*
  * David Quigley
- * UCSF Hellen Diller Family Comprehensive Cancer Center, 2007-2012
+ * UCSF Hellen Diller Family Comprehensive Cancer Center, 2007-2014
  *
  * Spear is used for various operations that include a measure of correlation between
  * rows of elements. When Spearman rank correlation is calculated ties are ranked using
@@ -144,6 +148,48 @@ void CacheHash::clear(int idx){
 		delete v;
 		hsh.erase(idx);
 	}
+}
+
+RewiringResult::RewiringResult(int row_1, double rho_a, double z_score, double p_perm, int n_z_lt5, int n_z_5_6, int n_z_6_7, int n_z_7_8, int n_z_8_9, int n_z_gt9 ) : row1(row_1), rhoa(rho_a), zscore(z_score), pperm(p_perm), z_lt5(n_z_lt5), z_5_6(n_z_5_6), z_6_7(n_z_6_7), z_7_8(n_z_7_8), z_8_9(n_z_8_9), z_gt9(n_z_gt9){
+    
+}
+
+double RewiringResult::rho_a(){
+    return this->rhoa;
+}
+
+int RewiringResult::row_1(){
+    return this->row1;
+}
+
+double RewiringResult::z_score(){
+    return this->zscore;
+}
+
+int RewiringResult::n_z_lt5(){
+    return this->z_lt5;
+}
+int RewiringResult::n_z_5_6(){
+    return this->z_5_6;
+}
+int RewiringResult::n_z_6_7(){
+    return this->z_6_7;
+}
+int RewiringResult::n_z_7_8(){
+    return this->z_7_8;
+}
+int RewiringResult::n_z_8_9(){
+    return this->z_8_9;
+}
+int RewiringResult::n_z_gt9(){
+    return this->z_gt9;
+}
+double RewiringResult::p_perm(){
+    return this->pperm;
+}
+
+void RewiringResult::increment_p_perm(double value){
+    this->pperm += value;
 }
 
 /*
@@ -330,6 +376,8 @@ Spearman::Spearman(){
 	this->fn_out = std::string("");
 	this->fn_eqtl = std::string("");
 	this->n_perms = 0;
+    this->current_permutation=0;
+    this->n_threads=1;
 	this->limit_network_to_seeds = false;
 	this->min_clique_size = 0;
 	this->include_seed_neighbor_correlations = false;
@@ -337,6 +385,8 @@ Spearman::Spearman(){
 	this->data = NULL;
 	this->ga = NULL;
 	this->sa = NULL;
+    this->permutations_idx_a=NULL;
+    this->permutations_idx_b=NULL;
 	this->do_distribution=false;
 	this->batch_extension = std::string("bat");
 	this->fn_cytoscape = std::string("");
@@ -387,6 +437,8 @@ Spearman::Spearman(std::string fn_in, Attributes* ga){
 	}
 
 	this->n_perms=0;
+    this->current_permutation=0;
+    this->n_threads=1;
 	this->limit_network_to_seeds = false;
 	this->min_clique_size=0;
 	this->do_distribution=false;
@@ -406,6 +458,12 @@ Spearman::~Spearman(){
 		delete this->sa;
 	for(int i=0; i<(int)spears.size(); i++)
 		delete this->spears.at(i);
+    for(int i=0; i<(int)rewiring_results.size(); i++)
+        delete this->rewiring_results.at(i);
+    if( this->permutations_idx_a != NULL )
+        delete this->permutations_idx_a;
+    if( this->permutations_idx_b != NULL )
+        delete this->permutations_idx_b;
 	this->data = NULL;
 	this->ga = NULL;
 	this->sa = NULL;
@@ -551,6 +609,10 @@ void Spearman::set_fn_eqtl( std::string fn){
 
 void Spearman::set_fn_out( std::string fn_out){
 	this->fn_out = fn_out;
+}
+
+void Spearman::set_n_threads( int n_threads ){
+    this->n_threads=n_threads;
 }
 
 void Spearman::set_column_extra_attributes(std::string col){
@@ -1059,6 +1121,32 @@ bool Spearman::get_mean_difference(double& meanA, double& meanB){
 }
 
 
+void Spearman::permute_group_labels_persistent( std::vector<int>* a_idx, std::vector<int>* b_idx, std::vector<int>& a_idx_perm, std::vector<int>& b_idx_perm, boost::mt19937& rng ){
+	// Given true class labels passed in: a_idx and b_idx,
+	// Mixes sample labels across two groups with results stored in a_idx_perm and b_idx_perm.
+	std::vector<int> perm;
+	for(int i=0; i<int( a_idx->size() ); i++)
+		perm.push_back( a_idx->at(i) );
+	if( b_idx != NULL ){
+		for(int i=0; i<int( b_idx->size() ); i++)
+			perm.push_back( b_idx->at(i) );
+	}
+    //http://stackoverflow.com/questions/4778797/setting-seed-boostrandom
+    
+    boost::random_number_generator<boost::mt19937> generator( rng );
+    
+	std::random_shuffle(perm.begin(), perm.end(), generator );
+	a_idx_perm.clear();
+	b_idx_perm.clear();
+	for(int i=0; i<int( a_idx->size() ); i++)
+		a_idx_perm.push_back(perm.at(i));
+	if(b_idx != NULL){
+		for(int i=int( a_idx->size() ); i<int( perm.size() ); i++ )
+			b_idx_perm.push_back(perm.at(i));
+	}
+}
+
+
 
 void Spearman::permute_group_labels( std::vector<int>* a_idx, std::vector<int>* b_idx, std::vector<int>& a_idx_perm, std::vector<int>& b_idx_perm ){
 	// Given true class labels passed in: a_idx and b_idx,
@@ -1070,8 +1158,12 @@ void Spearman::permute_group_labels( std::vector<int>* a_idx, std::vector<int>* 
 		for(int i=0; i<int( b_idx->size() ); i++)
 			perm.push_back( b_idx->at(i) );
 	}
-	boost::mt19937 state;
-	RNG generator(state);
+    //http://stackoverflow.com/questions/4778797/setting-seed-boostrandom
+    
+    boost::mt19937 rng;
+    rng.seed(std::time(0));
+    boost::random_number_generator<boost::mt19937> generator( rng );
+
 	std::random_shuffle(perm.begin(), perm.end(), generator );
 	a_idx_perm.clear();
 	b_idx_perm.clear();
@@ -1264,20 +1356,279 @@ double Spearman::fisher_zscore(double rhoA, double rhoB, int nA, int nB){
 }
 
 
-void Spearman::calculate_rewiring_coefficient(){
-    // store results in spears rho_a
-	this->success=false;
-	for(int i=0; i<(int)spears.size(); i++){
-		delete spears.at(i);
+//***************************************************
+// Thread worker functions
+//***************************************************
+
+
+int Spearman::request_permutation_number(){
+    // If we're done, return -1
+    // We're returning the index into idx, not the actual value of idx.
+    // This is so individual threads can report where we are in the vector;
+    // otherwise we wouldn't be able to see how far we've gotten
+    
+    // MUST be locked to continue
+    int next_permutation=-1;
+    boost::mutex::scoped_lock lock( this->thread_iter_mutex);
+    if( this->current_permutation < this->n_perms ){
+        next_permutation=this->current_permutation;
+        this->current_permutation++;
+    }
+    return next_permutation;
+}
+
+void Spearman::process_rewiring_in_thread(int thread_id ){
+    
+    // permutation indexes are pre-calculated, use the row that corresponds to the current permutation.
+    {
+        boost::mutex::scoped_lock lock( this->io_mutex );
+        std::cout << "MESSAGE: Initiated thread " << thread_id+1 << ".\n";
+    }
+    // seed_idx is either set by user, or all valid probesets
+    std::vector<int>* seed_idx;
+    if( this->seeds.size()>0 ){
+        seed_idx = new std::vector<int>();
+        for(int i=0; i<(int)this->seeds.size(); i++){
+            seed_idx->push_back( this->data->raw_data->identifier2idx[seeds.at(i)] );
+        }
+    }
+	else{
+		seed_idx = &(this->idx);
 	}
-	spears.clear();
+    int N = (int)seed_idx->size();
+    int n_probes = int(this->idx.size());
+    
+    std::vector<int> perm_a_idx, perm_b_idx;
+    Matrix<double>* ranks_a_perm = new Matrix<double>();
+	Matrix<double>* ranks_b_perm = new Matrix<double>();
+    std::vector<int>* all_columns = new std::vector<int>();
+    for(int i=0; i<n_probes; i++){
+        all_columns->push_back(i);
+    }
+    Matrix<float>* rhos = new Matrix<float>(2, n_probes); // two rows, one for each condition
+    
+    bool is_spearman = true;
+	if(this->corr_type.compare("spearman") != 0){
+		is_spearman = false;
+    }
+    
+    int row1, row2;
+    double z_sum_perm, z_val;
+    
+    int permutation_number = request_permutation_number();
+    while( permutation_number != -1 ){
+        // Fill permutation_a_idx, permutation_b_idx with correct scrambled values
+        perm_a_idx.clear();
+        perm_b_idx.clear();
+        for(int i=0; i<this->permutations_idx_a->cols(); i++){
+            perm_a_idx.push_back( this->permutations_idx_a->arr[permutation_number][i] );
+        }
+        for(int i=0; i<this->permutations_idx_b->cols(); i++){
+            perm_b_idx.push_back( this->permutations_idx_b->arr[permutation_number][i] );
+        }
+        if( is_spearman ){
+            this->find_ranks(this->data->raw_data->data, perm_a_idx, ranks_a_perm); // recalculate ranking. Expensive.
+            this->find_ranks(this->data->raw_data->data, perm_b_idx, ranks_b_perm);
+        }
+        for(int i=0; i<N; i++){
+            row1 = seed_idx->at(i);
+            z_sum_perm=0.0;
+            for(int j=0; j<(int)idx.size(); j++){ // intersect(seed_idx, idx) may be (1) a subset of idx or (2) equal to idx.
+                row2 = idx.at(j);
+                if(row1==row2)
+                    continue;
+                if( is_spearman ){
+                    rhos->arr[0][j] = (float)this->find_spearman_from_ranks( ranks_a_perm, row1, ranks_a_perm, row2);
+                    rhos->arr[1][j] = (float)this->find_spearman_from_ranks( ranks_b_perm, row1, ranks_b_perm, row2);
+                }
+                else{
+                    rhos->arr[0][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, &perm_a_idx, this->data->raw_data->data, row2, &perm_a_idx); // note permutation idx
+                    rhos->arr[1][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, &perm_b_idx, this->data->raw_data->data, row2, &perm_b_idx);
+                }
+                z_val = this->fisher_zscore(rhos->arr[0][j], rhos->arr[1][j], this->permutations_idx_a->cols(), this->permutations_idx_b->cols() );
+                if(z_val<0){
+                    z_val = -1.0 * z_val; // had truncation problems with abs()
+                }
+                z_sum_perm += z_val;
+            }
+            if( z_sum_perm > rewiring_results.at(i)->z_score() ){
+                boost::mutex::scoped_lock lock( this->results_mutex );
+                rewiring_results.at(i)->increment_p_perm( 1.0 / double(n_perms) );
+            }
+            if(this->verbose & (i % 5000 == 0) ){
+                boost::mutex::scoped_lock lock( this->io_mutex );
+                std::cout << "MESSAGE: Thread " << thread_id+1 << " completed row " << i+1 << " of " << N << " in permutation " << permutation_number+1 << "\n";
+                std::cout.flush();
+            }
+        }
+        {
+            boost::mutex::scoped_lock lock( this->io_mutex );
+            std::cout << "MESSAGE: Thread " << thread_id+1 << " completed permutation " << permutation_number+1 << ".\n";
+            std::cout.flush();
+        }
+        permutation_number = request_permutation_number();
+    }
+}
+
+
+void Spearman::calculate_rewiring_coefficient(){
+    // this code will calculate the correlation between each probe and all others in two separate conditions.
+    // It then compares the correlation values in condition 1 to those in condition 2 by calculating a z score for the
+    // difference in correlations. The null model is no change, which produces a Z of 0.
+    
+    // Initialize. Store values in this->rewiring_results.
+	this->success=false;
+	for(int i=0; i<(int)rewiring_results.size(); i++){
+		delete rewiring_results.at(i);
+	}
+	rewiring_results.clear();
     load_data_for_run();
 	prune_data_by_seeds();
     if( this->verbose ){
         std::cout << "MESSAGE: Data load complete\n";
         std::cout.flush();
     }
+    
+    int i, j=0, row1, row2;
+	double rho_a;
+	Matrix<double>* ranks_a = new Matrix<double>(); // stored ranks for spearman rank correlation
+	Matrix<double>* ranks_b = new Matrix<double>();
+    std::vector<int> perm_a_idx, perm_b_idx;
+    int n_A = int(this->data->a_idx->size());
+	int n_B = int(this->data->b_idx->size());
+    double z_sum = 0, z_val=0, p_perm=0;
+    int n_z_lt5=0, n_z_5_6=0, n_z_6_7=0, n_z_7_8=0, n_z_8_9=0, n_z_gt9=0;
+    
+    std::vector<int>* seed_idx;
+    
+    // seed_idx is either set by user, or all valid probesets
+    if( this->seeds.size()>0 ){
+        seed_idx = new std::vector<int>();
+        for(int i=0; i<(int)this->seeds.size(); i++){
+            seed_idx->push_back( this->data->raw_data->identifier2idx[seeds.at(i)] );
+        }
+    }
+	else{
+		seed_idx = &(this->idx);
+	}
+    int N = (int)seed_idx->size();
+    int n_probes = int(this->idx.size());
+    
+    
+    // all_columns has same length as number of probes, used to calculate correlation between
+    // Z scores in two conditions.
+    std::vector<int>* all_columns = new std::vector<int>();
+    for(int i=0; i<n_probes; i++){
+        all_columns->push_back(i);
+    }
+    Matrix<float>* rhos = new Matrix<float>(2, n_probes); // two rows, one for each condition
+    
+    bool is_spearman = true;
+	if(this->corr_type.compare("spearman") != 0){
+		is_spearman = false;
+    }
+    else{
+		this->find_ranks(this->data->raw_data->data, *(this->data->a_idx), ranks_a);
+        this->find_ranks(this->data->raw_data->data, *(this->data->b_idx), ranks_b);
+    }
+    std::vector<thread*> threads;
 
+        
+    // We'd like to re-use the find_spearman() code which is already written and tested.
+    // when we calculate correlation, that is between two rows, meaning a wide matrix
+    // Do this, we will transpose the matrix before
+      
+    for(i=0; i<N; i++){
+        row1 = seed_idx->at(i);
+        z_sum=0;
+        n_z_lt5=0; n_z_5_6=0; n_z_6_7=0; n_z_7_8=0; n_z_8_9=0; n_z_gt9=0;
+        for(j=0; j<(int)idx.size(); j++){ // intersect(seed_idx, idx) may be (1) a subset of idx or (2) equal to idx.
+            row2 = idx.at(j);
+            if(row1==row2)
+                continue;
+            if( is_spearman ){
+                rhos->arr[0][j] = (float)this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
+                rhos->arr[1][j] = (float)this->find_spearman_from_ranks( ranks_b, row1, ranks_b, row2);
+            }
+            else{
+                rhos->arr[0][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
+            	rhos->arr[1][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->b_idx, this->data->raw_data->data, row2, this->data->b_idx);
+            }
+            z_val = this->fisher_zscore(rhos->arr[0][j], rhos->arr[1][j], n_A, n_B);
+            if(z_val<0){
+                z_val = -1.0 * z_val; // had trouble with abs()
+            }
+            if(z_val<=5){      n_z_lt5++; }
+            else if(z_val<=6){ n_z_5_6++; }
+            else if(z_val<=7){ n_z_6_7++; }
+            else if(z_val<=8){ n_z_7_8++; }
+            else if(z_val<=9){ n_z_8_9++; }
+            else{              n_z_gt9++; }
+            z_sum += z_val;
+        }
+        rho_a = find_spearman( rhos, 0, all_columns, rhos, 1, all_columns);
+        this->rewiring_results.push_back(new RewiringResult(row1, rho_a, z_sum, p_perm, n_z_lt5, n_z_5_6, n_z_6_7, n_z_7_8, n_z_8_9, n_z_gt9 ) );
+        if(this->verbose & (i % 100 == 0) ){
+			std::cout << "MESSAGE: Completed row " << i+1 << " of " << N << "...\n";
+			std::cout.flush();
+		}
+    }
+    
+    // to assess statistical significance of a disruption, permute category assignments (a vs b)
+    // calculating ranking is expensive, so I only want to do it n_perms times.
+    // I have already calculated the observed Z scores and stored them in this->rewiring_results
+    // for each permutation,
+    //    randomly shuffle the assignment of samples into class_a and class_b
+    //    find_ranks in these new groups
+    //    calculate Z score for each gene pair; if it exceeds z_observed, increment p value
+    
+    boost::mt19937 rng;
+    rng.seed(std::time(0)); // seed RNG for permutations
+    this->permutations_idx_a = new Matrix<int>(n_perms, n_A, false, 0);
+    this->permutations_idx_b = new Matrix<int>(n_perms, n_B, false, 0);
+    for(int perm=0; perm<n_perms; perm++){
+        this->permute_group_labels_persistent( this->data->a_idx, this->data->b_idx, perm_a_idx, perm_b_idx, rng );
+        for(int i=0; i<int(perm_a_idx.size()); i++){
+            this->permutations_idx_a->arr[perm][i] = perm_a_idx.at(i);
+        }
+        for(int i=0; i<int(perm_b_idx.size()); i++){
+            this->permutations_idx_b->arr[perm][i] = perm_b_idx.at(i);
+        }
+    }
+    std::cout << "Completed permutation setup\n";
+    if( this->n_perms>0 ) {
+        this->current_permutation=0;
+        for( int thread_id=0; thread_id<this->n_threads; thread_id++){
+            threads.push_back(new thread( boost::bind( &Spearman::process_rewiring_in_thread, this, thread_id)) );
+        }
+        for( int thread_id=0; thread_id<this->n_threads; thread_id++){
+            threads.at(thread_id)->join();
+        }
+        for( int thread_id=0; thread_id<this->n_threads; thread_id++){
+            delete threads.at(thread_id);
+        }
+    }
+    delete ranks_a;
+    delete ranks_b;
+    delete rhos;
+    this->success=true;
+}
+/*
+ Version as of 3/17
+void Spearman::calculate_rewiring_coefficient(){
+    // store results in spears rho_a
+	this->success=false;
+	for(int i=0; i<(int)rewiring_results.size(); i++){
+		delete rewiring_results.at(i);
+	}
+	rewiring_results.clear();
+    load_data_for_run();
+	prune_data_by_seeds();
+    if( this->verbose ){
+        std::cout << "MESSAGE: Data load complete\n";
+        std::cout.flush();
+    }
+    
     bool is_spearman = true;
 	if(this->corr_type.compare("spearman") != 0)
 		is_spearman = false;
@@ -1300,9 +1651,9 @@ void Spearman::calculate_rewiring_coefficient(){
 		seed_idx = &(this->idx); // set seed_idx to all valid probesets
 	}
     int N = (int)seed_idx->size();
-    
+    int n_probes = int(this->idx.size());
     std::vector<int>* all_columns = new std::vector<int>();
-    for(int i=0;i<N;i++){
+    for(int i=0; i<n_probes; i++){
         all_columns->push_back(i);
     }
     if( is_spearman ){
@@ -1314,8 +1665,11 @@ void Spearman::calculate_rewiring_coefficient(){
     // We'd like to re-use the find_spearman() code which is already written and tested.
     // when we calculate correlation, that is between two rows, meaning a wide matrix
     // Do this, we will transpose the matrix before
-    Matrix<float>* rhos = new Matrix<float>(2, N);
-    
+    Matrix<float>* rhos = new Matrix<float>(2, n_probes);
+    int n_A = int(this->data->a_idx->size());
+	int n_B = int(this->data->b_idx->size());
+    double z_sum = 0, z_val;
+    int n_z_lt5=0, n_z_5_6=0, n_z_6_7=0, n_z_7_8=0, n_z_8_9=0, n_z_gt9=0;
     // store correlations in vector of doubles
     std::vector<double> rhos_a, rhos_b;
     for(i=0; i<N; i++){
@@ -1323,8 +1677,9 @@ void Spearman::calculate_rewiring_coefficient(){
         rhos_a.clear();
         rhos_b.clear();
         seen.clear();
+        z_sum=0;
+        n_z_lt5=0; n_z_5_6=0; n_z_6_7=0; n_z_7_8=0; n_z_8_9=0; n_z_gt9=0;
         for(j=0; j<(int)idx.size(); j++){ // intersect(seed_idx, idx) may be (1) a subset of idx or (2) equal to idx.
-            
             row2 = idx.at(j);
             if(row1==row2)
                 continue;
@@ -1340,10 +1695,28 @@ void Spearman::calculate_rewiring_coefficient(){
                 rhos->arr[0][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, this->data->a_idx);
             	rhos->arr[1][j] = (float)this->find_correlation_r( this->data->raw_data->data, row1, this->data->b_idx, this->data->raw_data->data, row2, this->data->b_idx);
             }
+            z_val = this->fisher_zscore(rhos->arr[0][j], rhos->arr[1][j], n_A, n_B);
+            if(z_val<0){
+                z_val = -1.0 * z_val;
+            }
+            if(z_val<=5)
+                n_z_lt5++;
+            else if(z_val<=6)
+                n_z_5_6++;
+            else if(z_val<=7)
+                n_z_6_7++;
+            else if(z_val<=8)
+                n_z_7_8++;
+            else if(z_val<=9)
+                n_z_8_9++;
+            else
+                n_z_gt9++;
+            
+            z_sum += z_val;
         }
         rho_a = find_spearman( rhos, 0, all_columns, rhos, 1, all_columns);
-        this->spears.push_back(new Spear(rho_a, 0, row1, row2, 0 ) );
-
+        this->rewiring_results.push_back(new RewiringResult(row1, rho_a, z_sum, n_z_lt5, n_z_5_6, n_z_6_7, n_z_7_8, n_z_8_9, n_z_gt9 ) );
+        
 		if(this->verbose && i % 100==0){
 			std::cout << "MESSAGE: Completed row " << i+1 << " of " << N << "...\n";
 			std::cout.flush();
@@ -1352,6 +1725,7 @@ void Spearman::calculate_rewiring_coefficient(){
     
     this->success=true;
 }
+*/
 
 
 void Spearman::find_spears(){
@@ -2065,12 +2439,17 @@ void Spearman::write_rewiring_coefficient(){
 	this->generate_result_header(header);
 	f_out << header;
     std::string id1;
-	Spear* spear;
+	RewiringResult* result;
     std::string gene_name_col = this->ga->get_gene_name_column();
-    for(int i=0; i<(int)this->spears.size(); i++){
-        spear = this->spears.at(i);
-        id1 = this->ga->identifiers.at( spear->row_1() );
-        f_out << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << id1 << "\t" << spear->rho_a() << "\n";
+    f_out << "# Analysis rewiring_coefficient\n";
+    f_out << "#probe\tsymbol\trho\tz_sum\tp.perm\tz.lt5\tz.5_6\tz.6_7\tz.7_8\tz.8_9\tz.gt9\n";
+    for(int i=0; i<(int)this->rewiring_results.size(); i++){
+        result = this->rewiring_results.at(i);
+        id1 = this->ga->identifiers.at( result->row_1() );
+        f_out << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << std::fixed << std::setprecision(2) << result->rho_a() << "\t";
+        f_out << std::fixed << std::setprecision(0) << result->z_score() << "\t";
+        f_out << std::fixed << std::setprecision(5) << result->p_perm() << "\t";
+        f_out << result->n_z_lt5() << "\t" << result->n_z_5_6() << "\t" << result->n_z_6_7() << "\t" << result->n_z_7_8() << "\t" << result->n_z_8_9() << "\t" << result->n_z_gt9() << "\n";
     }
     f_out.close();
 }
@@ -2080,12 +2459,17 @@ void Spearman::print_rewiring_coefficient(){
 	this->generate_result_header(header);
     std::cout << header;
     std::string id1;
-	Spear* spear;
+	RewiringResult* result;
     std::string gene_name_col = this->ga->get_gene_name_column();
-    for(int i=0; i<(int)this->spears.size(); i++){
-        spear = this->spears.at(i);
-        id1 = this->ga->identifiers.at( spear->row_1() );
-        std::cout << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << id1 << "\t" << spear->rho_a() << "\n";
+    std::cout << "# Analysis rewiring_coefficient\n";
+    std::cout << "#probe\tsymbol\trho\tz_sum\tz.lt5\tz.5_6\tz.6_7\tz.7_8\tz.8_9\tz.gt9\n";
+    for(int i=0; i<(int)this->rewiring_results.size(); i++){
+        result = this->rewiring_results.at(i);
+        id1 = this->ga->identifiers.at( result->row_1() );
+        std::cout << id1 << "\t" << this->ga->prop_for_identifier( id1, gene_name_col ) << "\t" << std::fixed << std::setprecision(2) << result->rho_a() << "\t";
+        std::cout << std::fixed << std::setprecision(0) << result->z_score() << "\t";
+        std::cout << std::fixed << std::setprecision(5) << result->p_perm() << "\t";
+        std::cout << result->n_z_lt5() << "\t" << result->n_z_5_6() << "\t" << result->n_z_6_7() << "\t" << result->n_z_7_8() << "\t" << result->n_z_8_9() << "\t" << result->n_z_gt9() << "\n";
     }
 }
 
@@ -2219,6 +2603,8 @@ void Spearman::load_data_for_run(){
 			std::cout << "MESSAGE: Calculating seed neighbor correlations\n";
 		else
 			std::cout << "MESSAGE: Not calculating neighbor correlations\n";
+        std::cout << "MESSAGE: Calculating with " << this->n_threads << " threads.\n";
+        std::cout << "MESSAGE: Performing " << this->n_perms << " permutations to assess statistical significance.\n";
 		std::cout.flush();
 	}
 }

@@ -31,6 +31,24 @@ public:
     double perm_pvalue;
 };
 
+class RewiringResult{
+public:
+    RewiringResult(int row_1, double rho_a, double z_score, double p_perm, int n_z_lt5, int n_z_5_6, int n_z_6_7, int n_z_7_8, int n_z_8_9, int n_z_gt9 );
+    
+    double rho_a();
+    int row_1();
+    double z_score();
+    int n_z_lt5();
+    int n_z_5_6();
+    int n_z_6_7();
+    int n_z_7_8();
+    int n_z_8_9();
+    int n_z_gt9();
+    double p_perm();
+    void increment_p_perm(double value);
+    double row1, rhoa, zscore, z_lt5, z_5_6, z_6_7, z_7_8, z_8_9, z_gt9, pperm;
+};
+
 class Sorter{
 public:
 	Sorter(double val, double index);
@@ -119,6 +137,7 @@ public:
 	void set_include_seed_neighbor_correlations(bool include_seed_neighbor_correlations);
 	void set_require_eqtl(bool req);
 	void set_fn_out( std::string fn_out);
+    void set_n_threads(int n);
 	void set_verbose( bool is_verbose );
 	void set_limit_network_to_seeds( bool limit_to_seeds );
 	void set_min_clique_size( int min_clique );
@@ -145,6 +164,7 @@ private:
 	Attributes* sa;
 	Attributes* ga;
 	std::vector<Spear*> spears;
+    std::vector<RewiringResult*> rewiring_results;
 	std::vector<int> idx;
 	std::vector<int> rho_distribution; // can be filled by find_DC_distribution()
 	int n_before_NA, n_after_NA;
@@ -153,9 +173,15 @@ private:
 	std::string fn_cytoscape, fn_cytoscape_props, batch_extension, col_extra_attributes;
 	std::vector<std::string> seeds;
 	double min_var, percent_required, corr_diff, corr_abs_a, corr_abs_b, max_eqtl_pval, min_zscore;
-	int n_perms, min_clique_size;
+	int n_perms, current_permutation, min_clique_size, n_threads;
 	bool verbose, success, include_seed_neighbor_correlations, limit_network_to_seeds, require_eqtl, allow_uncorrelated_loci_with_eQTL;
-
+    
+    boost::mutex io_mutex;
+    boost::mutex results_mutex;
+    boost::mutex thread_iter_mutex;
+    Matrix<int>* permutations_idx_a;
+    Matrix<int>* permutations_idx_b;
+    
 	double calculate_differential_correlations_probeset_pval(double mean_diff_obs);
 	void calculate_differential_correlation_GWER();
 	void calculate_ranks( Matrix<float>* raw_data, int row, std::vector<int>* idx, std::vector<int>& ranks);
@@ -178,7 +204,11 @@ private:
 	void find_GWER();
 	void find_DC_GWER();
 	void permute_group_labels( std::vector<int>* a_idx, std::vector<int>* b_idx, std::vector<int>& a_idx_perm, std::vector<int>& b_idx_perm );
-	//void permute_ranks_between_groups( Matrix<double>* ranks_obs_a, Matrix<double>* ranks_obs_b, std::vector<int> a_idx_perm, std::vector<int> b_idx_perm, Matrix<double>* ranks_perm_a, Matrix<double>* ranks_perm_b );
+    void permute_group_labels_persistent( std::vector<int>* a_idx, std::vector<int>* b_idx, std::vector<int>& a_idx_perm, std::vector<int>& b_idx_perm, boost::mt19937& rng );
+    
+    int request_permutation_number();
+    void process_rewiring_in_thread(int thread_id );
+
 	void prepare_graphs(Graph* G, Graph* G_QTL, HASH_I_VECTOR_STR& g2p, double min_abs, Attributes* ga, std::string fn_eQTL, double max_perm_pval, bool require_eQTL);
 	void remove_empty_seeds();
     void write_GO_terms_for_cytoscape( GeneAnnotationParser* gene_parser, GOAnnotationParser* go, std::string fn_bp, std::string fn_mf, std::string fn_cc, Graph* G );

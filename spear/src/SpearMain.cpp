@@ -8,11 +8,15 @@
 #include "math.h"
 using namespace std;
 #include "boost/tokenizer.hpp"
+using namespace boost;
 #include "boost/lexical_cast.hpp"
 #include "boost/algorithm/string.hpp"
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
+#include <boost/thread/mutex.hpp>
 #include <boost/random.hpp>
 namespace alg = boost::algorithm;
-using namespace boost;
+
 #include "DataStructures.h"
 #include "ClassMinerOptions.h"
 #include "Rawdata.h"
@@ -54,7 +58,9 @@ int main(int argc, char *argv[]){
     options->push_back( new Option("corr_type", "t", "Method of correlation, {spearman,pearson}, default spearman", "spearman", OPT_OPTIONAL));
 	options->push_back( new Option("probe", "p", "Restrict calculation to first degree neighbors of these seed probes, comma delimited", "", OPT_OPTIONAL));
 	options->push_back( new Option("include_seed_neighbor_corr", "r", "If T, calculate correlation between seed neighbors, default F", "F", OPT_OPTIONAL));
-	options->push_back( new Option("rewiring_coefficient", "w", "If T, calculate rewiring coefficient for all probes in class A and class B, default F", "F", OPT_OPTIONAL));
+    options->push_back( new Option("n_threads", "w", "Number of threads on which to execute, default 1", "1", OPT_OPTIONAL));
+
+	options->push_back( new Option("rewiring_coefficient", "j", "If T, calculate rewiring coefficient for all probes in class A and class B, default F", "F", OPT_OPTIONAL));
     
 	options->push_back( new Option("limit_to_seeds", "l", "If T, limit correlation to those between seeds default F", "F", OPT_OPTIONAL));
 	options->push_back( new Option("min_var", "m", "Minimum variance across all samples", "0", OPT_OPTIONAL));
@@ -148,9 +154,18 @@ int main(int argc, char *argv[]){
 	bool include_seed_neighbors=false;
 	bool limit_network_to_seeds=false;
     bool calculate_rewiring_coefficient=false;
-	if(options->at(r++)->value.compare("T")==0)
+
+    if(options->at(r++)->value.compare("T")==0)
 		include_seed_neighbors = true;
-	if(options->at(r++)->value.compare("T")==0)
+	int n_threads=1;
+    try{ n_threads = boost::lexical_cast<int>( options->at(r++)->value ); }
+    catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -w, n_threads must be 1 or higher"; return 0;}
+    if( n_threads<1 ){
+        std::cout << "ERROR: invalid integer parameter for -j, n_threads must be 1 or higher\n";
+        return 0;
+    }
+
+    if(options->at(r++)->value.compare("T")==0)
 		calculate_rewiring_coefficient = true;
 	if(options->at(r++)->value.compare("T")==0)
 		limit_network_to_seeds = true;
@@ -179,7 +194,7 @@ int main(int argc, char *argv[]){
 
     try{ min_zscore = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -x, min_zscore"; return 0;}
-
+   
     int n_perms;
     try{ n_perms = boost::lexical_cast<int>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -z, perms"; return 0;}
@@ -198,12 +213,13 @@ int main(int argc, char *argv[]){
 		std::string fn_out = options->at(r++)->get_value();
 		sp.set_fn_out( fn_out );
 		sp.set_n_permutations( n_perms );
+        sp.set_n_threads( n_threads );
 		if(options->at(r++)->value.compare("T")==0)
 			sp.set_verbose(true);
         
         if( calculate_rewiring_coefficient ){
             if( (int)limit_b.size()==0 ){
-                std::cout << "ERROR: when passing -WT (calculate rewiring coefficient), required to pass class_b_limit";
+                std::cout << "ERROR: when passing -jT (calculate rewiring coefficient), required to pass class_b_limit";
                 return 0;
             } 
             sp.calculate_rewiring_coefficient();
