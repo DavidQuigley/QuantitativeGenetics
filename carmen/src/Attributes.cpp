@@ -134,7 +134,7 @@ void Attributes::set_chromosome_and_locus( std::string col_chr, std::string col_
     std::string chr, loc;
     int locus;
     std::string NA("NA");
-    for(int i=0; i<this->identifiers.size(); i++){
+    for(int i=0; i<int(this->identifiers.size()); i++){
         chr = this->prop_for_identifier(this->identifiers.at(i) , col_chr);
         loc = this->prop_for_identifier(this->identifiers.at(i) , col_locus);
         try{
