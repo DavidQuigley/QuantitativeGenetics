@@ -30,7 +30,7 @@ namespace alg = boost::algorithm;
 
 /*
  * David Quigley
- * UCSF Cancer Research Institute, 2007-2013
+ * UCSF Cancer Research Institute, 2007-2014
  *
  * Spear is used to measure correlation between rows of elements.  Spearman
  * rank correlation is calculated; ties are ranked using the mean of the ranks
@@ -38,12 +38,12 @@ namespace alg = boost::algorithm;
  * By passing in only one class, you can find genes that are
  * correlated in a single group.  By passing in two non-intersecting classes,
  * you can find genes whose correlation changes between two groups.
- * 
- * The rewiring coefficient_P for each probe P is:
- * for each probe P
- *    cors_a = cor( P vs !P ) for samples in A // one entry for each probe
- *    cors_b = cor( P vs !P ) for samples in B // one entry for each probe
- *    coefficient_P = cor( cors_a, cors_b )
+ *
+ * rewiring coefficient:
+ *   positive z_sum indicates that on the whole correlation is being created in B compared to A.
+ *   negative z_sum indicates that on the whole correlation is being removed in B compared to A.
+ *   the null hypothesis is that z_sum is 0
+ *   coefficient is normalized to the number of probes under consideration
  */
 
 int main(int argc, char *argv[]){
