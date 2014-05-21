@@ -275,7 +275,7 @@ void Dataset::check_gene_integrity(Rawdata* R, Attributes* ga ){
 	for(int i=0; i<(int)ga->identifiers.size(); i++){
 		if( ga->identifiers.at(i).compare(R->identifiers.at(i)) != 0 ){
 			std::stringstream ss;
-			ss << "Gene attributes and data differ in gene order at identifier " << i+1;
+			ss << "Gene attributes and data differ in gene order at identifier " << i+1 << " data: " << R->identifiers.at(i) << " gene " << ga->identifiers.at(i);
 			throw std::string(ss.str());
 		}
 	}
