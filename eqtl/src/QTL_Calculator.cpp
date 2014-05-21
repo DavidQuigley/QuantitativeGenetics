@@ -877,6 +877,7 @@ bool QTL_Calculator::regress_direct(std::vector<int>* sample_idx, int expr_g_idx
 			snps_s_idx = sample_idx->at(p);
 			y = this->data_snps->raw_data->data->arr[snps_g_idx][snps_s_idx];
 			x = this->data_expr->raw_data->data->arr[expr_g_idx][expr_s_idx];
+            //std::cout << this->data_expr->raw_data->sample_names[expr_s_idx] << "\t" << x << "\t" << this->data_snps->raw_data->sample_names[snps_s_idx] << "\t" << y << "\n";
             sumy += y;
             sumx += x;
             sumx2 += (x*x);

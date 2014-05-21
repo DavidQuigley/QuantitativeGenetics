@@ -250,7 +250,7 @@ int main(int argc, char *argv[]){
 	catch(std::string msg){
 		crash( msg );
 	}
-    
+     
     QTL_Calculator* QC;
     try{
         QC = new QTL_Calculator(data_expr, sa_expr, ga_expr, data_snps, sa_snps, ga_snps, shared_geno_pheno_col);
