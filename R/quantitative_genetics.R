@@ -79,7 +79,7 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # write.dataset=function(sa, gene.symbols, E, fn)
 #   writes out dataset in a format readable by TMEV or suitable for Excel.
 #
-# do.sam = function(E, ga, A, B, med.FDR, is.log2=T){
+# do.sam = function(E, symbols, A, B, med.FDR, is.log2=T){
 #   Perform a turn-key SAM analysis returning values with FDR<med.FDR
 #
 # do.sam.paired = function(E, ga, A, B, med.FDR)
@@ -194,7 +194,11 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # plot.discretization = function(M, lbls=NULL, method="SD", bounds=0.5, x_lbl=NULL, y_lbl="expression")
 #    plot a single gene, discretized using standard deviation
 #
-# plot.percent.altered.by.locus= function(M, chr, upper.bound=0.5, lower.bound=-0.5)
+# plot.percent.altered.by.locus.proportionate = function(M, chr.list, loc.list, upper.bound=0.5, lower.bound=-0.5, y.min=0, y.max=0, x.max=1000, colors=c("blue", "red"))
+#    plot whole genome aCGH or SNP data, percentage amplified or deleted
+#    respects physical location of sampled data to produce correctly scaled plot
+# 
+# plot.percent.altered.by.locus = function(M, chr, upper.bound=0.5, lower.bound=-0.5)
 #    plot whole genome aCGH or SNP data, percentage amplified or deleted
 #
 # plot.percent.altered.by.tumor = function(M, upper.bound=0.3, lower.bound=-0.3)
@@ -242,7 +246,7 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 #                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", col.na="black", labels=F, bottom.bar.values=NULL )
 #   Given a matrix and a list of gene names and symbol, plot gene names sorted by symbol
 #
-# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2){
+# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19)
 #
 #    Helper function for quick visualization of PCA. Automatically colors based on labels.
 #
@@ -545,7 +549,7 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # nearest.ten = function( x )
 #   find the nearest factor of 10 for x between 10 and 100, rounding up
 #
-# plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1, cex=1)
+# plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis="both", cex.axis=1, cex=1)
 #   utility function to actually draw plots
 #
 # convert.to.ranks = function(M)
@@ -2076,6 +2080,97 @@ plot.discretization = function(M, lbls=NULL, method="SD", bounds=0.5, x_lbl=NULL
     axis(1, at=(1:N), labels=lbls, las=2)
 }
 
+convert.genome.to.scaled.x = function( chr.list, loc.list, x.max=1000 ){
+    df = data.frame( chr=chr.list, loc=loc.list )
+    size.chroms = ddply(df, "chr", max )
+    names(size.chroms)[2] = "loc"
+    size.genome = sum(size.chroms$loc)
+    xs = rep(0, length(chr.list))
+    for(i in 1:length(xs)){
+        cur.chrom = chr.list[i]
+        cur.loc = loc.list[i]
+        if( cur.chrom>1 ){
+            xs[i] = sum(size.chroms$loc[1:(cur.chrom-1)]) + cur.loc
+        }
+        else{
+            xs[i] = cur.loc
+        }
+    }
+    xs = round( xs/(max(xs)) * x.max )
+}
+
+plot.percent.altered.by.locus.proportionate=function(M, chr.list, loc.list, upper.bound=0.5, lower.bound=-0.5, y.min=0, y.max=0, x.max=1000, colors=c("blue", "red")){
+    # M is a data frame with some sort of value where we want to count the percentage
+    # that exceed a given bounds (typically SNP amplification or aCGH data)
+    # chr is the chromosome for each row in M
+    N.genes = dim(M)[1]
+    N.samples = dim(M)[2]
+    if( length(chr.list) != N.genes ){
+        stop("length of chr not equal to rows in M")
+    }
+    if( length(loc.list) != N.genes ){
+        stop("length of locs not equal to rows in M")
+    }
+    if(length(colors)!=2)
+        stop("Must pass two colors for up and down respectively")
+    df = data.frame( chr=chr.list, loc=loc.list )
+    size.chroms = ddply(df, "chr", max )
+    names(size.chroms)[2] = "loc"
+    xs = convert.genome.to.scaled.x(chr.list, loc.list, x.max)
+    color.up = colors[1]
+    color.dn = colors[2]
+    amps = rowSums(M>=upper.bound,na.rm=T) / N.samples * 100
+    dels = rowSums(M<=lower.bound,na.rm=T) / N.samples * 100
+    amps[is.na(amps)]=0
+    dels[is.na(dels)]=0    
+    if( y.max==0 )
+        y.max = nearest.ten( max(amps) )
+    if( y.min==0 )
+        y.min = nearest.ten( max(dels) )
+    size.genome = sum(size.chroms$loc)
+    chr.breaks = round( cumsum( size.chroms$loc ) / size.genome * x.max )
+    chr.lbl.idx = rep(0, length(chr.breaks))
+    chr.lbl.idx[1] = chr.breaks[1] / 2
+    for(i in 2:length(chr.breaks) ){
+        prev.idx = chr.breaks[i-1]
+        curr.idx = chr.breaks[i]
+        chr.lbl.idx[i] = prev.idx + ( (curr.idx-prev.idx) / 2 )
+    }
+    main.lbl = paste("SNP Arrays Percent Amplified, +/- ", upper.bound,",",lower.bound,sep="")
+    plot(0,0, xaxs="i", pch='.',col='white', main=main.lbl, xlab="SNP index", ylab="Percentage", axes=F, xlim=c(0, x.max), ylim=c(-y.min, y.max))
+    abline(h=0, col='black')
+    chr.labels = as.character(sort(unique(size.chroms$chr)))
+    axis(side=1, xlim=c(0, x.max), at=chr.lbl.idx, labels=chr.labels, tick=F, cex.axis=1.25,las=1 )
+    axis(side=2, at=seq(-y.min,y.max,by=10), labels=seq(-y.min,y.max,by=10), tick=T, cex.axis=1.5,las=1 )
+    ys.amp = rep(0, x.max)
+    ys.del = rep(0, x.max)
+    for(i in 1:N.genes){
+        x.this = xs[i]
+        if(x.this==0){
+            x.this=1
+        }
+        if( ys.amp[ x.this ] <= amps[i] ){
+            ys.amp[ x.this ] = amps[i] 
+        }
+        if( ys.del[ x.this ] <= dels[i] ){
+            ys.del[ x.this ] = dels[i] 
+        }        
+    }
+    points(xs, rep(-1*y.min, length(xs)), pch=19, cex=0.1)
+    for(i in 1:x.max){
+        lines(c(i,i), c(0, ys.amp[i]), col=color.up)
+        lines(c(i,i), c(0, -1*ys.del[i]), col=color.dn)        
+    }
+    chr.breaks = append(0, chr.breaks)
+    chr.breaks = append(chr.breaks, length(chr.list)) 
+    for(i in 1:length(chr.breaks)){
+        segments(chr.breaks, rep(-1*y.min, length(chr.breaks)), y1=y.max, col='black')
+    }
+    
+    data.frame( xs=1:x.max, ys.amp, ys.del )
+}
+
+
 plot.percent.altered.by.locus= function(M, chr.list, upper.bound=0.5, lower.bound=-0.5, y.min=0, y.max=0, color=T){
     # M is a data frame with some sort of value where we want to count the percentage
     # that exceed a given bounds (typically SNP amplification or aCGH data)
@@ -2505,13 +2600,16 @@ plot.alterations = function(M, name, chr.list, upper.bound=0.3, lower.bound=-0.3
 
 
 plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plot.type='l', no.plot=F, 
-                    legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1.5, cex=1){
+                    legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis="both", cex.axis=1.5, cex=1){
     # sa is an attribute file data frame that describes the values in M
     # M is a numeric value data frame with one row per gene to plot
     # legend.labels are friendly names for rows; if NULL, rownames(M) is used
     # group.by optionally orders samples by a column pulled from sa, if NULL, sorted by identifier
     #
-    samples.M = as.character(names(M))
+    if(is.matrix(M))
+        samples.M = as.character(dimnames(M)[[2]])
+    else
+        samples.M = as.character(names(M))
     if( is.null(sa) ){
         samples.sa = samples.M
         group.by = NULL
@@ -2576,15 +2674,25 @@ plot.rows=function( M, sa=NULL, legend.labels=NULL, group.by=NULL, sorted=F, plo
 }
 
 
-plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', legend.xy=c(), pch=1, show.axis=T, cex.axis=1.5, ymin=NULL, ymax=NULL, cex=1){
+
+plot.by.identifiers=function( dataset, probe.list, group.by=NULL, sorted=F, plot.type='l', legend.xy=c(), pch=1, show.axis="both", cex.axis=1.5, ymin=NULL, ymax=NULL, cex=1){
     # Convenience function to allow us to plot with a simple probe list.
     # dataset is list of {expr, sa, ga}
     if( is.null(dataset$expr) | is.null(dataset$ga) | is.null(dataset$sa))
         stop("dataset is incomplete; must contain expr, ga, and sa")
-    if( length(rownames(dataset$sa)) != length( names(dataset$expr) ) )
-        stop("dimensions of sa and expr not compatible")
-    if( sum(rownames(dataset$sa) != names(dataset$expr))>0 )
+    if(is.matrix(dataset$expr)){
+        sample.names = dimnames(dataset$expr)[[2]]
+    }
+    else{
+        sample.names = names(dataset$expr)
+    }
+    if( length(rownames(dataset$sa)) != length( sample.names) ){
+            stop("dimensions of sa and expr not compatible")
+    }
+    if( sum(rownames(dataset$sa) != sample.names)>0 ){
         stop("rownames of sa != names of expr")
+    }
+
     idx.probes = rep(-1, length(probe.list))
     legend.labels = rep("", length(probe.list))
     idx.symbol = which(names(dataset$ga)=="symbol")    
@@ -2600,6 +2708,7 @@ plot.by.identifiers = function( dataset, probe.list, group.by=NULL, sorted=F, pl
                cex.axis=cex.axis, show.axis=show.axis, cex=cex )
     abline(0,0)
 }
+
 
 plot.raw.probe.values2 = function(Data, probe_id){
     idx.probes = indexProbes(Data, 'pm', genenames=probe_id)[[1]]
@@ -2634,7 +2743,7 @@ plot.raw.probe.values2 = function(Data, probe_id){
     legend(1, ymax-1, rownames(raw), col=col.used, lty=1, lwd=2, pch=pch.used, cex=1,y.intersp=0.75)
 }
 
-plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis=T, cex.axis=1, cex=1){
+plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.xy = c(), ymin=NULL, ymax=NULL, pch=1, show.axis="both", cex.axis=1, cex=1){
     # pass plot.type=='l' for lines, 'p' for points
     
     col.pool = COLOR.WHEEL
@@ -2650,7 +2759,7 @@ plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.x
             ymin=1
     }
     col.used = c( col.pool[1] )
-    plot(X, as.numeric(V[1,]), col=1, type=plot.type, pch=pch, cex=cex, axes=F, xlab=x_lbl, ylim=c(ymin,ymax), ylab='', lwd=2)
+    plot(X, as.numeric(V[1,]), col=1, type=plot.type, pch=pch[1], cex=cex, axes=F, xlab=x_lbl, ylim=c(ymin,ymax), ylab='', lwd=2)
     iter = 2
     if( n_probes>1 ){
         for( i in 2:n_probes){
@@ -2660,14 +2769,22 @@ plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.x
             if(plot.type=='l')
                 lines(X, as.numeric(V[i,]), col=cur.color, lwd=2)
             else{
-                points(X, as.numeric(V[i,]), pch=pch, col=cur.color, lwd=2, cex=cex)
+                if(length(pch)==1){
+                    cur.pch=pch
+                }
+                else{
+                    cur.pch = pch[i]
+                }
+                points(X, as.numeric(V[i,]), pch=cur.pch, col=cur.color, lwd=2, cex=cex)
             }
             col.used[length(col.used)+1] = cur.color
         }
     }
     par(ps=8)
-    if( show.axis ){
+    if( show.axis=="both" | show.axis=="y" ){
         axis(2, at=(ymin:ymax), las=1, cex.axis=cex.axis)
+    }
+    if( show.axis=="both" | show.axis=="x" ){    
         axis(1, at=(1:length(lbls)), labels=lbls, las=2)
     }
     legend.x = 1
@@ -2678,7 +2795,6 @@ plot_multiple=function(V, lbls, x_lbl, probe_label_list, plot.type='p', legend.x
     }
     legend(legend.x, y=legend.y, probe_label_list, col=col.used, lty=1, lwd=2, y.intersp=0.5)
 }
-
 
 
 plot.geno.expr = function(ids, expr.g, expr.e, probe.g, probe.e, main=NULL, show.lm.pval=FALSE){
@@ -3094,10 +3210,14 @@ sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, sor
     }
 }
 
-do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2){
+do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19){
+    if(length(pch)!=1 & length(pch) != dim(D)[2] )
+        stop("pch must be of length 1 or equal length to the number of samples.")
+    
     if(is.null(colors))
-        color.wheel = c("black", "blue", "gold", "darkgreen", "slategray1", "gray", "magenta", "darkblue",
-        "violetred", "bisque", "chartreuse3", "orange", "darksalmon", "green1", "red","pink")
+        color.wheel=COLOR.WHEEL
+        #color.wheel = c("black", "blue", "gold", "darkgreen", "slategray1", "gray", "magenta", "darkblue",
+        #"violetred", "bisque", "chartreuse3", "orange", "darksalmon", "green1", "red","pink")
     else{
         color.wheel = colors
     }
@@ -3133,7 +3253,7 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
     if(is.null(ylim))
         ylim = c(y.min, y.max)
     
-    plot(pca$x[,x.axis], pca$x[,y.axis], col=colors, pch=19, cex=plot.cex, xlim=xlim, ylim=ylim, main=main )  
+    plot(pca$x[,x.axis], pca$x[,y.axis], col=colors, pch=pch, cex=plot.cex, xlim=xlim, ylim=ylim, main=main, las=1 )  
     
     if( show.legend & !is.null(labels) ){
         if( is.null(legend.xy) )
@@ -3143,6 +3263,7 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
     }
     pca
 }
+
 
 
 ####################
@@ -3215,17 +3336,21 @@ cor.test.probe.vs.all=function( expr, symbols, probe, percent.present=0.90, meth
     # RETURNS: data frame of index in expr.matrix, r-value, p-value
     if( percent.present > 1 || percent.present < 0 ){ stop("percent.present not between 0 and 1") }
     
-    D = data.matrix(expr)
+    if(is.matrix(expr)){
+        D = expr
+    }
+    else{
+        D = data.matrix(expr)
+    }
     vals.row = D[ which(rownames(expr)==probe),]
     N.genes = dim(D)[1]
     N = dim(D)[2]
     threshold = floor( N * percent.present )
     n.NA = rowSums(is.na(D))
     if( N - sum( is.na(vals.row) ) < threshold ){
-        warning("Skipping row due to insufficient number of present measurements")
+        warning("ERROR: insufficient number of present measurements in the target gene")
         d=data.frame( 1:N.genes, rep(NA,N.genes), rep(NA,N.genes))
-        names(d) = c('genes', 'rhos', 'pvals')
-        d
+        names(d) = c('symbol', 'rho', 'pval')
     }
     else{
         options(warn=-1)
@@ -3249,12 +3374,12 @@ cor.test.probe.vs.all=function( expr, symbols, probe, percent.present=0.90, meth
                 print(paste("Gene", i, "of", N.genes) )
             }
         }
-        options(warn=0)
-        d = data.frame(symbols, rho=round(rhos,3), pval=signif(pvals,4), stringsAsFactors=F)
-        rownames(d) = rownames(expr)
+        options(warn=0) 
+        pval.holm = signif(p.adjust(pvals, method="holm"), 4)
+        d = data.frame(symbol=symbols, rho=round(rhos,3), pval=pvals, pval.holm, stringsAsFactors=F, row.names=rownames(expr) )
         d = d[ order(d$pval, 1-abs(d$rho)), ]
-        d
     }
+    d
 }
 
 cor.test.row.vs.all = function( ids, expr.row, expr.all, percent.present=0.90, method="spearman", verbose=F){
@@ -4280,18 +4405,18 @@ genotype.for.expression.ids = function( probe.snp, expr, expr.SNP, sa.SNP, sa.SN
     out
 }
 
-do.sam = function(E, ga, A, B, med.FDR=10, is.log2=T){
+do.sam=function(E, symbols, A, B, med.FDR=10, is.log2=T){
     # Perform a turn-key SAM analysis returning values with FDR<med.FDR
     if( length(A) != length(B) | length(A) != dim(E)[2] )
         stop( "incorrectly formatted input: bad dimensions")
-    if( dim(E)[1] != dim(ga)[1])
+    if( dim(E)[1] != length(symbols))
         stop( "incorrectly formatted input: bad dimensions")
     labels = rep(0, dim(E)[2])
     labels[A] = 1
     labels[B] = 2
     E = E[,A|B]
     labels = labels[A|B]
-    data = list(x=data.matrix(E), y=labels, geneid=rownames(ga), genenames = ga$symbol, logged2=is.log2)
+    data = list(x=data.matrix(E), y=labels, geneid=rownames(E), genenames = symbols, logged2=is.log2)
     samr.obj = samr(data, resp.type="Two class unpaired", nperms=100)
     delta.table = samr.compute.delta.table(samr.obj)
     print(delta.table)
@@ -4322,7 +4447,8 @@ do.sam = function(E, ga, A, B, med.FDR=10, is.log2=T){
         sig = cbind(sig, fc=round(fc,2), stringsAsFactors=F )
         sig
     }
-}  
+}
+
 
 do.sam.paired = function(E, ga, labels, med.FDR=10){
     # Perform a turn-key SAM analysis returning values with FDR<med.FDR
@@ -5490,16 +5616,20 @@ get.split.col = function(v, string, col=0, last=F, first=F){
 }
 
 
-assign.colors = function(V){
+assign.colors = function(V, color.override=NULL ){
     colors = rep(COLOR.WHEEL[1], length(V))
+    if(is.null(color.override))
+        colors.to.use=COLOR.WHEEL
+    else
+        colors.to.use=color.override
     uniques = sort(unique(V))
     cur.color=1
     for(i in 1:length(uniques)){
-        if( cur.color>length(COLOR.WHEEL) ){
+        if( cur.color>length(colors.to.use) ){
             cur.color=1
             print("Colors wrapped around")
         }
-        colors[V==uniques[i]] = COLOR.WHEEL[cur.color]
+        colors[V==uniques[i]] = colors.to.use[cur.color]
         cur.color=cur.color+1
     }
     colors
