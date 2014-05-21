@@ -182,6 +182,8 @@ private:
     boost::mutex thread_iter_mutex;
     Matrix<int>* permutations_idx_a;
     Matrix<int>* permutations_idx_b;
+    double z_score_sum_obs;
+    double global_p_perm;
     
 	double calculate_differential_correlations_probeset_pval(double mean_diff_obs);
 	void calculate_differential_correlation_GWER();
