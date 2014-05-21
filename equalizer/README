@@ -1,0 +1,90 @@
+Equalizer is a tool that builds a customized Platform Design 
+Information package for microarray data, as described in Quigley & 
+Balmain 2014.
+
+To call Equalizer you will need:
+1) python (I use version 2.7.3 on OS X, any version should be fine). 
+   Available at http://python.org if you don't already have a version installed.
+2) bedtools (at the time of writing, I used 2.15.0) Available at 
+   https://github.com/arq5x/bedtools2
+3) A VCF file for each genome you wish to scan for SNPs that overlap 
+   probes. Generate this yourself or download a VCF file from your favorite 
+   genome provider
+4) Affymetrix microarray platform description files:
+   For IVT arrays, where ARRNAME is your array platform:
+    a) ARRNAME.annot.csv
+    b) ARRNAME.cdf
+    c) ARRNAME.probe_tab
+    d) ARRNAME.bed
+    e) A CEL file in the same format as ARRNAME
+    
+    For ST arrays, where ARRNAME is your array platform
+    a) ARRNAME.probeset.csv
+    b) ARRNAME.transcript.csv
+    c) ARRNAME.pgf
+    d) ARRNAME.mps
+    e) ARRNAME.clf
+    d) ARRNAME.bed
+    
+   All but the CEL file are available from affymetrix.com's NetAffx 
+   website. You will have your own CEL files.
+    
+5) R (at the time of writing, I used 2.15.12). Available at 
+   http://cran.r-project.org/
+
+********************************************
+IMPORTANT: IF YOU ARE NOT AN ADMINISTRATOR
+********************************************
+
+If you do not have superuser rights on your machine, you can still generate the package
+but you will have to modify create_package.R to install the package locally in a part 
+of the hard drive where you have write access, rather than in a location available to 
+the entire system.
+
+****************************
+An example call for M430, ST
+****************************
+
+# Call equalizer with two VCF files:
+#    /datasets/mouse_sequence_reference/SNPS/snps-all.SPR.vcf
+#    /datasets/mouse_sequence_reference/SNPS/2012-0612-snps+indels_FVBNJ_annotated.vcf
+#
+# Read input data files from a folder called data/annotation/M430
+# Write output into a folder called results/M430_FVB_SPR
+# Modify MoGene-1_1-st-v1
+# My BEDTools installation is /notebook/code/BEDTools-Version-2.15.0/bin; you need to
+# specify your own installation point if the BEDTools bin folder is not in your path 
+
+
+python equalizer.py \
+-f IVT -p M430_noSprFVBSnps \
+-c Mouse430_2 \
+-v /datasets/mouse_sequence_reference/SNPS/snps-all.SPR.vcf,/datasets/mouse_sequence_reference/SNPS/2012-0612-snps+indels_FVBNJ_annotated.vcf \
+-a data/annotation/probe_bed/Mouse430_2.mm9.bed \
+-b /notebook/code/BEDTools-Version-2.15.0/bin \
+-s na33 -g mm9 -d 37 -i 1.0 -r "Mus musculus" -w mouse \
+-u "David Quigley" -l dquigley@cc.ucsf.edu \
+-y data/annotation/M430/Mouse430_2.na33.annot.csv \
+-n data/annotation/M430/Mouse430_2.cdf \
+-x data/annotation/M430/Mouse430_2.probe_tab \
+-z data/annotation/M430/Mouse430_2.CEL \
+-o results/M430_FVB_SPR
+# Create the new package
+sudo /usr/bin/R --no-save  < results/MoGene_FVB_SPR/create_package.R
+
+python equalizer.py \
+-f gene -p mogene-1_1_nosprfvbSnps \
+-c MoGene-1_1-st-v1 \
+-v /datasets/mouse_sequence_reference/SNPS/snps-all.SPR.vcf,/datasets/mouse_sequence_reference/SNPS/2012-0612-snps+indels_FVBNJ_annotated.vcf \
+-a data/annotation/probe_bed/MoGene_probes_MM9.bed \
+-b /notebook/code/BEDTools-Version-2.15.0/bin \
+-s na33 -g mm9 -d 37 -i 1.1 -w Mouse -r "Mus musculus" \
+-y data/annotation/MoGene-1_1/MoGene-1_1-st-v1.na32.mm9.probeset.csv \
+-t data/annotation/MoGene-1_1/MoGene-1_1-st-v1.na32.mm9.transcript.csv \
+-f data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.pgf \
+-m data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.mps \
+-k data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.clf \
+-u "David Quigley" -l dquigley@cc.ucsf.edu \
+-o results/MoGene_FVB_SPR
+# Create the new package
+sudo R --no-save  < results/M430_FVB_SPR/create_package.R

@@ -1,0 +1,8 @@
+Package: equalizer
+Title: remove SNP effects on Affymetrix arrays
+Description: 
+Version: 0.1
+Author: David Quigley <david.a.quigley@gmail.com>
+Maintainer: David Quigley <david.a.quigley@gmail.com>
+License: MIT
+URL: http://davidquigley.com
