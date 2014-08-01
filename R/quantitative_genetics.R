@@ -194,6 +194,8 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # plot.discretization = function(M, lbls=NULL, method="SD", bounds=0.5, x_lbl=NULL, y_lbl="expression")
 #    plot a single gene, discretized using standard deviation
 #
+# convert.genome.to.scaled.x = function( chr.list, loc.list, x.max=1000 )
+#   
 # plot.percent.altered.by.locus.proportionate = function(M, chr.list, loc.list, upper.bound=0.5, lower.bound=-0.5, y.min=0, y.max=0, x.max=1000, colors=c("blue", "red"))
 #    plot whole genome aCGH or SNP data, percentage amplified or deleted
 #    respects physical location of sampled data to produce correctly scaled plot
@@ -242,8 +244,12 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 #   This is the utility function that just plots what it's given without labels.
 #   Intended for use in figures
 #
-# sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, 
-#                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", col.na="black", labels=F, bottom.bar.values=NULL )
+# sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, 
+#                         sort.by=NULL, order.rows.by.cor.with.first.symbol=FALSE, 
+#                         scale=FALSE, y.min=NULL, y.max=NULL, groups=NULL, 
+#                         col.low="blue3", col.high="yellow", col.na="black", 
+#                         labels=FALSE, bottom.bar.values=NULL )
+#
 #   Given a matrix and a list of gene names and symbol, plot gene names sorted by symbol
 #
 # do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19)
@@ -2081,6 +2087,8 @@ plot.discretization = function(M, lbls=NULL, method="SD", bounds=0.5, x_lbl=NULL
 }
 
 convert.genome.to.scaled.x = function( chr.list, loc.list, x.max=1000 ){
+    # given vector of chromosome and physical locations and a scaling factor,
+    # convert each item into a scaled proportionate element
     df = data.frame( chr=chr.list, loc=loc.list )
     size.chroms = ddply(df, "chr", max )
     names(size.chroms)[2] = "loc"
@@ -3101,114 +3109,125 @@ plot.clean=function( V, ymin=NA, ymax=NA, colors=c(), cex=0.25, y.axis=T ){
 }
 
 
-sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, sort.by=NULL, scale=F, 
-                        y.min=NULL, y.max=NULL, groups=NULL, col.low="blue3", col.high="yellow", col.na="black", labels=F, bottom.bar.values=NULL ){
-
-    # passing a list of probes uses the probe IDs to pick exact targets.
-    # If symbol==NULL, sorted by first symbol.
-    probes =  c()
-    symbols= c()
-    if( is.null(target.probes) & is.null(target.symbols) )
-        target.probes = rownames(D)
-    
-    if( is.null(ga)){
-        probes = rownames(D)
-        symbols = probes
-    }
-    else{
-        if( !is.null(target.probes) & !is.null(target.symbols) )
-            stop( "Cannot pass both target.probes and target.symbols" )
-        if( !is.null(target.probes) ){
-            m = match.idx.first(  rownames(ga), target.probes, allow.multiple.B=T)
-            if( dim(m)[1] != length(target.probes) ){
-                print(paste("Found", dim(m)[1],"of",length(target.probes),"probes"))
-                stop("Not all target probes found in gene attributes.")
-            }
-            else{
-                probes = target.probes
-                symbols = ga$symbol[m$idx.A]
-            }
-        }
-        else{
-            for(i in 1:length(target.symbols)){
-                probes = c(probes, rownames(ga)[ga$symbol==target.symbols[i]][1])
-                symbols = c(symbols, ga$symbol[ga$symbol==target.symbols[i]][1])
-            }
-        }
-    }
-    DT = data.matrix( D[match.idx.first( rownames(D), probes, allow.multiple.B=T)$idx.A,] )
-    
-    if(!is.null(groups)){
-        if( !is.numeric(groups) ){
-            stop("groups parameter must consist entirely of numbers")
-        }
-    }
-    if(!is.null(sort.by)){
-        idx.s = which(symbols==sort.by)[1]
-        idx.n = which(names(D)==sort.by)[1]
-        if(!is.na(idx.s)){
-            if( is.null(groups) ){
-                groups = rep(1, dim(DT)[2] ) # dummy same number of columns
-            }
-            DT = DT[,order(groups, DT[idx.s,])]
-        }
-        else if(!is.na(idx.n)){
-            if( is.null(groups) ){
-                groups = rep(1, dim(DT)[1] ) # dummy same number of rows
-            }
-            DT = DT[order(groups, DT[,idx.n]),]         
-        }
-        else{
-            stop("Cannot find sort.by parameter in names or rownames of matrix")
-        }
-    }
-    DT = DT[dim(DT)[1]:1,]
-
-    if( scale ){
-        means = rowMeans(DT)
-        sds = rep(0, dim(DT)[1])
-        for(i in 1:length(sds)){
-            sds[i] = sd(DT[i,])
-        }
-        DT = (DT - means) / sds
-    }
-    if( !is.null(y.min) ){
-        if( sum(DT<y.min, na.rm=T)>0 ){
-            print("Truncating at lower bound")
-            DT[DT<y.min] = y.min
-        }
-    }
-    if( !is.null(y.max) ){
-        if( sum(DT>y.max, na.rm=T)>0 ){
-            print("Truncating at upper bound")
-            DT[DT>y.max] = y.max
-        }
-    }    
-    if(is.null(y.min) | is.null(y.max)){
-        y.min=min(DT, na.rm=T)
-        y.max=max(DT, na.rm=T)
-    }
-    if(!is.null(bottom.bar.values)){
-        if( !length(bottom.bar.values)==dim(DT)[2])
-            stop("bottom bar values must be same length as the number of samples")
-        DT = rbind(bottom.bar.values, DT)
-        symbols = c(symbols, "extra")
-    }
-    df = expand.grid(y = 1:dim(DT)[1], x = 1:dim(DT)[2] )
-    df = cbind(df, v=as.numeric(DT) )
-    y.mid = mean(c(y.max, y.min))
-    scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high = col.high, na.value=col.na )
-    if(labels){
-        syc = scale_y_continuous(expand=c(0,0),breaks=dim(DT)[1]:1,labels=symbols)
-        sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[1],labels=symbols ) 
-        ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + 
-            theme(axis.title.x = element_blank()) + 
-            opts(axis.text.x = theme_text(angle = 90, hjust = 1) )
-    }
-    else{
-        ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank()
-    }
+sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, 
+                         sort.by=NULL, order.rows.by.cor.with.first.symbol=FALSE, 
+                         scale=FALSE, y.min=NULL, y.max=NULL, groups=NULL, 
+                         col.low="blue3", col.high="yellow", col.na="black", 
+                         labels=FALSE, bottom.bar.values=NULL ){
+     
+     # passing a list of probes uses the probe IDs to pick exact targets.
+     # If symbol==NULL, sorted by first symbol.
+     probes =  c()
+     symbols= c()
+     if( is.null(target.probes) & is.null(target.symbols) )
+         target.probes = rownames(D)
+     
+     if( is.null(ga)){
+         probes = rownames(D)
+         symbols = probes
+     }
+     else{
+         if( !is.null(target.probes) & !is.null(target.symbols) )
+             stop( "Cannot pass both target.probes and target.symbols" )
+         if( !is.null(target.probes) ){
+             m = match.idx.first(  rownames(ga), target.probes, allow.multiple.B=T)
+             if( dim(m)[1] != length(target.probes) ){
+                 print(paste("Found", dim(m)[1],"of",length(target.probes),"probes"))
+                 stop("Not all target probes found in gene attributes.")
+             }
+             else{
+                 probes = target.probes
+                 symbols = ga$symbol[m$idx.A]
+             }
+         }
+         else{
+             for(i in 1:length(target.symbols)){
+                 probes = c(probes, rownames(ga)[ga$symbol==target.symbols[i]][1])
+                 symbols = c(symbols, ga$symbol[ga$symbol==target.symbols[i]][1])
+             }
+         }
+     }
+     DT = data.matrix( D[match.idx.first( rownames(D), probes, allow.multiple.B=T)$idx.A,] )
+     
+     if(!is.null(groups)){
+         if( !is.numeric(groups) ){
+             stop("groups parameter must consist entirely of numbers")
+         }
+     }
+     if(!is.null(sort.by)){
+         idx.s = which(symbols==sort.by)[1]
+         idx.n = which(names(D)==sort.by)[1]
+         if(!is.na(idx.s)){
+             if( is.null(groups) ){
+                 groups = rep(1, dim(DT)[2] ) # dummy same number of columns
+             }
+             DT = DT[,order(groups, DT[idx.s,])]
+         }
+         else if(!is.na(idx.n)){
+             if( is.null(groups) ){
+                 groups = rep(1, dim(DT)[1] ) # dummy same number of rows
+             }
+             DT = DT[order(groups, DT[,idx.n]),]         
+         }
+         else{
+             stop("Cannot find sort.by parameter in names or rownames of matrix")
+         }
+     }
+     
+     if(order.rows.by.cor.with.first.symbol){
+         cor.with.first=cor.test.probe.vs.all(DT, probes, probes[1])
+         sorted.idx = match.idx(rownames(cor.with.first), probes)$idx.B
+         DT = DT[sorted.idx,]
+         probes = probes[ sorted.idx ]
+         symbols = symbols[ sorted.idx ]
+         print("NEW SYMBOL ORDER:")
+         print(symbols)
+     }
+     DT = DT[dim(DT)[1]:1,]
+     if( scale ){
+         means = rowMeans(DT)
+         sds = rep(0, dim(DT)[1])
+         for(i in 1:length(sds)){
+             sds[i] = sd(DT[i,])
+         }
+         DT = (DT - means) / sds
+     }
+     if( !is.null(y.min) ){
+         if( sum(DT<y.min, na.rm=T)>0 ){
+             print("Truncating at lower bound")
+             DT[DT<y.min] = y.min
+         }
+     }
+     if( !is.null(y.max) ){
+         if( sum(DT>y.max, na.rm=T)>0 ){
+             print("Truncating at upper bound")
+             DT[DT>y.max] = y.max
+         }
+     }    
+     if(is.null(y.min) | is.null(y.max)){
+         y.min=min(DT, na.rm=T)
+         y.max=max(DT, na.rm=T)
+     }
+     if(!is.null(bottom.bar.values)){
+         if( !length(bottom.bar.values)==dim(DT)[2])
+             stop("bottom bar values must be same length as the number of samples")
+         DT = rbind(bottom.bar.values, DT)
+         symbols = c(symbols, "extra")
+     }
+     df = expand.grid(y = 1:dim(DT)[1], x = 1:dim(DT)[2] )
+     df = cbind(df, v=as.numeric(DT) )
+     y.mid = mean(c(y.max, y.min))
+     scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high = col.high, na.value=col.na )
+     if(labels){
+         syc = scale_y_continuous(expand=c(0,0),breaks=dim(DT)[1]:1,labels=symbols)
+         sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[1],labels=symbols ) 
+         ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + theme(axis.title.x = element_blank() )
+     }
+     else{
+         ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank()
+     }
 }
+
 
 do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19){
     if(length(pch)!=1 & length(pch) != dim(D)[2] )
@@ -4284,7 +4303,10 @@ eqtl.filter = function(eqtl, snp, ga.chr.snp, ga.loc.snp, gene, ga.chr.gene, ga.
 write.rqtl.csv=function( expr, probe.list, sa.geno, sa.col.matching.expr, geno.chrom, geno.cM=NULL, calls.geno, fn.rqtl ){
     # write all probes in probe.list as phenotypes for an RQTL CSV file
     sa.match = sa.geno[,which(names(sa.geno)==sa.col.matching.expr)]
-    m = match.idx(sa.match, names(expr))
+    if( is.matrix(expr))
+        m = match.idx(sa.match, dimnames(expr)[[2]])
+    else
+        m = match.idx(sa.match, names(expr))
     expr = expr[,m$idx.B]
     sa.geno = sa.geno[m$idx.A,]
     
