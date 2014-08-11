@@ -9,7 +9,7 @@ correlation between two groups of samples, etc.
 BUILDING SPEAR
 
 Spear requires the boost C++ library (boost.org).
-In April 2013 spear was built with boost 1.46.1.
+In August 2014 spear was built with boost 1.56.0.
 
 USAGE
 type ./spear --help
