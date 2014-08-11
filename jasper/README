@@ -1,0 +1,55 @@
+For historical reasons, "Carmen" is the name of the library that the application 
+called Carmen uses. The actual executable for Carmen with the wxWidgets code is built as 
+a project called "jasper" and renamed to "carmen" for release. 
+
+wxWidgets is available at wxWidgets.org. As of this writing the build is 3.0.1.
+boost is available at boost.org. As of this writing the build is 1.56.0
+
+**********************
+BUILDING WXWIDGETS
+**********************
+
+IMPORTANT FOR USERS OF OSX 10.9: Build with libc++ explicitly. 
+To build wxWidgets on OSX 10.9, I have used:
+
+sudo ./configure --with-osx_cocoa --enable-monolithic --disable-shared \
+     --with-macosx-version-min=10.7 \
+     --with-macosx-sdk=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk 
+     --prefix="$(pwd)" --with-opengl CC=clang CXX=clang++ \
+     CXXFLAGS="-stdlib=libc++ -std=c++11" OBJCXXFLAGS="-stdlib=libc++ -std=c++11" \
+     LDFLAGS=-stdlib=libc++
+
+sudo make clean
+sudo make
+sudo make install
+
+**********************
+BUILDING BOOST
+**********************
+
+IMPORTANT FOR USERS OF OSX 10.9: Build with libc++ explicitly. 
+To build boost on OSX 10.9, I have used:
+
+sudo ./bootstrap.sh --with-libraries=system,filesystem,regex,thread
+sudo ./b2 link=static runtime-link=static toolset=clang \
+      cxxflags="-stdlib=libc++" linkflags="-stdlib=libc++"
+
+**********************
+BUILDING JASPER
+**********************
+
+Set Xcode to use C++11 as the C++ Language Dialect and libc++ (NOT libstdc++) as the C++ 
+standard library. 
+
+C++ flags: 
+==================
+-D__WXOSX_COCOA__ -D_FILE_OFFSET_BITS=64 -DWX_PRECOMP -D_WCHAR_H_CPLUSPLUS_98_CONFORMANCE_
+
+Linker flags:
+==================
+-framework IOKit -framework Carbon -framework Cocoa -framework System -framework OpenGL 
+-lz -lpthread -liconv -lboost_system -lboost_filesystem -lboost_thread -lboost_regex 
+-lcarmen 
+-lwx_osx_cocoau-3.0 -lwxscintilla-3.0 -lwxtiff-3.0 -lwxjpeg-3.0 -lwxpng-3.0 -lwxregexu-3.0
+
+
