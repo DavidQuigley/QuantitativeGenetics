@@ -16,6 +16,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/random.hpp>
+#include <boost/thread/mutex.hpp>
 namespace alg = boost::algorithm;
 #include <fstream>
 #include <set>
@@ -349,7 +350,7 @@ void CorrelationDialog::OnClickOk(wxCommandEvent& event){
 			p = aProbes.Item(0).ToAscii();
 		}
 		else{
-			wxString chosen_probe = wxT(wxGetSingleChoice(wxString(wxT("Choose a probe")), wxString(wxT("Choose a probe")), aProbes));
+			wxString chosen_probe = wxGetSingleChoice(wxString("Choose a probe"), wxString("Choose a probe"), aProbes);
 			if( chosen_probe.Len()==0 ){
 				return;
 			}

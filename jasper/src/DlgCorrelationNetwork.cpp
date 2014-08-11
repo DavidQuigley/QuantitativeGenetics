@@ -19,6 +19,7 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/path.hpp>
 #include <boost/random.hpp>
+#include <boost/thread/mutex.hpp>
 namespace alg = boost::algorithm;
 #include <fstream>
 #include <string>
