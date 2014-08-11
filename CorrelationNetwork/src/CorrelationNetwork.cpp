@@ -10,6 +10,7 @@ using namespace std;
 #include "boost/tokenizer.hpp"
 #include "boost/lexical_cast.hpp"
 #include "boost/algorithm/string.hpp"
+#include "boost/thread/mutex.hpp"
 //#include "boost/filesystem/operations.hpp"
 //#include "boost/filesystem/path.hpp"
 #include "boost/random.hpp"
