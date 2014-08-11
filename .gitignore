@@ -18,6 +18,8 @@ build/
 *.dep
 *.LinkFileList
 *.pbxproj
+*.pbxuser
+*.mode1v3
 *.hmap
 *.d
 *.dia
