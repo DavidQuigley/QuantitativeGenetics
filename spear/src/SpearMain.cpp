@@ -47,9 +47,9 @@ namespace alg = boost::algorithm;
  */
 
 int main(int argc, char *argv[]){
-
+    
     vector<Option*>* options = new vector<Option*>();
-	options->push_back( new Option("data_file", "d", "Path to file with raw data.  Defaults to expr.txt", "expr.txt", OPT_OPTIONAL));
+    options->push_back( new Option("data_file", "d", "Path to file with raw data.  Defaults to expr.txt", "expr.txt", OPT_OPTIONAL));
 	options->push_back( new Option("sample_file", "f", "Path to sample attributes file. Default: sample_attributes.txt", "sample_attributes.txt", OPT_REQUIRED));
 	options->push_back( new Option("gene_file", "g", "Path to gene attributes file. Default: gene_attributes.txt", "gene_attributes.txt", OPT_REQUIRED));
 	options->push_back( new Option("symbol_column", "y", "Column in gene attributes file indicating symbol to display, defaults 'Gene Name'", "", OPT_REQUIRED));
@@ -59,7 +59,7 @@ int main(int argc, char *argv[]){
 	options->push_back( new Option("probe", "p", "Restrict calculation to first degree neighbors of these seed probes, comma delimited", "", OPT_OPTIONAL));
 	options->push_back( new Option("include_seed_neighbor_corr", "r", "If T, calculate correlation between seed neighbors, default F", "F", OPT_OPTIONAL));
     options->push_back( new Option("n_threads", "w", "Number of threads on which to execute, default 1", "1", OPT_OPTIONAL));
-
+    
 	options->push_back( new Option("rewiring_coefficient", "j", "If T, calculate rewiring coefficient for all probes in class A and class B, default F", "F", OPT_OPTIONAL));
     
 	options->push_back( new Option("limit_to_seeds", "l", "If T, limit correlation to those between seeds default F", "F", OPT_OPTIONAL));
@@ -73,10 +73,10 @@ int main(int argc, char *argv[]){
     options->push_back( new Option("distribution", "e", "If T, compute distribution of DC values. Defaults F.", "F", OPT_OPTIONAL));
     options->push_back( new Option("fn_out", "o", "Output file, default to standard output", "", OPT_OPTIONAL));
 	options->push_back( new Option("verbose", "v", "Print out progress to screen, T or F.  Defaults to F.", "F", OPT_OPTIONAL));
-
+    
 	std::stringstream ss;
 	ss << "SPEAR\nDavid Quigley, Balmain Lab, UCSF\n\n";
-
+    
 	ss << "Calculates correlation and returns a file in the .SPEAR format\n\n";
 	ss << "GENERAL USAGE\n";
 	ss << "Pass --data_path, --sample_path, --gene_path to indicate the data set to analyze.\n";
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]){
 	ss << "Limit analysis to probes with at variance >= using --min_var.\n";
 	ss << "Limit analysis to samples present in at least --percent_present samples\n";
 	ss << "Limit absolute value of correlation coefficient by passing --min_abs_corr.\n\n";
-
+    
 	ss << "LIMITING PROBES USING SEED_PROBES\n";
 	ss << "If --seed_probes is not passed, all probes not excluded by--min_var are included.\n";
 	ss << "If --seed_probes is passed with a comma-delimited list of seed identifiers,\n";
@@ -98,11 +98,11 @@ int main(int argc, char *argv[]){
 	ss << "By default, only correlations between seeds and their neighbors are reported (excluding \n";
 	ss << "correlations between neighbors). To include correlations between neighbors, pass\n";
 	ss << "both --seed_probes and --include_seed_neighbor_corr=T\n\n";
-
+    
 	ss << "ANALYSIS OF ONLY A SUBSET OF PROBES\n";
 	ss << "To limit analysis to a subset of probes (and not include neighbors) pass --seed_probes\n";
 	ss << "to specify the probes and --limit_to_seeds=T to restrict analysis to only those probes.\n\n";
-
+    
 	ss << "PERMUTATION ANALYSIS\n";
 	ss << "To perform a permutation analysis (to generate the experiment-wide GWER) pass a number\n";
 	ss << "to --perms. The resulting spear file will contain bogus entries for genes; the only value\n";
@@ -125,10 +125,10 @@ int main(int argc, char *argv[]){
 		std::cout << "ERROR: Could not read arguments, bailing out.\n";
 		return(0);
 	}
-
+    
 	Spearman sp;
 	int r=0;
-
+    
 	std::string fn_data = options->at(r++)->value;
 	std::string fn_sa = options->at(r++)->value;
 	std::string fn_ga = options->at(r++)->value;
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]){
 	boost::algorithm::replace_all(limit_b, std::string("*"), std::string("!"));
 	sp.set_limit_a( limit_a );
 	sp.set_limit_b( limit_b );
-
+    
 	sp.set_method( options->at(r++)->value );
 	std::vector<std::string> seeds;
 	std::string seed_str = options->at(r++)->value;
@@ -150,11 +150,11 @@ int main(int argc, char *argv[]){
 		boost::algorithm::split(seeds, seed_str, boost::algorithm::is_any_of(",") );
 	if( seeds.size()>0 )
 		sp.set_seeds( seeds );
-
+    
 	bool include_seed_neighbors=false;
 	bool limit_network_to_seeds=false;
     bool calculate_rewiring_coefficient=false;
-
+    
     if(options->at(r++)->value.compare("T")==0)
 		include_seed_neighbors = true;
 	int n_threads=1;
@@ -164,7 +164,7 @@ int main(int argc, char *argv[]){
         std::cout << "ERROR: invalid integer parameter for -j, n_threads must be 1 or higher\n";
         return 0;
     }
-
+    
     if(options->at(r++)->value.compare("T")==0)
 		calculate_rewiring_coefficient = true;
 	if(options->at(r++)->value.compare("T")==0)
@@ -175,26 +175,26 @@ int main(int argc, char *argv[]){
 	}
 	sp.set_include_seed_neighbor_correlations(include_seed_neighbors);
 	sp.set_limit_network_to_seeds(limit_network_to_seeds);
-
+    
 	double percent_required, min_var, delta_corr, abs_corr_a, abs_corr_b, min_zscore;
     try{ min_var = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -m, min_var"; return 0;}
-
+    
     try{ percent_required = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -n, percent_present"; return 0;}
-
+    
     try{ delta_corr = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -c, corr_diff"; return 0;}
-
+    
     try{ abs_corr_a = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -s, corr_abs_a"; return 0;}
-
+    
     try{ abs_corr_b = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -h, corr_abs_b"; return 0;}
-
+    
     try{ min_zscore = boost::lexical_cast<double>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -x, min_zscore"; return 0;}
-   
+    
     int n_perms;
     try{ n_perms = boost::lexical_cast<int>( options->at(r++)->value ); }
     catch( boost::bad_lexical_cast &){ std::cout << "ERROR: invalid parameter for -z, perms"; return 0;}
@@ -221,7 +221,7 @@ int main(int argc, char *argv[]){
             if( (int)limit_b.size()==0 ){
                 std::cout << "ERROR: when passing -jT (calculate rewiring coefficient), required to pass class_b_limit";
                 return 0;
-            } 
+            }
             sp.calculate_rewiring_coefficient();
             if( sp.get_success() ){
                 if( fn_out.length() > 0 ){
@@ -254,7 +254,7 @@ int main(int argc, char *argv[]){
             }
 		}
     }
-
+    
 	catch(std::string err){
 		std::cout << "ERROR: " << err << "\n";
 	}

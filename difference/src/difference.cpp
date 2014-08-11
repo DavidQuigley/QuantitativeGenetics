@@ -47,7 +47,6 @@ int main(int argc, char *argv[]){
 	ss << "difference\nDavid Quigley, Balmain Lab, UCSF\n\n";
 	ss << "Calculates t-tests for a dataset, comparing two classes\n\n";
 	ss << "GENERAL USE\n";
-	ss << "GENERAL USE\n";
 	ss << "Pass --data_file, --sample_file, --gene_file to indicate the data set to analyze.\n";
 	ss << "By default all samples are included; limit the samples by passing limits to\n";
 	ss << "--class_a and --class_b with the format FOO=BAR or FOO!BAR to include only samples in\n";
