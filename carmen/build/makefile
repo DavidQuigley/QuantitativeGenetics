@@ -1,6 +1,6 @@
-BOOST_DIR=/home/dquigley/boost_1_54_0
+BOOST_DIR=/usr/local/boost_1_56_0
 CC=g++
-CFLAGS=-I$(BOOST_DIR) -Isrc -O3 -Wall -c -pthread
+CFLAGS=-I$(BOOST_DIR) -Isrc -O3 -Wall -c -pthread -stdlib=libc++
 ODIR=obj
 RM := rm -rf
 
