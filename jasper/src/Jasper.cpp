@@ -972,7 +972,8 @@ void JasperFrame::OnDocumentation(wxCommandEvent& WXUNUSED(event)){
 	if( helpfile.size()==0 )
 		helpfile = std::string("CARMEN_documentation.pdf");
 	if( this->investigation->is_mac ){
-		ss << "open \"" << homedir << "/" << helpfile << "\"";
+		ss << "open \"" << homedir << "/Carmen.app/Contents/MacOS/" << helpfile << "\"";
+        std::cout << ss.str();
 	}
 	else{
 		ss << "\"" << homedir << "\\" << helpfile << "\"";
