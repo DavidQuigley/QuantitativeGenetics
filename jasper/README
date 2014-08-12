@@ -5,9 +5,12 @@ a project called "jasper" and renamed to "carmen" for release.
 wxWidgets is available at wxWidgets.org. As of this writing the build is 3.0.1.
 boost is available at boost.org. As of this writing the build is 1.56.0
 
-**********************
+**************************
 BUILDING WXWIDGETS
-**********************
+**************************
+
+ON OSX
+--------------------------------
 
 IMPORTANT FOR USERS OF OSX 10.9: Build with libc++ explicitly. 
 To build wxWidgets on OSX 10.9, I have used:
@@ -23,16 +26,20 @@ sudo make clean
 sudo make
 sudo make install
 
+
+ON WINDOWS
+--------------------------------
+
+It is not necessary to build wxWidgets on Windows, as you can download a pre-built binary 
+which works just fine. The installer will put wxWidgets off of the root.
+
 **********************
-BUILDING BOOST
+BUILDING BOOST 
 **********************
 
-IMPORTANT FOR USERS OF OSX 10.9: Build with libc++ explicitly. 
-To build boost on OSX 10.9, I have used:
-
-sudo ./bootstrap.sh --with-libraries=system,filesystem,regex,thread
-sudo ./b2 link=static runtime-link=static toolset=clang \
-      cxxflags="-stdlib=libc++" linkflags="-stdlib=libc++"
+Jasper requires linking to the Boost header files and four compiled libraries (system, 
+filesystem, thread, regex). Please see the description in the src/README file if you 
+need tips on building boost.
 
 **********************
 BUILDING JASPER
