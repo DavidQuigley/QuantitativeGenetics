@@ -1,91 +1,67 @@
 This software was written by David Quigley in the Balmain Lab at UCSF.
 
 
-******************
-* BUILDING BOOST *
-******************
+**********************
+BUILDING BOOST 
+**********************
 
-Carmen and Jasper require the Boost library.
+Boost source code is available at boost.org
 
-Boost is well-documented at boost.org. For our purposes, we need to build 
-boost_filesystem and boost_system with 32-bit and 64-bit address models to 
-accomodate wxWidgets 2.8.12, which is 32-bit. For my OS X build I have put 
-these libraries into /usr/local/boost_1_54_0/stage/lib32 and lib64 respectively.
-Note that I remove the dynamically linked version of the libraries because I 
-want to distribute a single static object.
+ON OSX
+--------------------------------
 
-# Download boost from boost.org. Put in /usr/local
-cd /usr/local
-sudo tar -xf boost_1_54_0.tar
-cd /usr/local/boost_1_54_0
+IMPORTANT FOR USERS OF OSX 10.9: Build with libc++ explicitly, and build the 64-bit 
+version. To build boost on OSX 10.9, I have used:
+
 sudo ./bootstrap.sh --with-libraries=system,filesystem,regex,thread
-sudo ./b2
-sudo mv /usr/local/boost_1_54_0/stage/lib /usr/local/boost_1_54_0/stage/lib64
-sudo rm /usr/local/boost_1_54_0/stage/lib64/*.dylib
-sudo ./bjam cflags=-m32 cxxflags=-m32 address-model=32 threading=multi architecture=x86 instruction-set=i686
-sudo mv /usr/local/boost_1_54_0/stage/lib /usr/local/boost_1_54_0/stage/lib32
-sudo rm /usr/local/boost_1_54_0/stage/lib32/*.dylib
+sudo ./b2 link=static runtime-link=static toolset=clang \
+      cxxflags="-stdlib=libc++" linkflags="-stdlib=libc++"
 
+ON WINDOWS
+--------------------------------
+
+It may not be necessary to build boost for Windows, as once again the binary files can be 
+downloaded from boost.org. I am using Visual Studio 2005 (VC8), and because of compiler 
+incompatibilities with the pre-built binaries I found it necessary to build a 32-bit 
+version of boost on Windows. In order to call bootstrap.bat, For reasons I do not 
+understand I had to define two symbols in builtins.c that should have been present 
+somewhere in windows.h:
+
+#ifndef FSCTL_GET_REPARSE_POINT
+#define FSCTL_GET_REPARSE_POINT 0x000900a8
+#endif
+# ifndef IO_REPARSE_TAG_SYMLINK
+# define IO_REPARSE_TAG_SYMLINK (0xA000000CL)
+# endif
+
+After calling bootstrap.bat my call to bjam to build a static, multi-threaded 32-bit 
+version of boost was:
+
+bjam link=static address-model=32 threading=multi runtime-link=static -a
+     --with-regex --with-system --with-filesystem --with-thread --with-date_time install 
+
+You want in this call to link to the mt-s versions of the libraries:
+libboost_thread-vc80-mt-s-1_56.lib 
+libboost_system-vc80-mt-s-1_56.lib 
+libboost_regex-vc80-mt-s-1_56.lib 
+libcarmen.lib
+
+Note that your version of boost (and your build environment) may be different.
+
+I pass the pre-processor definitions 
+    WIN32
+    NDEBUG
+    _CONSOLE
+
+If you're building this way be sure to specify the /MT runtime library flag, not /MD.
 
 
 *************************
 * BUILDING JASPER: OS X *
 *************************
 
-Jasper is built using the wxWidgets library of windowing functions. 
-I have used wxWidgets wxMac verison 2.8.12:
-
-http://downloads.sourceforge.net/project/wxwindows/2.8.12/wxMac-2.8.12.tar.gz
-
-See hints on wxMac at:
-http://wiki.wxwidgets.org/Creating_Xcode_projects_for_wxWidgets_applications
-http://wiki.wxwidgets.org/Development:_wxMac#Building_under_10.6_Snow_Leopard
-
--------------------------
-To build with XCode
--------------------------
-
-As of this writing the current version of XCode is 4.5.x.
-Apple, in its infinite wisdom, does not ship this version of XCode with the OS X 10.6 SDK. 
-You will need the 10.6 version of the SDK in order to target 10.6. wxWidgets requires that you target 
-10.6 because the stable version of the wxWidgets OS X codebase is a 32 bit application. 
-To get SDK 10.6, pull down XCode 4.1 or google for a copy of the SDK that someone has already extracted.
-
-You will also need to link to 32-bit versions of the boost binaries. These are simple to make with a second 
-call to bjam, see note above on boost.
-
-For the notes below:
-    1) I have installed wxMac-2.8.12 into /usr/local
-    2) My code root is /notebook/code/src; this means the jasper directory containing the 
-       Xcode file is in /notebook/code/src/jasper
-    3) I have installed boost in /usr/local/boost_1_54_0
-
-In general settings:
-    Set Architectures to i386
-    Set Base SDK to 10.6
-    Set Valid Architectures to i386
-
-To learn the proper compiler include flags, call
-/usr/local/wxMac-2.8.12/build-carbon/wx-config --cppflags
-
-To learn the proper compiler library flags, call
-/usr/local/wxMac-2.8.12/build-carbon/wx-config --libs
-
-COMPILER FLAGS:
-    -mmacosx-version-min=10.6 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXMAC__ -arch i386
-COMPILER INCLUDES 
-    /usr/local/boost_1_54_0
-    /usr/local/wxMac-2.8.12/build-carbon/lib/wx/include/mac-ansi-release-static-2.8
-    /usr/local/wxMac-2.8.12/include
-    /usr/local/wxMac-2.8.12/contrib/include
-    /notebook/code/src
-LINKER FLAGS 
-    -framework IOKit -framework Carbon -framework Cocoa -framework System -framework QuickTime -framework OpenGL -framework AGL -framework WebKit -lwx_mac-2.8 -lwxtiff-2.8 -lwxjpeg-2.8 -lwxpng-2.8 -lz -lpthread -liconv -lboost_system -lboost_filesystem -lboost_regex -lcarmen
-LIBRARY PATH:
-    /usr/local/wxMac-2.8.12/build-carbon/lib
-    /usr/local/boost_1_54_0/stage/lib32
-    /Users/dquigley/Documents/notebook/code/src/carmen/DerivedData/carmen/Build/Products/Release
-    
+Please see the notes in the jasper README.
+ 
     
 ***********************************
 * The CARMEN software data format *
