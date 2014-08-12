@@ -1,0 +1,5 @@
+In addition to Boost, eqtl is also dependent on the Rmath library, allowing us to 
+calculate P value distributions using code from R (r-project.org). You can generate 
+this library from source, or download it from
+
+http://www.cgjennings.ca/toybox/R/index.html
