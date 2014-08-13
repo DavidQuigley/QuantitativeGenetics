@@ -45,6 +45,9 @@ need tips on building boost.
 BUILDING JASPER
 **********************
 
+ON OSX
+---------------------------------
+
 Set Xcode to use C++11 as the C++ Language Dialect and libc++ (NOT libstdc++) as the C++ 
 standard library. 
 
@@ -52,11 +55,41 @@ C++ flags:
 ==================
 -D__WXOSX_COCOA__ -D_FILE_OFFSET_BITS=64 -DWX_PRECOMP -D_WCHAR_H_CPLUSPLUS_98_CONFORMANCE_
 
+You need to link carmen (carmen), boost (system, filesystem, thread, and regex),  
+wxWidgets (cocoau scintilla tiff, jpeg, png, regexu), and the system libraries for
+(z, pthred, iconv).
+
 Linker flags:
 ==================
 -framework IOKit -framework Carbon -framework Cocoa -framework System -framework OpenGL 
 -lz -lpthread -liconv -lboost_system -lboost_filesystem -lboost_thread -lboost_regex 
 -lcarmen 
 -lwx_osx_cocoau-3.0 -lwxscintilla-3.0 -lwxtiff-3.0 -lwxjpeg-3.0 -lwxpng-3.0 -lwxregexu-3.0
+
+ON WINDOWS
+---------------------------------
+
+I use Visual Studio 2005; these instructions should work for any flavor of VS.
+Be sure your application is Win32 and not console. 
+nmake /f makefile.vc clean
+nmake /f makefile.vc RUNTIME_LIBS=static MONOLITHIC=1 BUILD=release UNICODE=1 /a
+For reasons I don't understand I had to build wxbase30u_core.lib wxbase30u.lib and 
+wxmsw30u_adv.lib manually, by loading \build\msw\wx_vc8.sln into visual studio.
+*** Build with static Runtime libraries in Visual Studio, default is DLL***
+
+PREPROCESSOR DEFINITIONS
+WIN32;_LIB;_DEBUG;NDEBUG;_CRT_SECURE_NO_WARNINGS;__WXMSW__;
+WIN32;WINVER=0x0400; __WXMSW__;_WINDOWS;wxUSE_GUI=1;_CRT_SECURE_NO_DEPRECATE
+
+Libraries to link
+---------------------------------------------------------------------------------
+You'll need to link boost, carmen, and wxWidgets libraries.
+
+libboost_filesystem-vc80-mt-s-1_56.lib libboost_regex-vc80-mt-s-1_56.lib 
+libboost_system-vc80-mt-s-1_56.lib libboost_thread-vc80-mt-s-1_56.lib 
+libcarmen.lib 
+wxbase30u_core.lib wxbase30u.lib wxmsw30u_adv.lib 
+wxjpeg.lib wxpng.lib wxtiff.lib wxscintilla.lib 
+winmm.lib comctl32.lib rpcrt4.lib wsock32.lib odbc32.lib advapi32.lib
 
 
