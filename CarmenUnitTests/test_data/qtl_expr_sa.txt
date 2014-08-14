@@ -1,0 +1,11 @@
+IDENTIFIER	pick
+g1	1
+g2	1
+g3	1
+g4	1
+g5	1
+g6	1
+g7	1
+g8	1
+g9	1
+g10	0

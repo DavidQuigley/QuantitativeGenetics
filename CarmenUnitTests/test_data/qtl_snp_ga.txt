@@ -1,0 +1,3 @@
+IDENTIFIER	loc	Gene Name
+snp1	1	1:2-3
+snp2	2	4:5-6

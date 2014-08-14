@@ -1,0 +1,22 @@
+# Source SingleQTL 1.0
+# Date 2010_05_27_21_22_28
+# Format long
+# Phenotype_Data_File /code/mouse/carcinomas/data/jesus/expression/expr_refseq.txt
+# Phenotype_Sample_File /code/mouse/carcinomas/data/jesus/expression/sample_attributes.txt
+# Phenotype_Genes_File /code/mouse/carcinomas/data/jesus/expression/gene_attributes_refseq.txt
+# Genotype_Data_File /code/mouse/carcinomas/data/jesus/genotypes/expr.txt
+# Genotype_Sample_File /code/mouse/carcinomas/data/jesus/genotypes/sample_attributes.txt
+# Genotype_Genes_File /code/mouse/carcinomas/data/jesus/genotypes/gene_attributes.txt
+# min_var 0
+# maximum_reported_p_value 1
+# n_perms 100
+# test_type regression
+# fraction_expr_samples_required 0.9
+# experiment_wide_0.05_threshold 1
+# p_val	Quant Name	Quant ID	SNP ID	Perm_Pval	Mean_A	Mean_B	Mean_C
+1.50573e-13	Ets1	1422027_a_at	E09.034.366_10	0.00000	6.54406	8.72455	0.00000
+2.67738e-11	Cno	1459783_s_at	E05.023.497_10	0.1	9.71333	8.69820	0.00000
+5.81731e-11	Frg1	1417253_at	E08.048.274_10	0.00000	10.01980	9.29553	0.00000
+2.22697e-09	Fastk	1460635_at	E05.023.497_10	0.00000	8.16554	7.57353	0.00000
+2.43708e-09	Adpgk	1451079_at	E09.052.894_10	0.00000	6.27018	7.42349	0.00000
+6.47198e-09	Rbm8a	1418120_at	E03.094.477_10	1.00000	7.44911	6.55976	0.00000

@@ -1,0 +1,29 @@
+# Source CARMEN 1.0
+# Date 2014_08_14_10_32_12
+# Class_A  8 members.
+# Class_B  0 members.
+# Focus_Probe GENE1
+# Min_var 0
+# Delta_rho 0
+# Abs_rho 0
+# Abs_rho_Class_B 0
+# Data_File ../../test_data/test_correlation_dataset.txt
+# Sample_File ../../test_data/test_sample_attributes.txt
+# Genes_File ../../test_data/test_correlation_gene_attributes.txt
+# Max_pval_eqtl 1
+# Rho_difference 
+# Min_clique_size 0
+# Min_percent_present 0
+# Gene_name_column 
+# Include_seed_neighbor_correlations True
+# Limit_network_to_seeds False
+# Min_clique_size 0
+# N_perms 0
+# Percent_required 0
+# name_1	id_1	name_2	id_2	rho_a	rho_b	diff	perm_pval	z_score
+Foo	GENE1	Mis	GENE4	1	0	1	-1	9.64974
+Foo	GENE1	Bar	GENE2	0.97619	0	0.97619	-1	3.4934
+Mis	GENE4	Bar	GENE2	0.9	0	0.9	-1	2.32778
+Baz	GENE3	Bar	GENE2	0.40476	0	0.40476	-1	0.67883
+Foo	GENE1	Baz	GENE3	0.30952	0	0.30952	-1	0.50599
+Mis	GENE4	Baz	GENE3	-0.1625	0	-0.1625	-1	-0.25923

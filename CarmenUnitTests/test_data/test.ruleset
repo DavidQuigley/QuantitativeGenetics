@@ -1,0 +1,18 @@
+# Date 2007_03_22_10_38_15
+# Mine_Type Core_Rules tolorance 0
+# Data_File C:\code\mouse\data\expr.txt
+# Sample_File C:\code\mouse\data\sample_attributes.txt
+# Genes_File C:\code\mouse\data\gene_attributes.txt
+# Class_A is_tumor=0,gene:1424511_at=-1 17 members.
+# Class_B is_tumor=0,gene:1424511_at=1 19 members.
+# S_C_I 75,90,1
+# Max_Depth 3
+# Discretization SD Lower,Upper multiples 0.5,0.5
+# Maximum_Chi2 1
+# Tested 99010 hypotheses.  Bonferroni 0.05 corrected p-value 5.04999e-007
+# Generated 4 rules.
+# chi2	%conf	supA	%supA	supB	%supB	imp	Rule	Rule_ID	Rule_Dis	t_stat
+1e-007	100	0	0	16	84	1	Gene1_is_1	1_at_is_1	1_at>8	7.42181
+1e-007	100	14	82	0	0	1	Gene2_is_-1	2_at_is_-1	2_at<7	0.916751
+1e-007	90	15	88	1	5	0.93	Gene1_is_-1	1_at_is_-1	1_at<3	0.642288
+1e-006	100	0	0	15	78	1	Gene1_is_1|Gene3_is_1	1_at_is_1|3_at_is_1	1_at>8|3_at>6	7.06878

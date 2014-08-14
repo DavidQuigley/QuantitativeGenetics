@@ -1,0 +1,4 @@
+IDENTIFIER	Gene Name	CHR	Allowed
+GENE1	Foo	1	1
+GENE2	Bar	2	1
+GENE3	Baz	3	0

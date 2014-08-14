@@ -1,0 +1,11 @@
+IDENTIFIER	shared_snp_expr	pick
+s1	g1	1
+s2	g2	1
+s3	g3	1
+s4	g4	1
+s5	g5	1
+s6	g6	1
+s7	g7	1
+s8	g8	1
+s9	g9	1
+s10	g10	1

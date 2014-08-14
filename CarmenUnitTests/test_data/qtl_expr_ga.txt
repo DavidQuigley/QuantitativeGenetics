@@ -1,0 +1,3 @@
+IDENTIFIER	Chr	Gene Name
+gene_1	1	foo
+gene_2	2	bar

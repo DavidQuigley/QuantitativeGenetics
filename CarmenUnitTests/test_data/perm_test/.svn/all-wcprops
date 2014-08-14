@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 53
+/svn/!svn/ver/223/CarmenUnitTests/test_data/perm_test
+END
+gene_attributes.txt
+K 25
+svn:wc:ra_dav:version-url
+V 73
+/svn/!svn/ver/223/CarmenUnitTests/test_data/perm_test/gene_attributes.txt
+END
+sample_attributes.txt
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svn/!svn/ver/223/CarmenUnitTests/test_data/perm_test/sample_attributes.txt
+END
+expr.txt
+K 25
+svn:wc:ra_dav:version-url
+V 62
+/svn/!svn/ver/223/CarmenUnitTests/test_data/perm_test/expr.txt
+END

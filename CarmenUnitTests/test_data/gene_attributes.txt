@@ -1,0 +1,4 @@
+IDENTIFIER	Gene Name	CHR	Allowed	loc_start
+GENE1	Foo	1	1	20
+GENE2	Bar	1	1	NA
+GENE3	Baz	1	0	32

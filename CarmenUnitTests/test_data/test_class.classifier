@@ -1,0 +1,31 @@
+# Source CARMEN 1.0
+# Validation AllData
+# Method boosting
+# Date 2007_03_27_23_57_16
+# Data_File C:\code\CARMEN\test_data\test_class_dataset.txt
+# Sample_File C:\code\CARMEN\test_data\sample_attributes.txt
+# Genes_File C:\code\CARMEN\test_data\gene_attributes.txt
+# Ruleset_File C:\code\CARMEN\test_data\test_class_ruleset.txt
+# S_C_I 80,100,50
+# Discretization None 
+# Class_A_train PAVM=0 4 members
+# Class_B_train PAVM=1 4 members
+# Class_A_test  0 members
+# Class_B_test  0 members
+# n_train 55
+# n_test 0
+# Label Tr_All Tr_A Tr_B Tst_All Tst_A Tst_B
+# Acc 94.5455 100 92.1053 0 0 0
+# Sens_train 100
+# Spec_train 85
+# Sens_test 0
+# Spec_test 0
+# PPV_train 0.921053
+# NPV_train 1
+# PPV_test 0
+# NPV_test 0
+# labels -1	-1	-1	-1	1	1	1	1
+# calls -1	-1	-1	-1	1	1	1	1
+# n_rules 2
+Foo_is_1	GENE1_is_1	GENE1=1	-1	-1
+Baz_is_1	GENE3_is_1	GENE3=1	1	-1

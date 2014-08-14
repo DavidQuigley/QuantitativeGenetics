@@ -1,0 +1,5 @@
+IDENTIFIER	Gene Name	CHR
+GENE1	Foo	1
+GENE2	Bar	2
+GENE3	Baz	3
+GENE4	Mis	4

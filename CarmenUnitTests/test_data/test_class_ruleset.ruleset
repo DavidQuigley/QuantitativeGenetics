@@ -1,0 +1,16 @@
+# Date 2007_03_22_10_38_14
+# Mine_Type Core_Rules tolorance 0
+# Data_File C:\code\CARMEN\test_data\test_class_dataset.txt
+# Sample_File C:\code\CARMEN\test_data\test_sample_attributes.txt
+# Genes_File C:\code\CARMEN\test_data\test_gene_dataset.txt
+# Class_A PAVM=0 4 members.
+# Class_B PAVM=1 4 members.
+# S_C_I 75,90,1
+# Max_Depth 3
+# Discretization none
+# Maximum_Chi2 1
+# Tested 99010 hypotheses.  Bonferroni 0.05 corrected p-value 5.04999e-007
+# Generated 2 rules.
+# chi2	%conf	supA	%supA	supB	%supB	imp	Rule	Rule_ID	Rule_Dis	t_stat
+1e-07	75	4	100	1	25	1	Foo_is_1	GENE1_is_1	GENE1=1	10
+1e-07	100	0	0	4	100	1	Baz_is_1	GENE3_is_1	GENE3=1	10
