@@ -117,7 +117,7 @@ double pnorm(double z, bool upper) {
 		upper=!upper;
 		z=-z;
     }
-    if(z<=ltone || upper && z<=utzero) {
+    if(z<=ltone || (upper && z<=utzero)) {
 		double y = 0.5 * z * z;
 		if(z>con) {
 			alnorm= b1 * exp(-y) / (z-b2+b3 / (z+b4+b5 / (z-b6+b7 / (z+b8-b9 / (z+b10+b11 / (z+b12))))));
