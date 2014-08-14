@@ -1736,8 +1736,12 @@ void Spearman::find_spears(){
 			row1 = neighbors.at(i);
 			for(int j=i+1; j<(int)neighbors.size(); j++){
 				row2 = neighbors.at(j);
-				if(row1==row2)
-					continue;
+				if( row1==row2 || seen.arr[row1][row2] )
+                    continue;
+                else{
+                    seen.arr[row2][row1] = true;
+                    seen.arr[row1][row2] = true;
+                }
 				if( is_spearman )
 					rho_a = this->find_spearman_from_ranks( ranks_a, row1, ranks_a, row2);
 				else
@@ -2446,10 +2450,14 @@ void Spearman::load_data_for_run(){
 		std::cout << "MESSAGE: Loading data set...\n";
 		std::cout.flush();
 	}
-	if( this->sa != NULL )
+	//if( this->sa != NULL ){
 		delete this->sa;
-	if( this->ga != NULL )
+        this->sa = NULL;
+    //}
+	//if( this->ga != NULL ){
 		delete this->ga;
+        this->ga = NULL;
+    //}
 
 	this->sa = new Attributes("NA");
 	this->ga = new Attributes("NA");
