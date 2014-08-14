@@ -445,27 +445,24 @@ void SampleFilterDialog::redraw(){
 
 PanelLimits::PanelLimits(wxWindow* parent, int id, Investigation* investigation) : wxPanel(parent, id){
 	this->parent = parent;
-
+    
 	this->investigation = new Investigation();
     this->investigation->clone_from(investigation);
 	this->lbx_limits = new wxListBox(this, CTL_TXT_LIMITS, wxDefaultPosition, wxSize(200, 50), 0, NULL, wxLB_SINGLE );
-	int btn_size = 90;
-	if( this->investigation->is_mac)
-		btn_size = 120;
+	int btn_size = 160;
+	if( this->investigation->is_mac){
+	    btn_size=120;
+	}
 	this->btn_remove = new wxButton( this, CTL_BTN_REMOVE, wxString::FromAscii("Remove"), wxDefaultPosition, wxSize(btn_size, 20));
 	this->btn_add_sample = new wxButton( this, CTL_BTN_ADD_SAMPLE, wxString::FromAscii("Add Sample Limit"), wxDefaultPosition, wxSize(btn_size, 20));
 	this->btn_add_gene = new wxButton( this, CTL_BTN_ADD_GENE, wxString::FromAscii("Add Gene Limit"), wxDefaultPosition, wxSize(btn_size, 20));
 	this->btn_remove->Enable(false);
-	if(this->investigation->is_mac){
-	    // mac uses giant fonts by default; PC is better.
-		wxFont font(this->btn_add_gene->GetFont());
-		font.SetPointSize(wxSMALL_FONT->GetPointSize());
-	    this->btn_add_gene->SetFont( font );
-	    this->btn_add_sample->SetFont( font );
-	    this->btn_remove->SetFont( font );
-	    this->lbx_limits->SetFont( font );
-	}
-
+	wxFont font(this->btn_add_gene->GetFont());
+	font.SetPointSize(wxSMALL_FONT->GetPointSize());
+	this->btn_add_gene->SetFont( font );
+	this->btn_add_sample->SetFont( font );
+	this->btn_remove->SetFont( font );
+	this->lbx_limits->SetFont( font );
 	this->sizer_top = new wxBoxSizer(wxHORIZONTAL);
 	this->sizer_top->Add(this->lbx_limits, 0, FLAGS, BORDER_PXL);
 	
@@ -474,12 +471,12 @@ PanelLimits::PanelLimits(wxWindow* parent, int id, Investigation* investigation)
 	sizer_right->Add(this->btn_add_sample, 0, FLAGS, BORDER_PXL);
 	sizer_right->Add(this->btn_add_gene, 0, FLAGS, BORDER_PXL);
 	this->sizer_top->Add(sizer_right, 0, FLAGS, BORDER_PXL);
-
+    
 	Connect(CTL_TXT_LIMITS, wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler(PanelLimits::OnSelected));
 	Connect(CTL_BTN_REMOVE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PanelLimits::OnRemove));
 	Connect(CTL_BTN_ADD_SAMPLE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PanelLimits::OnAddSample));
 	Connect(CTL_BTN_ADD_GENE, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PanelLimits::OnAddGene));
-
+    
 	this->SetSizer(this->sizer_top);
 	this->sizer_top->Fit(this);
 	this->redraw();
