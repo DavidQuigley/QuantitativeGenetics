@@ -19,6 +19,7 @@ public:
 	void intersection( std::vector<int>* source, std::vector<int>* diff);
 	void load(std::string file_name);
 	std::string prop_for_identifier(std::string identifier, std::string attribute);
+    void restrict_identifiers( std::vector<std::string> target );
 	void set_gene_name_column(std::string col_name);
     void set_chromosome_and_locus( std::string col_chr, std::string col_locus );
 	void write(std::string file_name);

@@ -102,6 +102,45 @@ Attributes::~Attributes(){
 }
 
 
+void Attributes::restrict_identifiers( std::vector<std::string> new_identifiers ){
+    // after call, identifiers should match the order of new_identifiers
+    // If an identifier in target is not present, that's fatal
+    // UPDATEs identifiers, values, identifier2idx
+    
+    std::vector<int> idx_of_orig_to_keep, idx_orig_to_remove;
+    HASH_S_I hsh_target;
+    for(int i=0; i<new_identifiers.size();i++){
+        if( this->identifier2idx.find( new_identifiers.at(i) ) == this->identifier2idx.end() ){
+            std::stringstream ss;
+            ss << "called restrict_identifiers with identifier not found in attributes: " << new_identifiers.at(i);
+            throw ss.str();
+        }
+        hsh_target[new_identifiers.at(i)]=1; // track seen so we know which to delete
+        idx_of_orig_to_keep.push_back( this->identifier2idx[ new_identifiers.at(i) ] ); // store original index of identifier
+    }
+    // keep pointers to values for each new identifier
+    std::vector<std::string*> new_values;
+    for(int i=0; i<int(idx_of_orig_to_keep.size()); i++){
+        new_values.push_back( this->values.at( idx_of_orig_to_keep.at(i)) );
+    }
+    // delete values that are not present in target
+    for(int i=0; i<int(this->identifiers.size()); i++){
+        if( hsh_target.find(this->identifiers.at(i)) == hsh_target.end() ){
+            delete [] this->values.at(i);
+        }
+    }
+
+    this->identifiers.clear();
+    this->values.clear(); // pointers to the values that we're keeping are in new_values
+    this->identifier2idx.clear();
+    for(int i=0; i<int(new_identifiers.size()); i++){
+        this->identifiers.push_back(new_identifiers.at(i) );
+        this->values.push_back(new_values.at(i));
+        this->identifier2idx[ this->identifiers.at(i) ]=i;     // rebuild identifier2idx
+    }
+
+}
+
 bool Attributes::get_chromosome_and_locus_by_identifier( std::string identifier, std::string& chromosome, int& locus){
     // If not data are missing, return false; 
     if( this->col_chr.size()==0 || this->col_locus.size()==0 )
