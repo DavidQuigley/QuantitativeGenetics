@@ -659,7 +659,7 @@ void JasperFrame::OnQuit(wxCommandEvent& WXUNUSED(event)){
 }
 
 void JasperFrame::OnAbout(wxCommandEvent& WXUNUSED(event)){
-	wxMessageBox(wxString::FromAscii("CARMEN 1.3\nDavid Quigley\nBalmain Lab, UCSF\n2014"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(wxString::FromAscii("CARMEN 1.3\nDavid Quigley\nBalmain Lab, UCSF\nBuild date August 15 2014"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
 }
 
 
