@@ -1553,8 +1553,35 @@ void run_Attributes(std::string basedir){
     test(std::string("Attributes chromosome_and_locus"), 19, locus, 20);
     test(std::string("Attributes chromosome_and_locus"), 20, chromosome.compare("1"), 0);
     is_present = G->get_chromosome_and_locus_by_identifier( std::string("GENE2"), chromosome, locus);
-    test(std::string("Attributes chromosome_and_locus"), 18, is_present, false); // has missing value    
+    test(std::string("Attributes chromosome_and_locus"), 21, is_present, false); // has missing value
     
+    
+    Attributes* ga = new Attributes("NA");
+	ga->load(basedir + "/test_gene_attributes.txt");
+    std::vector<std::string> new_ids;
+    new_ids.push_back(std::string("GENE2"));
+    new_ids.push_back(std::string("GENE3"));
+    test(std::string("Attributes restrict_identifiers original size"), 22, int(ga->identifiers.size() ), 3);
+    ga->restrict_identifiers(new_ids);
+    test(std::string("Attributes restrict_identifiers size"), 23, int(ga->identifiers.size() ), 2);
+    test(std::string("Attributes restrict_identifiers id 0 is GENE2"), 24, ga->identifiers.at(0).compare(std::string("GENE2") ), 0);
+    test(std::string("Attributes restrict_identifiers id 1 is GENE3"), 25, ga->identifiers.at(1).compare(std::string("GENE3") ), 0);
+    test(std::string("Attributes restrict_identifiers id 1 CHR is 3"), 26, ga->prop_for_identifier(std::string("GENE3"), std::string("CHR")).compare(std::string("3") ), 0);
+    
+    new_ids.clear();
+    new_ids.push_back(std::string("I_AM_NOT_THERE"));
+    bool caught_bogus_identifier=false;
+    try{
+        ga->restrict_identifiers(new_ids);
+    }
+    catch(std::string x){
+        caught_bogus_identifier=true;
+        if(verbose)
+            std::cout << "PASS Caught error thrown on purpose: " << x << "\n";
+    }
+    test(std::string("Attributes restrict_identifiers catch_bogus_identifier"), 27, caught_bogus_identifier, true);
+    
+    delete ga;
     delete G;
     delete A;
 	delete B;
@@ -1621,7 +1648,8 @@ int main(int argc, char *argv[]){
 
 
 	run_Attributes(dir_data);
-	run_Matrix();
+	/*
+    run_Matrix();
 	run_spear(dir_data);
 
 	//run_CacheHash();
@@ -1641,7 +1669,7 @@ int main(int argc, char *argv[]){
 	run_Rule();
 	run_RuleSet(dir_data);
 	run_Perm();
-
+*/
 	delete options->at(0);
 	delete options->at(1);
 	delete options;
