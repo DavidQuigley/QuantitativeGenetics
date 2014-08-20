@@ -1683,7 +1683,12 @@ void Spearman::find_spears(){
 		}
 	}
     // Using seen to keep track of which pairs we've already tested. Changed to matrix to keep memory footprint constant.
-    Matrix<bool> seen( int(idx.size() ), int(idx.size() ), false, false);
+    // If you set the size of seen to int(idx.size()) the code blows up if you restrict to seeds; seen is set to be
+    // could be 3x3 for 3 seeds, while row1 and row2 are indexed into the gene attributes and full data tables and will be
+    // in the thousands
+    Matrix<bool> seen( int(this->data->raw_data->identifiers.size()),
+                       int(this->data->raw_data->identifiers.size()),
+                      false, false);
 	for(i=0; i<N; i++){
         row1 = seed_idx->at(i);
         hsh_neighbors[row1] = 1;
