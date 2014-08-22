@@ -81,7 +81,7 @@ python equalizer.py \
 -s na33 -g mm9 -d 37 -i 1.1 -w Mouse -r "Mus musculus" \
 -y data/annotation/MoGene-1_1/MoGene-1_1-st-v1.na32.mm9.probeset.csv \
 -t data/annotation/MoGene-1_1/MoGene-1_1-st-v1.na32.mm9.transcript.csv \
--f data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.pgf \
+-q data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.pgf \
 -m data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.mps \
 -k data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.clf \
 -u "David Quigley" -l dquigley@cc.ucsf.edu \
