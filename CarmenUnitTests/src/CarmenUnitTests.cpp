@@ -1645,10 +1645,9 @@ int main(int argc, char *argv[]){
 	}
 	else
 		std::cout << "Runing silently: only noting test failures\n";
-
-
+    
 	run_Attributes(dir_data);
-	/*
+	
     run_Matrix();
 	run_spear(dir_data);
 
@@ -1669,7 +1668,27 @@ int main(int argc, char *argv[]){
 	run_Rule();
 	run_RuleSet(dir_data);
 	run_Perm();
-*/
+    
+    /*
+     Debug limit_network_to_seeds
+    std::string fn_expr = "/datasets/mouse_skin_normal/expr_noKO_above_bg_refseq_collapsed_to_symbols_2014_06_06.txt";
+	std::string fn_ga = "/datasets/mouse_skin_normal/gene_attributes_noKO_above_bg_refseq_collapsed_to_symbols_2014_06_06.txt";
+	std::string fn_sa = "/datasets/mouse_skin_normal/sample_attributes_noKO.txt";
+    std::string fn_out = "/notebook/U01/aim1/paper_skin_eqtl_networks/reproduce/results_2014_06/smo_dc_tail_nottail_6.txt";
+    std::vector<std::string> seeds;
+    seeds.push_back(std::string("Smo"));
+    seeds.push_back(std::string("Gli1"));
+    seeds.push_back(std::string("Ptch1"));
+	Spearman* sp = new Spearman();
+    sp->set_fn_out(fn_out);
+    sp->set_gene_name_column(std::string("symbol"));
+    sp->set_limit_a(std::string("back.anagen=tail"));
+    sp->set_seeds(seeds);
+    sp->set_verbose(true);
+    sp->set_limit_network_to_seeds(true);
+    sp->set_input_files(fn_expr, fn_sa, fn_ga);
+    sp->run();
+     */
 	delete options->at(0);
 	delete options->at(1);
 	delete options;
