@@ -160,6 +160,8 @@ public:
 	void power(double p);
 	void print(std::string spacer);
 	void resize(int rows, int cols);
+    void restrict_by_rows(std::vector<int> idx_keep );
+    void restrict_by_cols(std::vector<int> idx_keep );
 	bool row_has_missing_value(int row);
 	int rows();
 	void rowSums(std::vector<T>* result);
@@ -951,6 +953,70 @@ template <typename T> void Matrix<T>::set_all_values_present(){
 		}
 	}
 	this->has_missing_values = false;
+}
+
+
+// Allow matrix to be trimmed to arbitrary sub-selection of rows.
+template <typename T> void Matrix<T>::restrict_by_rows(std::vector<int> idx_keep ){
+	// check that all values in idx_keep are valid indexes for Matrix, and no duplicates
+    boost::unordered_map<int, int> seen;
+    for(int i=0; i<int(idx_keep.size()); i++){
+        if( idx_keep.at(i) >= this->r ){
+            throw std::string("index in restrict_by_rows larger than number of rows");
+        }
+        if(seen.find( idx_keep.at(i) ) != seen.end() ){
+            throw std::string("Duplicate index in restrict_by_rows");
+        }
+    }
+    // copy existing matrix into tmp. resize this to new number of rows.
+    // copy requested rows into this. Clean up temp.
+    Matrix<T>* tmp = new Matrix<T>();
+    this->clone(tmp);
+    this->clean_up();
+	this->set_dimensions(int(idx_keep.size()), this->c, false, 0);
+    int old_row_idx;
+    for(int new_row_idx=0; new_row_idx<int(idx_keep.size()); new_row_idx++){
+        old_row_idx = idx_keep.at(new_row_idx);
+        for( int col=0; col<tmp->c; col++){
+            this->arr[new_row_idx][col] = tmp->arr[old_row_idx][col];
+            if( tmp->is_missing(old_row_idx, col)){
+                this->set_missing_value(new_row_idx, col);
+            }
+        }
+    }
+    tmp->clean_up();
+}
+
+
+// Allow matrix to be trimmed to arbitrary sub-selection of columns.
+template <typename T> void Matrix<T>::restrict_by_cols(std::vector<int> idx_keep ){
+	// check that all values in idx_keep are valid indexes for Matrix, and no duplicates
+    boost::unordered_map<int, int> seen;
+    for(int i=0; i<int(idx_keep.size()); i++){
+        if( idx_keep.at(i) >= this->c ){
+            throw std::string("index in restrict_by_cols larger than number of columns");
+        }
+        if(seen.find( idx_keep.at(i) ) != seen.end() ){
+            throw std::string("Duplicate index in restrict_by_cols");
+        }
+    }
+    // copy existing matrix into tmp. resize this to new number of rows.
+    // copy requested rows into this. Clean up temp.
+    Matrix<T>* tmp = new Matrix<T>();
+    this->clone(tmp);
+    this->clean_up();
+	this->set_dimensions(this->r, int(idx_keep.size()), false, 0);
+    int old_col_idx;
+    for(int new_col_idx=0; new_col_idx<int(idx_keep.size()); new_col_idx++){
+        old_col_idx = idx_keep.at(new_col_idx);
+        for( int row=0; row<tmp->r; row++){
+            this->arr[row][new_col_idx] = tmp->arr[row][old_col_idx];
+            if( tmp->is_missing(row, old_col_idx)){
+                this->set_missing_value(row, new_col_idx);
+            }
+        }
+    }
+    tmp->clean_up();
 }
 
 
