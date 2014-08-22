@@ -49,6 +49,8 @@ import datetime
 from optparse import OptionParser
 import uuid
 
+VERSION = "0.1"
+RELEASE_DATE = "August 22 2014"
     
 def require_file(fn, what_is_it):
     if len(fn)==0:
@@ -145,6 +147,8 @@ def validate_input(options):
     
     P["fn_cdf_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".cdf"    
     P["fn_mps_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".mps"
+    #P["fn_clf_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".clf"
+    P["fn_clf_new"] = P["fn_clf_orig"] # do not rewrite the clf file
     P["fn_pgf_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".pgf"
     P["fn_ps_new"] =  P["dir_out"] + "/" + P["new_package_name"] + ".probeset.csv"
     P["fn_ts_new"] =  P["dir_out"] + "/" + P["new_package_name"] + ".transcript.csv"
@@ -164,7 +168,7 @@ def find_probe_intersections( P ):
     
     cmd = ""
     for i,fn in enumerate(P["fn_vcf"]):
-        cmd += dir_bedtools + "/intersectBed -u -a " + P["fn_affy_bed"] + " -b " + fn + " > " + P["dir_out"] + "/snps_from_vcf_" + str(i+1) + ".bed\n"
+        cmd += P["dir_bedtools"] + "/intersectBed -u -a " + P["fn_affy_bed"] + " -b " + fn + " > " + P["dir_out"] + "/snps_from_vcf_" + str(i+1) + ".bed\n"
     
     cmd += "cat" 
     for i,fn in enumerate(P["fn_vcf"]):
@@ -175,7 +179,7 @@ def find_probe_intersections( P ):
     fo.write(cmd)    
     fo.close()
 
-    print "MESSAGE: Executing BEDtools commands to combine VCF files."
+    print "MESSAGE: Executing BEDtools commands to combine VCF files (combine_vcf.sh)"
     print "MESSAGE: Please be patient, as this can take several minutes...\n"
     subprocess.call(["sh", P["dir_out"] + "/combine_vcf.sh"])
 
@@ -480,9 +484,9 @@ def process_gene_format(P):
 
     # Write new PGF file
     fo = open(P["fn_pgf_new"], 'w')
-    fo.write("""#%chip_type=""" + new_package_name + """
-    #%lib_set_name=""" + new_package_name + """
-    #%lib_set_version=""" + annot_revision + """
+    fo.write("""#%chip_type=""" + P["new_package_name"] + """
+    #%lib_set_name=""" + P["new_package_name"] + """
+    #%lib_set_version=""" + P["annot_revision"] + """
     #%create_date=""" + timestamp + """
     #%guid=""" + guid + """
     #%pgf_format_version=1.0
@@ -756,7 +760,7 @@ def process_IVT_format(P):
 
 parser = OptionParser()
 parser.add_option("-f", "--format", dest="chip_format", help="Chip format, one of {gene,IVT}", default="")
-parser.add_option("-p", "--packagename", dest="newpackage", help="New package name, default MoGenenoSnps-1_1-st-v1", default="MoGenenoSnps-1_1-st-v1")
+parser.add_option("-p", "--packagename", dest="newpackage", help="New package name", default="")
 parser.add_option("-v", "--vcf", dest="fn_list_vcf", help="Path to VCF files, comma-delimited", default="")
 parser.add_option("-a", "--affy", dest="fn_affy_bed", help="Path to affymetrix probe BED file", default="")
 parser.add_option("-b", "--bedtools", dest="dir_bedtools", help="Path to bedTools bin folder", default="")
@@ -786,6 +790,14 @@ parser.add_option("-k", "--file_clf", dest="fn_clf", help="Path to chip CLF file
 parser.add_option("-o", "--output", dest="dir_out", help="Path to write package files, default current directory", default=".")
 
 (options, args) = parser.parse_args()
+
+print "*** EQUALIZER"
+print "*** David Quigley, UCSF
+print "*** Contact: dquigley@cc.ucsf.edu"
+print "*** davidquigley.com"
+print "*** Version " + VERSION
+print "*** Released " + RELEASE_DATE 
+
 P = validate_input( options ) # Check to make sure requested files exist and commands are coherent
 
 print "MESSAGE: New package will be named: " + P["new_package_name"]
@@ -823,8 +835,8 @@ if P["chip_format"]=="gene":
     r_script += "fn.pgf = '" + P["fn_pgf_new"] + "'\n"
     r_script += "fn.clf = '" + P["fn_clf_new"] + "'\n"
     r_script += "fn.mps = '" + P["fn_mps_new"] + "'\n"
-    r_script += "fn.trans = '" + P["fn_trans_new"] + "'\n\n"
-    r_script += "seed <- new('AffyExpressionPDInfoPkgSeed', "
+    r_script += "fn.trans = '" + P["fn_ts_new"] + "'\n\n"
+    r_script += "seed <- new('AffyGenePDInfoPkgSeed', "
 else:
     r_script += "fn.tab = '" + P["fn_probetab_new"] + "'\n"
     r_script += "fn.cel = '" + P["fn_CEL"] + "'\n"
@@ -839,6 +851,7 @@ if P["chip_format"]=="gene":
     r_script += "clfFile = fn.clf, "
     r_script += "coreMps = fn.mps, "
     r_script += "transFile = fn.trans, "
+    r_script += "probeFile = fn.probes, "
 else:
     r_script += "cdfFile = fn.cdf, "
     r_script += "celFile = fn.cel, "
@@ -860,7 +873,8 @@ print "MESSAGE: Wrote R script to create package: " + P["fn_R_script"]
 print "MESSAGE: There are several ways to run this script:"
 print "         1) Open the file, run R, and paste the contents into R"
 print "         2) From the command line, type: "
-print "            R " + P["fn_R_script"]
+print "            R < " + P["fn_R_script"] + " --no-save"
+print " "
 print "         The script will attempt to install the bioconductor 'pdInfoBuilder' package if "
 print "         it is not already present on your machine. If you do not have the ability to "
 print "         install packages on your machine, contact your local system administrator."
