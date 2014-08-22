@@ -223,22 +223,6 @@ void Dataset::find_permitted_genes(HASH_S_I* permitted_genes, ClassMinerOptions*
 	delete identifiers_in_limits;
 }
 
-void Dataset::check_sample_integrity(Rawdata* D, std::vector<std::string>* a, std::vector<std::string>* b){
-	// ensure that each sample identified in a and b is present in raw data.
-	std::string identifier;
-	for(int i=0; i<(int)a->size(); i++){
-		identifier = a->at(i);
-		if( D->sample_name2idx.find(identifier) == D->sample_name2idx.end() ){
-			throw( std::string( "Identifier in Class A not found in expression file: '" + identifier + "'") );
-		}
-	}
-	for(int i=0; i<(int)b->size(); i++){
-		identifier = b->at(i);
-		if( D->sample_name2idx.find(identifier) == D->sample_name2idx.end() ){
-			throw( std::string("Identifier in Class B not found in expression file: '" + identifier + "'") );
-		}
-	}
-}
 
 
 void Dataset::load(Attributes* sa, Attributes* ga, std::string fn_data, std::string limit_a, std::string limit_b){
@@ -267,16 +251,26 @@ void Dataset::confirm_disjoint(){
 
 
 void Dataset::check_gene_integrity(Rawdata* R, Attributes* ga ){
-	if( ga->identifiers.size() != R->identifiers.size() ){
-        std::stringstream ss;
-        ss << "Gene attributes and data files do not have same number of identifiers (" << ga->identifiers.size() << " vs " <<  R->identifiers.size() << ")";
-		throw std::string( ss.str() );
+    // Force the identifiers in ga to match the identifiers in R.
+    // If there are entries in ga that are not present in the rows of R
+    // resize ga to match R in order and composition.
+    ga->restrict_identifiers( R->identifiers );
+}
+
+
+void Dataset::check_sample_integrity(Rawdata* D, std::vector<std::string>* a, std::vector<std::string>* b){
+	// ensure that each sample identified in a and b is present in raw data.
+	std::string identifier;
+	for(int i=0; i<(int)a->size(); i++){
+		identifier = a->at(i);
+		if( D->sample_name2idx.find(identifier) == D->sample_name2idx.end() ){
+			throw( std::string( "Identifier in Class A not found in expression file: '" + identifier + "'") );
+		}
 	}
-	for(int i=0; i<(int)ga->identifiers.size(); i++){
-		if( ga->identifiers.at(i).compare(R->identifiers.at(i)) != 0 ){
-			std::stringstream ss;
-			ss << "Gene attributes and data differ in gene order at identifier " << i+1 << " data: " << R->identifiers.at(i) << " gene " << ga->identifiers.at(i);
-			throw std::string(ss.str());
+	for(int i=0; i<(int)b->size(); i++){
+		identifier = b->at(i);
+		if( D->sample_name2idx.find(identifier) == D->sample_name2idx.end() ){
+			throw( std::string("Identifier in Class B not found in expression file: '" + identifier + "'") );
 		}
 	}
 }
