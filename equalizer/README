@@ -27,9 +27,10 @@ To call Equalizer you will need:
     d) ARRNAME.bed
     
    All but the CEL file are available from affymetrix.com's NetAffx 
-   website. You will have your own CEL files.
+   website. You also may be able to download the files you need from my website 
+   davidquigley.com/equalizer.html. You will have your own CEL files.
     
-5) R (at the time of writing, I used 2.15.12). Available at 
+5) R (at the time of writing, I used 3.1.1). Available at 
    http://cran.r-project.org/
 
 ********************************************
@@ -40,6 +41,40 @@ If you do not have superuser rights on your machine, you can still generate the 
 but you will have to modify create_package.R to install the package locally in a part 
 of the hard drive where you have write access, rather than in a location available to 
 the entire system.
+
+********************************************
+WHAT TRACK OF THE BED FILE SHOULD I USE?
+********************************************
+
+The BED file from Affymetrix contains four tracks:
+Affymetrix MoGene-2_0-st-v1_exon probeset(transcriptID_probesetID)
+Affymetrix MoGene-2_0-st-v1_gene level exon(transcriptID)
+Affymetrix MoGene-2_0-st-v1_gene probeset(transcriptID)
+Affymetrix MoGene-2_0-st-v1_probe(transcriptID_probesetID)
+
+The purpose of the BED file in this context is to obtain the mapped positions of each 
+individual probe. If you call:
+grep 17210850_17210851 MoGene-2_0-st-v1.mm10.bed
+
+you'll see:
+chr1	3102029	3102110	17210850_17210851	0	+	3102029	3102110	204,102,51	8	24,24,24,24,24,24,24,24,	0,1,5,6,7,51,52,57,
+chr1	3102029	3102053	17210850_17210851	0	+	3102029	3102053	0,0,0	1		
+chr1	3102030	3102054	17210850_17210851	0	+	3102030	3102054	0,0,0	1		
+chr1	3102034	3102058	17210850_17210851	0	+	3102034	3102058	0,0,0	1		
+chr1	3102035	3102059	17210850_17210851	0	+	3102035	3102059	0,0,0	1		
+chr1	3102036	3102060	17210850_17210851	0	+	3102036	3102060	0,0,0	1		
+chr1	3102080	3102104	17210850_17210851	0	+	3102080	3102104	0,0,0	1		
+chr1	3102081	3102105	17210850_17210851	0	+	3102081	3102105	0,0,0	1		
+chr1	3102086	3102110	17210850_17210851	0	+	3102086	3102110	0,0,0	1
+
+Note that the first entry, from the probeset track, spans chr1:3102029-3102110. The 8 on 
+that line indicates 8 probes make up that probeset. The remaining lines are the locations 
+of the eight individual probes (e.g. chr1:3102029-3102053). If there is a SNP between 
+chr1:3102029-3102110 that does NOT intersect one of the probe locations, it should not 
+affect the hybridization.
+
+Therefore, retain only the last track. Do not use the probeset track and intermingle it 
+with the probe track.
 
 ****************************
 An example call for M430, ST
