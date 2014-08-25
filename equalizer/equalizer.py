@@ -792,7 +792,7 @@ parser.add_option("-o", "--output", dest="dir_out", help="Path to write package 
 (options, args) = parser.parse_args()
 
 print "*** EQUALIZER"
-print "*** David Quigley, UCSF
+print "*** David Quigley, UCSF"
 print "*** Contact: dquigley@cc.ucsf.edu"
 print "*** davidquigley.com"
 print "*** Version " + VERSION
