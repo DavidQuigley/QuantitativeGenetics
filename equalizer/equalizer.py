@@ -484,21 +484,21 @@ def process_gene_format(P):
 
     # Write new PGF file
     fo = open(P["fn_pgf_new"], 'w')
-    fo.write("""#%chip_type=""" + P["new_package_name"] + """
-    #%lib_set_name=""" + P["new_package_name"] + """
-    #%lib_set_version=""" + P["annot_revision"] + """
-    #%create_date=""" + timestamp + """
-    #%guid=""" + guid + """
-    #%pgf_format_version=1.0
-    #%rows=1190
-    #%cols=990
-    #%probesets=""" + str(len(probesets)) + """
-    #%datalines=2023948
-    #%sequential=1
-    #%order=col_major
-    #%header0=probeset_id	type	probeset_name
-    #%header1=	atom_id
-    #%header2=		probe_id	type	gc_count	probe_length	interrogation_position	probe_sequence""" + '\n')
+    fo.write("#%chip_type=" + P["new_package_name"] + "\n")
+    fo.write("#%lib_set_name=" + P["new_package_name"] + "\n")
+    fo.write("#%lib_set_version=" + P["annot_revision"] + "\n")
+    fo.write("#%create_date=" + timestamp + "\n")
+    fo.write("#%guid=" + guid + "\n")
+    fo.write("#%pgf_format_version=1.0\n")
+    fo.write("#%rows=1190\n")
+    fo.write("#%cols=990\n")
+    fo.write("#%probesets=" + str(len(probesets)) + "\n")
+    fo.write("#%datalines=2023948\n")
+    fo.write("#%sequential=1\n")
+    fo.write("#%order=col_major\n")
+    fo.write("#%header0=probeset_id	type	probeset_name\n")
+    fo.write("#%header1=	atom_id\n")
+    fo.write("#%header2=		probe_id	type	gc_count	probe_length	interrogation_position	probe_sequence" + '\n')
     for probeset in probesets:
         fo.write( str(probeset) )
 
@@ -861,7 +861,7 @@ r_script += "author = '" + P["author"] + "', email = '" + P["email"] + "', biocV
 r_script += "genomebuild = '" + P["genome_version_ucsc"].upper() + "', organism = '" + P["organism"] + "', "
 r_script += "species = '" + P["species"] + "', url ='')\n"
 r_script += "makePdInfoPackage(seed, destDir = '" + P["dir_out"] + "', unlink=T)\n"
-pd_name = "pd." + P["new_package_name"].lower().replace("_",".")
+pd_name = "pd." + P["new_package_name"].lower().replace("_",".").replace("-",".")
 r_script += "#install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')"
 
 fo = open(P["fn_R_script"], 'w')
@@ -878,3 +878,5 @@ print "         The script will attempt to install the bioconductor 'pdInfoBuild
 print "         it is not already present on your machine. If you do not have the ability to "
 print "         install packages on your machine, contact your local system administrator."
 print "         To install the new package, uncomment and run the last line of the R script."
+print "         This line reads:"
+print "#install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')"
