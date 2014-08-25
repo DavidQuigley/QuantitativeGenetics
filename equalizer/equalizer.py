@@ -864,7 +864,6 @@ r_script += "makePdInfoPackage(seed, destDir = '" + P["dir_out"] + "', unlink=T)
 pd_name = "pd." + P["new_package_name"].lower().replace("_",".")
 r_script += "#install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')"
 
-
 fo = open(P["fn_R_script"], 'w')
 fo.write(r_script)
 fo.close()
@@ -879,14 +878,3 @@ print "         The script will attempt to install the bioconductor 'pdInfoBuild
 print "         it is not already present on your machine. If you do not have the ability to "
 print "         install packages on your machine, contact your local system administrator."
 print "         To install the new package, uncomment and run the last line of the R script."
-print ""
-print "         IMPORTANT FOR OS X users running R v2.14.0 or newer!"
-print "         If you have installed the binary build of affxparser v1.26.2, it will crash"
-print "         when you attempt to build the package. See: "
-print "              https://groups.google.com/forum/#!topic/aroma-affymetrix/lEfDanThLEA/discussion"
-print "              https://stat.ethz.ch/pipermail/bioc-devel/2011-November/002969.html"
-print "         You can install a working binary build of affxparser v1.26.2 and avoid the crash with: "
-print "         remove.packages('affxparser')"
-print "         source('http://www.braju.com/R/hbLite.R)"
-print "         hbBiocLite('affxparser');"
-
