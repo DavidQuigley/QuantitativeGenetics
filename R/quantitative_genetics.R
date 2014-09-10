@@ -3822,7 +3822,9 @@ calculate.min.DC.score = function( n.probes ){
 }
 
 
-spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b="", probe="", y="symbol", score="", min_var="", neighbors=F ){
+spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b=0, fn_out, min_zscore=0, 
+                  class.a="", class.b="", probe="", y="symbol", score="", min_var="", 
+                  neighbors=F ){
     # simple wrapper for spear 
     c1 = fn.spear
     c2 = paste( "-d", fn_expr, sep='' )
@@ -3832,8 +3834,10 @@ spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", 
     c6 = "-vT"
     c7 = paste( "-o", fn_out, sep='' )
     c8 = paste( "-s", min_cor, sep='' )
+    c9 = paste( "-h", min_cor_b, sep='' )
+    c10 = paste( "-x", min_zscore, sep='' )
     
-    cmd = paste(c1, c2, c3, c4, c5, c6, c7, c8)
+    cmd = paste(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
     if( class.a != "" ){
         aa = paste( "-a", class.a, sep='' )
         cmd = paste( cmd, aa )
