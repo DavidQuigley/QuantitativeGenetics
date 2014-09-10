@@ -49,8 +49,8 @@ import datetime
 from optparse import OptionParser
 import uuid
 
-VERSION = "0.1"
-RELEASE_DATE = "August 22 2014"
+VERSION = "0.2"
+RELEASE_DATE = "September 10 2014"
     
 def require_file(fn, what_is_it):
     if len(fn)==0:
@@ -147,7 +147,6 @@ def validate_input(options):
     
     P["fn_cdf_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".cdf"    
     P["fn_mps_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".mps"
-    #P["fn_clf_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".clf"
     P["fn_clf_new"] = P["fn_clf_orig"] # do not rewrite the clf file
     P["fn_pgf_new"] = P["dir_out"] + "/" + P["new_package_name"] + ".pgf"
     P["fn_ps_new"] =  P["dir_out"] + "/" + P["new_package_name"] + ".probeset.csv"
@@ -193,28 +192,28 @@ class Probeset():
         self.at_least_one_valid_probe = True
     
     def __str__( self ):
-        s = self.probe_id + '\t' + self.probe_type + '\t' + self.probe_name + '\n'
-        for atom in self.probe_atoms:
-            s += str(atom)
-            for probe in atom.probes:
-                s += str(probe)
+        if self.probe_type.count("control")==0 and len(self.probe_atoms)==0:
+            s = ""
+        else:
+            s = self.probe_id + '\t' + self.probe_type + '\t' + self.probe_name + '\n'
+            for atom in self.probe_atoms:
+                s += str(atom)
+                for probe in atom.probes:
+                    s += str(probe)
         
         return s
     
     def remove_probes_by_idx(self, idx):
-        # Having problems with probesets containing no probes.
-        # to work around, always keeping one probe in probeset, but marking invalid if 
-        # that probeset should have been removed.
         tmp = []
         for i,atom in enumerate(self.probe_atoms):
             if not i in idx:
                 tmp.append( atom )
         if len(tmp)==0:
-            tmp.append(atom)
             self.at_least_one_valid_probe=False
         
         self.probe_atoms = tmp
         return self.at_least_one_valid_probe
+    
         
     def n_probes(self):
         n = 0
@@ -224,7 +223,7 @@ class Probeset():
         return n
 
 class Probe_atom():
-    # one atom can have multiple probes in the case of controls probes, e.g. 10338002
+    """ one atom can have multiple probes in the case of controls probes, e.g. 10338002 """
     def __init__(self, probe_atom ):
         self.probe_atom = probe_atom
         self.probes = []
@@ -248,7 +247,9 @@ class Probe():
         return s
 
 def parse_PGF(fn_pgf):
-    # Read in the PGF file and store it as a vector of probeset objects
+    """ Read in the PGF file and store it as a vector of probeset objects """
+    
+    print "MESSAGE: Parsing affymetrix PGF file..."
     PS = None
     f = open(fn_pgf)
     probesets = []
@@ -261,7 +262,6 @@ def parse_PGF(fn_pgf):
             # this is a new probeset
             if not PS is None:
                 probesets.append(PS)
-            
             PS = Probeset( a[0], a[1], a[2] )
         
         else:
@@ -276,30 +276,11 @@ def parse_PGF(fn_pgf):
     probesets.append(PS)
     return probesets
 
-def parse_pre_post(fn):
-    # transcript.id	orig.n.probes	probeset.id	orig.probeset.n.probes	final.probeset.n.probes
-    f = open(fn)
-    h = f.readline()
-    ps2n = {}
-    ts2n = {}
-    ps2n_orig = {}
-    for line in f:
-        a = line.rstrip('\r\n').split('\t')
-        try:
-            ts2n[a[0]] += int(a[4])
-        except:
-            ts2n[a[0]] = int(a[4])
-        ps2n[a[2]] = int(a[4])
-        ps2n_orig[a[2]] = int(a[3])
-    
-    f.close()
-    
-    return ps2n, ts2n, ps2n_orig
-
 
 def check_sequence_chr_consistency( fn_vcf, fn_affy_bed ):
-    """ Confirm that all VCF files and the affymetrix BED file agree about whether column one
-    starts with the string 'chr' or not"""
+    """ Confirm that all VCF files and the affymetrix BED file agree about 
+        whether column one starts with the string 'chr' or not
+    """
     
     bed_has_chr = False
     for line in open(fn_affy_bed):
@@ -307,7 +288,7 @@ def check_sequence_chr_consistency( fn_vcf, fn_affy_bed ):
             bed_has_chr = "chr" in line.split('\t')[0]
             break
     
-    print "MESSAGE: Does Affymetrix bed file uses 'chr' format? " + str(bed_has_chr)
+    print "MESSAGE: Does Affymetrix bed file use 'chr' format? " + str(bed_has_chr)
     agrees = True
     for fn in fn_vcf:
         f = open(fn)
@@ -320,19 +301,16 @@ def check_sequence_chr_consistency( fn_vcf, fn_affy_bed ):
     return agrees
 
 
-def process_gene_format(P):
-    """ Generate new files for Affymetrix Gene ST format 
-        I am well aware of how comically large this function is; however, it works, and 
-        there is only one path through the code for all of these statements.
+def read_probes_with_SNPs(P):
+    """ identify probesets containing a SNP (BED file)
+        load these into a remove hash. We need both the probeset
+        identifier and the probe start location to uniquely identify a probe, 
+        since multiple probes are identified by the same probeset ID in the 
+        Affymetrix probe BED file.
+        
+        RETURNS:
+        ps_start_remove, hash of probeset<space>genomic_start_location
     """
-
-    #---------------------------------------------------
-    # identify probesets containing a SNP (BED file)
-    # load these into a remove hash. We need both the probeset
-    # identifier and the probe start location to uniquely identify a probe, 
-    # since multiple probes are identified by the same probeset ID in the 
-    # Affymetrix probe BED file.
-    #---------------------------------------------------
     print "MESSAGE: Reading probesets with SNPs file:"
     print "         " + P["fn_probesets_with_snps"]
     f = open(P["fn_probesets_with_snps"])
@@ -344,15 +322,18 @@ def process_gene_format(P):
 
     f.close()
     print "MESSAGE: VCF file analysis identified " + str(len(ps_start_remove.keys())) + " probes containing SNPs."
+    return ps_start_remove
 
-    #---------------------------------------------------
-    # spin through probe BED, identifying the index of probes within a 
-    # probeset that are within the remove hash. The probes in the PGF file
-    # within a probeset can be identified only by index which seems to match 
-    # the index in which they are present into the Affymetrix BED file.
-    #
-    # probe_indexes_to_remove is a hash of probeset->list of indexes to remove
-    #---------------------------------------------------
+
+def parse_probe_BED(P, ps_start_remove):
+    """ spin through probe BED, identifying the index of probes within a 
+        probeset that are within the remove hash. The probes in the PGF file
+        within a probeset can be identified only by index which seems to match 
+        the index in which they are present into the Affymetrix BED file.
+        
+        RETURNS:
+        probe_indexes_to_remove is a hash of probeset->list of indexes to remove
+    """
     f = open(P["fn_affy_bed"])
     current_probe = ""
     remove_list = []
@@ -364,7 +345,7 @@ def process_gene_format(P):
         if probeset != current_probe:
             probe_idx = 0
             current_probe = probeset
-    
+        
         if probeset + " " + start in ps_start_remove:
             transcript_id, probeset_id = probeset.split("_")
             remove_list.append( [transcript_id, probeset_id, probe_idx ] )
@@ -376,14 +357,16 @@ def process_gene_format(P):
         probe_idx += 1
 
     f.close()
-
     print "MESSAGE: Found " + str(marked_probes_found_in_BED) + " of these probes in the affymetrix BED file"
 
-    #---------------------------------------------------
-    # rewrite the PGF file
-    # Representing this nested file format as objects makes it easier to parse
-    #-------------------------------------------------
-    print "MESSAGE: Parsing affymetrix PGF file..."
+    return probe_indexes_to_remove
+    
+def process_gene_format(P):
+    """ Generate new files for Affymetrix Gene ST format 
+    """
+    
+    ps_start_remove = read_probes_with_SNPs(P)
+    probe_indexes_to_remove = parse_probe_BED(P, ps_start_remove)
     probesets = parse_PGF(P["fn_pgf_orig"])
 
     # find the index of each probeset
@@ -394,95 +377,207 @@ def process_gene_format(P):
 
     # How many probes does each probeset have before we touch it?
     ps2before = {}
-    n_probes = 0
+    n_probes_total = 0
     for id in ids:
         ps2before[id] = probesets[id2idx[id]].n_probes()
-        n_probes += ps2before[id]
+        n_probes_total += ps2before[id]
+    print "MESSAGE: Counted " + str(len(probesets)) + " probesets containing " + str(n_probes_total) + " probes in the original PGF file"
 
-    print "MESSAGE: Counted " + str(len(probesets)) + " probesets containing " + str(n_probes) + " probes in the original PGF file"
-
-    # Remove probes from probesets. Count remaining probes in ps2after.
+    # Remove marked probes from probesets. update the new number of probes in ps2after.
+    # ps2after is only set for probesets that we modify
     ps2after = {}
     n_probes_removed = 0 
     probesets_no_valid_probes = {}
     for probeset in probe_indexes_to_remove.keys():
         indexes = sorted( probe_indexes_to_remove[probeset], reverse=True)
         n_probes_removed += len(indexes)
-        if not probesets[ id2idx[probeset] ].remove_probes_by_idx(indexes):
+        if not probesets[ id2idx[probeset] ].remove_probes_by_idx(indexes): 
             probesets_no_valid_probes[ probeset ] = 1
         ps2after[probeset] = probesets[ id2idx[probeset] ].n_probes() 
-
+    
     n_probes_after = 0
     for id in ids:
         n_probes_after += probesets[id2idx[id]].n_probes()
 
     print "MESSAGE: Removed " + str(n_probes_removed) + " probes for SNP adjustement."
     print "MESSAGE: Counted " + str(n_probes_after) + " probes after SNP adjustement."
+    
+    # the changes we make are tracked in the pre_post file
+    summaries = parse_MPS(P, ps2before, ps2after, probesets_no_valid_probes)
+    summaries.write_summary_file( P["fn_probe_count_changes"] )
+        
+    timestamp = datetime.datetime.today().strftime("%a %b %d %H:%M:%S PST %Y")
+    guid = str(uuid.uuid1())
+    
+    write_new_PGF_file(P, timestamp, guid, probesets)
+    
+    # TODO: MPS write needs to know which values changed
+    write_new_MPS_file(P, guid, timestamp, summaries)
+    write_new_probeset_file(P, summaries)
+    write_new_transcript_file(P, summaries)
 
-    # Write out a summary table of transcript_id probeset_id before after
-    # Use the stock MPS file to map probesets to transcript IDs and get probe counts
+class Probeset_summary():
+    """ Track original and final number of probes for an individual probeset """
+    def __init__(self, probeset_id, probes_orig, probes_final):
+        self.probeset_id = probeset_id
+        self.probes_orig = probes_orig
+        self.probes_final = probes_final
+    
+    def n_probes_final(self):
+        return self.probes_final
+
+class Transcript_summary():
+    """ Track original and final number or probes for all probesets in transcript cluster """
+    def __init__(self, transcript_id, transcript_type):
+        self.transcript_id = transcript_id
+        self.transcript_type = transcript_type
+        self.probeset_summaries = {}
+        self.probeset_ids = []
+    
+    def add_probeset_summary(self, probeset_id, n_probes_orig, n_probes_final):
+        self.probeset_ids.append( probeset_id )
+        self.probeset_summaries[probeset_id] = Probeset_summary(probeset_id, n_probes_orig, n_probes_final)
+                        
+    def is_control(self):
+        return self.transcript_type=="control"
+    
+    def n_probes_final(self):
+        n=0
+        for probeset_id in self.probeset_ids:
+            n += self.probeset_summaries[probeset_id].probes_final
+        return n
+    
+    def include_in_MPS(self):
+        if self.is_control() or self.n_probes_final()>0:
+            return "yes"
+        else:
+            return "no"
+    
+    def n_probesets(self):
+        return len(self.probeset_ids)
+
+    def n_probesets_with_probe_final(self):
+        # note we're returning sum(probesets with >0 probes), not sum(probes)
+        n=0
+        for probeset_id in self.probeset_ids:
+            if self.probeset_summaries[probeset_id].probes_final>0:
+                n+=1
+        return n
+            
+    def n_probes_original(self):
+        n=0
+        for probeset_id in self.probeset_ids:
+            n += self.probeset_summaries[probeset_id].probes_orig
+        return n
+
+ 
+class Transcript_summaries():
+    """ Wrapper class to manage transcript summaries """
+    def __init__(self):
+        self.ts2summary = {}
+        self.transcript_ids = []
+    
+    def __len__(self):
+        return len(self.transcript_ids)
+    
+    def add_control_summary( self, transcript_id ):
+        if not transcript_id in self.ts2summary:
+            self.transcript_ids.append( transcript_id )
+            self.ts2summary[transcript_id] = Transcript_summary(transcript_id, "control")
+            
+    def add_probeset_summary( self, transcript_id, probeset_id, n_probes_orig, n_probes_final ):
+        if not transcript_id in self.ts2summary:
+            self.transcript_ids.append( transcript_id )
+            self.ts2summary[transcript_id] = Transcript_summary(transcript_id, "main")
+        self.ts2summary[transcript_id].add_probeset_summary( probeset_id, n_probes_orig, n_probes_final ) 
+    
+    def get_probeset_summary(self, transcript_id, probeset_id):
+        if transcript_id in self.ts2summary:
+            ts = self.ts2summary[transcript_id]
+            if probeset_id in ts.probeset_summaries:
+                return ts.probeset_summaries[probeset_id]
+        return None
+        
+    def write_summary_file(self, fn):
+        fo = open(fn, "w")
+        fo.write( "transcript.id\torig.n.probes\tprobeset.id\torig.probeset.n.probes\tfinal.probeset.n.probes\tinclude.in.MPS\n" )
+        for transcript_id in self.transcript_ids:
+            ts = self.ts2summary[transcript_id]
+            if ts.is_control():
+                fo.write( transcript_id + "\t0\t" + transcript_id + "\t0\t0\tyes\n")
+            else:
+                for probeset_id in ts.probeset_ids:
+                    n_orig = str(ts.probeset_summaries[probeset_id].probes_orig)
+                    n_final = str(ts.probeset_summaries[probeset_id].probes_final)
+                    include_in_MPS = ts.include_in_MPS()
+                    fo.write( transcript_id + "\t" + str(ts.n_probes_original()) + "\t" + probeset_id + "\t" + n_orig + '\t' + n_final + '\t' + include_in_MPS + '\n')
+        fo.close()
+    
+    def n_control_transcripts(self):
+        n=0
+        for transcript_id in self.transcript_ids:
+            if self.ts2summary[transcript_id].is_control():
+                n += 1
+        return n
+    
+    def n_probesets(self):
+        n=0
+        for transcript_id in self.transcript_ids:
+            n += self.ts2summary[transcript_id].n_probesets()  
+        return n
+    
+    def n_probesets_with_a_probe_final(self):
+        n=0
+        for transcript_id in self.transcript_ids:
+            n += self.ts2summary[transcript_id].n_probesets_with_probe_final()  
+        return n
+
+def parse_MPS(P, ps2before, ps2after, probesets_no_valid_probes):
+    """ Use the stock MPS file to map probesets to transcript IDs and get probe counts
+        RETURN:
+        probe_statistics object
+    """
     print "MESSAGE: Parsing Affymetrix MPS file. This file assigns probesets to transcripts."
-    fo = open(P["fn_probe_count_changes"], 'w')
-    fo.write( "transcript.id\torig.n.probes\tprobeset.id\torig.probeset.n.probes\tfinal.probeset.n.probes\tinclude.in.MPS\n" )
     f = open(P["fn_mps_orig"])
     n_empty_probesets = 0
     n_mps_probesets_at_least_one_probe = 0
     n_mps_probesets_total = 0
+    n_control_probesets = 0
+    
+    sums = Transcript_summaries()
+    
     for line in f:
         if line[0]!="#":
-            ps, ts, probes, length = line.rstrip('\r\n').split('\t')
+            ps, ts, probes, length = line.rstrip('\r\n').split('\t')            
             if ts=="":
-                ts = ps
-        
+                ts = ps    
             if length=="":
-                length="0"
-                fo.write( ps + "\t" + length + "\t" + ps + "\t" + length + '\t' + length + '\tno\n')
-                n_empty_probesets += 1
+                # these are control probes
+                sums.add_control_summary(ps)
         
             elif ps != "probeset_id":
                 for probe in probes.split(" "):
-                    n_mps_probesets_total += 1
-                    n_before = str(ps2before[probe])
+                    n_before = ps2before[probe]
                     if probe in ps2after:
-                        n_after = str(ps2after[probe])
-                
+                        n_after = ps2after[probe]
                     else:
                         n_after = n_before
-                    if probe in probesets_no_valid_probes:
-                        include_in_MPS = "no"
-                    else:
-                        include_in_MPS = "yes"
-                        n_mps_probesets_at_least_one_probe += 1
-                    fo.write( ps + "\t" + length + "\t" + probe + "\t" + n_before + '\t' + n_after + '\t' + include_in_MPS + '\n')
-
-    fo.close()
-
-    print "MESSAGE: The Affymetrix MPS file contained " + str(n_mps_probesets_total) + " probesets"
-    print "MESSAGE: The Affymetrix MPS file contained " + str(n_mps_probesets_at_least_one_probe) + " probesets with >= 1 probe after correction"
-    print "MESSAGE: The Affymetrix MPS file contained " + str(n_empty_probesets) + " probesets that did not contain a probe assignment"
-    print "MESSAGE: NOTE: Not every probeset in the PGF file will be assigned to a transcript,"
-    print "MESSAGE:       even in the stock Affymetrix assignments. This accounts for the difference"
-    print "MESSAGE:       in probeset count between the PGF and MPS files and for the difference "
-    print "MESSAGE:       in probe counts as well."
-    print "MESSAGE: Wrote a table of changes to probeset composition to " + P["fn_probe_count_changes"]
-
-    ps2n, ts2n, ps2n_orig = parse_pre_post(P["fn_probe_count_changes"])
-    n_probesets_orig=0
-    for probeset in ps2n_orig.keys():
-        n_probesets_orig += ps2n_orig[probeset]
+                    sums.add_probeset_summary( ps, probe, n_before, n_after )
+    f.close()
     
-    n_probes_after=0
-    for probeset in ps2n.keys():
-        n_probes_after += ps2n[probeset]
+    print "MESSAGE: The Affymetrix MPS file contained " + str(len(sums)) + " transcripts."
+    print "MESSAGE: The Affymetrix MPS file contained " + str(sums.n_control_transcripts()) + " control transcripts"
+    print "MESSAGE: The Affymetrix MPS file contained " + str( sums.n_probesets() ) + " probesets"
+    print "MESSAGE: The Affymetrix MPS file contained " + str( sums.n_probesets_with_a_probe_final() ) + " probesets with >= 1 probe after correction"
+    print "MESSAGE: Wrote a table of changes to probeset composition to " + P["fn_probe_count_changes"]
+    
+    return sums
 
-    print "MESSAGE: Summary of changes:"
-    print "MESSAGE: Before accounting for SNPs, PGF contains " + str(len(ts2n)) + " transcripts " + str(len(ps2n_orig)) + " probesets " + str(n_probesets_orig) + " probes"
-    print "MESSAGE: After accounting for SNPs, PGF contains  " + str(len(ts2n)) + " transcripts "  + str(len(ps2n)) + " probesets " + str(n_probes_after) + " probes"
 
-    timestamp = datetime.datetime.today().strftime("%a %b %d %H:%M:%S PST %Y")
-    guid = str(uuid.uuid1())
-
+def write_new_PGF_file(P, timestamp, guid, probesets):
     # Write new PGF file
+    # probesets that contain no probes will NOT be written because the overridden str()
+    # command knows to return an empty string 
     fo = open(P["fn_pgf_new"], 'w')
     fo.write("#%chip_type=" + P["new_package_name"] + "\n")
     fo.write("#%lib_set_name=" + P["new_package_name"] + "\n")
@@ -493,7 +588,7 @@ def process_gene_format(P):
     fo.write("#%rows=1190\n")
     fo.write("#%cols=990\n")
     fo.write("#%probesets=" + str(len(probesets)) + "\n")
-    fo.write("#%datalines=2023948\n")
+    fo.write("#%datalines=2023948\n") # TODO: update this correctly
     fo.write("#%sequential=1\n")
     fo.write("#%order=col_major\n")
     fo.write("#%header0=probeset_id	type	probeset_name\n")
@@ -501,30 +596,31 @@ def process_gene_format(P):
     fo.write("#%header2=		probe_id	type	gc_count	probe_length	interrogation_position	probe_sequence" + '\n')
     for probeset in probesets:
         fo.write( str(probeset) )
-
     fo.close()
-
     print "MESSAGE: wrote new PGF file to " + P["fn_pgf_new"]
- 
-    #------------------------------------------------------------------
-    # Rewrite the MPS file
-    # In the MPS format the first two columns are identical.
-    # The third is space-delimited list of probesets.
-    # The fourth is count of probes.
-    # If a probeset contains zero probes, we will remove it.
-    # If the number of probes has changed, we'll change sixth column in transcript.csv 
-    # to update with new number of probes
-    #
-    # Read probes for exclusion out of probe_count_changes
-    # For each transcript we want 
-    #   the number of probes remaining
-    #   the list of probesets with at least one probe
-    # 
-    # Rewrite MPS file
-    # MPS links individual probesets to a transcript
-    # Apparently the case of no probesets for a transcript is
-    # ps {empty}  ps {empty}
-    #----------------------------------------
+
+
+def write_new_MPS_file(P, guid, timestamp, summaries ):
+    """ Rewrite the MPS file
+        The MPS links individual probesets to a transcript
+    
+        In the MPS format the first two columns are identical.
+        The third is space-delimited list of probesets.
+        The fourth is count of probes.
+        If a probeset contains zero probes, we will remove it.
+        If the number of probes has changed, we'll change sixth column in transcript.csv 
+        to update with new number of probes
+    
+        Read probes for exclusion out of probe_count_changes
+        For each transcript we want 
+          the number of probes remaining
+          the list of probesets with at least one probe
+    
+        Apparently the case of no probesets for a transcript is
+        ps<tab>{empty}<tab>ps<tab>{empty}<newline>
+        We will only write this for cases where the transcript contains no probesets but 
+        not because we didn't remove them
+    """
     f = open(P["fn_mps_orig"])
     fo = open(P["fn_mps_new"], 'w')
     fo.write("#%chip_type=" + P["new_package_name"] + "\n" )
@@ -541,73 +637,72 @@ def process_gene_format(P):
         if line[0] != "#":
             ps, ts, probes, length = line.rstrip('\r\n').split('\t')
             if ps == "probeset_id":
-                fo.write(line.rstrip('\r\n') + '\r')
-        
+                fo.write(line.rstrip('\r\n') + '\r') # header
             else:
-                length = str(ts2n[ps])
-                probes_not_zero = []
-                for probe in probes.split(" "):
-                    if ps2n[probe]>0 and not probe in probesets_no_valid_probes:
-                        probes_not_zero.append(probe)
-                if len(probes_not_zero) == 0:
-                    fo.write( ps + '\t\t' + ps + '\t\n') # matches MPS entries
-                else:
-                    fo.write( ps + '\t' + ps + '\t' + ' '.join(probes_not_zero) + '\t' + length + '\n' )
-
+                transcript_summary = summaries.ts2summary[ps]
+                if transcript_summary.include_in_MPS:
+                    if transcript_summary.is_control():
+                        fo.write( ps + '\t\t' + ps + '\t\n') # control probe
+                    else:
+                        
+                        if transcript_summary.n_probesets_with_probe_final()>0:
+                            length = str( transcript_summary.n_probes_final() )
+                            probes_not_zero = []
+                            for probeset_id in transcript_summary.probeset_ids:
+                                if transcript_summary.probeset_summaries[probeset_id].n_probes_final() > 0:
+                                    probes_not_zero.append(probeset_id)
+                            length = str(transcript_summary.n_probes_final())
+                            fo.write( ps + '\t' + ps + '\t' + ' '.join(probes_not_zero) + '\t' + length + '\n' )
     fo.close()
     f.close()
 
     print "MESSAGE: wrote new MPS file to " + P["fn_mps_new"]
 
-    #------------------------------------------------------------------------
-    # Modify probeset and transcript files 
-    # For probeset, do not write if no probes are left.
-    # For transcript, update number of probes. 
-    # TOTAL PROBESETS: 212,639
-    # TOTAL TRANSCRIPTS: 35,556
-    #------------------------------------------------------------------------
 
-    n_probes, n_transcripts = 0,0
+def write_new_probeset_file(P, summaries):
+    # If all probes have been remove from the probeset, do not write it
     f = open(P["fn_ps_orig"])
     fo = open(P["fn_ps_new"], "w")
     for line in f:
         if line[0] =="#":
-            fo.write(line.rstrip('\r\n') + '\n' )
-    
+            fo.write(line.rstrip('\r\n') + '\n' ) # header
         else:
             a = line.rstrip('\r\n')[1:-1].split('","')
             if a[0]=="probeset_id":
-                fo.write(line.rstrip('\r\n') + '\n' )
-            elif int( ps2n[a[0]]) > 0:
-                fo.write(line.rstrip('\r\n') + '\n' )
-                n_probes += 1
-
+                fo.write(line.rstrip('\r\n') + '\n' ) # header
+            else:
+                probeset_id = a[0]
+                transcript_id = a[6]
+                probeset_summary = summaries.get_probeset_summary(transcript_id, probeset_id)
+                if not probeset_summary is None and probeset_summary.probes_final>0:
+                    a[5] = str( probeset_summary.probes_final ) # rewrite number of probes
+                    fo.write( '"' + '","'.join(a) + '"\n' )
     fo.close()
     f.close()
-
     print "MESSAGE: wrote new probeset description file to " + P["fn_ps_new"]
 
+
+def write_new_transcript_file(P, summaries):
+    # If all probesets have been remove from the transcript cluster, do not write it
     f = open(P["fn_ts_orig"])
     fo = open(P["fn_ts_new"], "w")
     for line in f:
-        if line[0] =="#":
-            fo.write(line.rstrip('\r\n') + '\n' )
-    
+        if line[0] =="#": 
+            fo.write(line.rstrip('\r\n') + '\n' ) # header
         else:
             a = line.rstrip('\r\n')[1:-1].split('","')
             if a[0]=="transcript_cluster_id":
-                fo.write(line.rstrip('\r\n') + '\n' )
-        
+                fo.write(line.rstrip('\r\n') + '\n' ) # header
             else:
-                a[6] = str( ts2n[a[0]] )
-                out = '"' + '","'.join(a) + '"'
-                fo.write(out + '\n' )
-                n_transcripts += 1
-
+                transcript_id = a[0]
+                if summaries.ts2summary[ transcript_id ].n_probesets_with_probe_final()>0:
+                    a[6] = str( summaries.ts2summary[ transcript_id ].n_probes_final() )
+                    out = '"' + '","'.join(a) + '"'
+                    fo.write(out + '\n' )    
     fo.close()
     f.close()
-
     print "MESSAGE: wrote new transcript description file to " + P["fn_ts_new"]
+
 
 def process_block(block_lines, probeset2idx_remove, unithead2details):
     """ Input is an array of lines read from the cdf
@@ -879,4 +974,4 @@ print "         it is not already present on your machine. If you do not have th
 print "         install packages on your machine, contact your local system administrator."
 print "         To install the new package, uncomment and run the last line of the R script."
 print "         This line reads:"
-print "#install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')"
+print "         #install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')"
