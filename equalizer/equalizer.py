@@ -1,47 +1,3 @@
-# Example call for Affymetrix Gene ST:
-# python equalizer.py \
-# -f gene \
-# -p MoGene-1_1_noSprFVBSnps \
-# -v /datasets/mouse_sequence_reference/SNPS/snps-all.SPR.vcf,/datasets/mouse_sequence_reference/SNPS/2012-0612-snps+indels_FVBNJ_annotated.vcf \
-# -a data/annotation/probe_bed/MoGene_probes_MM9.bed \
-# -b /notebook/code/BEDTools-Version-2.15.0/bin \
-# -s na32 \
-# -g mm9 \
-# -d 37 \
-# -c MoGene-1_1-st-v1 \
-# -i 1.1 \
-# -r "Mus musculus" \
-# -w mouse \
-# -u "David Quigley" \
-# -l dquigley@cc.ucsf.edu \
-# -y data/annotation/MoGene-1_1/MoGene-1_1-st-v1.na32.mm9.probeset.csv \
-# -t data/annotation/MoGene-1_1/MoGene-1_1-st-v1.na32.mm9.transcript.csv \
-# -q data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.pgf \
-# -m data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.mps \
-# -k data/annotation/MoGene-1_1/MoGene-1_1-st-v1.r4.clf \
-# -o results/MoGene_FVB_SPR
- 
-# Example call for Affymetrix M430 v2
-# python equalizer.py \
-# -f IVT \
-# -p M430_noSprFVBSnps \
-# -v /datasets/mouse_sequence_reference/SNPS/snps-all.SPR.vcf,/datasets/mouse_sequence_reference/SNPS/2012-0612-snps+indels_FVBNJ_annotated.vcf \
-# -a data/annotation/probe_bed/Mouse430_2.mm9.bed \
-# -b /notebook/code/BEDTools-Version-2.15.0/bin \
-# -s na32 \
-# -g mm9 \
-# -d 37 \
-# -c Mouse430_2 \
-# -i 1.0 \
-# -r "Mus musculus" \
-# -w mouse \
-# -u "David Quigley" \
-# -l dquigley@cc.ucsf.edu \
-# -n data/annotation/M430/Mouse430_2.cdf \
-# -x data/annotation/M430/Mouse430_2.probe_tab \
-# -z data/annotation/M430/Mouse430_2.CEL \
-# -o results/M430_FVB_SPR
-
 import subprocess
 import sys
 import os
@@ -892,11 +848,8 @@ parser.add_option("-o", "--output", dest="dir_out", help="Path to write package 
 
 (options, args) = parser.parse_args()
 
-print( "*** EQUALIZER" )
-print( "*** David Quigley, UCSF" )
-print( "*** Contact: dquigley@cc.ucsf.edu" )
-print( "*** davidquigley.com" )
-print( "*** Version " + VERSION )
+print( "*** EQUALIZER version " + VERSION )
+print( "*** Contact David Quigley (dquigley@cc.ucsf.edu, davidquigley.com)" )
 print( "*** Released " + RELEASE_DATE  )
 
 P = validate_input( options ) # Check to make sure requested files exist and commands are coherent
