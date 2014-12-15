@@ -49,30 +49,36 @@ import datetime
 from optparse import OptionParser
 import uuid
 
-VERSION = "0.2"
-RELEASE_DATE = "September 10 2014"
+VERSION = "0.3"
+RELEASE_DATE = "December 12 2014"
     
 def require_file(fn, what_is_it):
     if len(fn)==0:
-        sys.exit("ERROR: did not pass a value for " + what_is_it )
+        print( "ERROR: did not pass a value for " + what_is_it + "\n" )
+        sys.exit("For usage instructions, call equalizer.py --help or visit http://http://github.com/DavidQuigley/QuantitativeGenetics/equalizer")
     
     if not os.path.exists(fn):
-        sys.exit("ERROR: " + what_is_it + " " + fn + " does not exist, exiting")    
-
+        print( "ERROR: " + what_is_it + " " + fn + " does not exist, exiting\n" )
+        sys.exit("For usage instructions, call equalizer.py --help or visit http://http://github.com/DavidQuigley/QuantitativeGenetics/equalizer")
+        
 def require_not_zero(str, msg):    
     if len(str)==0:
-        sys.exit(msg)
- 
+        print( msg + '\n' )
+        sys.exit("For usage instructions, call equalizer.py --help or visit http://http://github.com/DavidQuigley/QuantitativeGenetics/equalizer")
+
+
 def validate_input(options):
     """ check input parameters, ensuring required files exist """
     
     new_package_name = options.newpackage
     if len(new_package_name)==0:
-        sys.exit("ERROR: must provide a new package name")
+        print( "ERROR: must provide a new package name\n" )
+        sys.exit("For usage instructions, call equalizer.py --help or visit http://http://github.com/DavidQuigley/QuantitativeGenetics/equalizer")
     
     chip_format = options.chip_format
     if chip_format not in ["gene", "IVT"]:
-        sys.exit("ERROR: must specify chip format as one of {gene,IVT}")
+        print( "ERROR: must specify chip format as one of {gene,IVT}\n" )
+        sys.exit("For usage instructions, call equalizer.py --help or visit http://http://github.com/DavidQuigley/QuantitativeGenetics/equalizer")
     
     fn_vcf = options.fn_list_vcf.split(",")
     require_not_zero( fn_vcf, "no VCF files passed" )
@@ -111,7 +117,7 @@ def validate_input(options):
     require_not_zero( options.organism, "must pass an organism (e.g. mouse)")        
     
     if options.dir_out == ".":
-        print "MESSAGE: no output directory passed, writing files to current directory"
+        print( "MESSAGE: no output directory passed, writing files to current directory" )
     
     P ={}
     P["new_package_name"] = options.newpackage
@@ -161,8 +167,8 @@ def find_probe_intersections( P ):
     """ Call intersectBed to build a single large BED for all intersections between SNPs and affy """
     
     if os.path.exists( P["fn_combined_bed"] ):
-        print "MESSAGE: Combined BED file indicating SNP intersections already exists: " + P["fn_combined_bed"]
-        print "MESSAGE: Skipping BEDtools step. To re-create this file, delete it and re-run the script."
+        print( "MESSAGE: Combined BED file indicating SNP intersections already exists: " + P["fn_combined_bed"] )
+        print( "MESSAGE: Skipping BEDtools step. To re-create this file, delete it and re-run the script." )
         return
     
     cmd = ""
@@ -178,8 +184,8 @@ def find_probe_intersections( P ):
     fo.write(cmd)    
     fo.close()
 
-    print "MESSAGE: Executing BEDtools commands to combine VCF files (combine_vcf.sh)"
-    print "MESSAGE: Please be patient, as this can take several minutes...\n"
+    print( "MESSAGE: Executing BEDtools commands to combine VCF files (combine_vcf.sh)" )
+    print( "MESSAGE: Please be patient, as this can take several minutes...\n" )
     subprocess.call(["sh", P["dir_out"] + "/combine_vcf.sh"])
 
 
@@ -249,7 +255,7 @@ class Probe():
 def parse_PGF(fn_pgf):
     """ Read in the PGF file and store it as a vector of probeset objects """
     
-    print "MESSAGE: Parsing affymetrix PGF file..."
+    print( "MESSAGE: Parsing affymetrix PGF file..." )
     PS = None
     f = open(fn_pgf)
     probesets = []
@@ -288,7 +294,7 @@ def check_sequence_chr_consistency( fn_vcf, fn_affy_bed ):
             bed_has_chr = "chr" in line.split('\t')[0]
             break
     
-    print "MESSAGE: Does Affymetrix bed file use 'chr' format? " + str(bed_has_chr)
+    print( "MESSAGE: Does Affymetrix bed file use 'chr' format? " + str(bed_has_chr) )
     agrees = True
     for fn in fn_vcf:
         f = open(fn)
@@ -311,8 +317,8 @@ def read_probes_with_SNPs(P):
         RETURNS:
         ps_start_remove, hash of probeset<space>genomic_start_location
     """
-    print "MESSAGE: Reading probesets with SNPs file:"
-    print "         " + P["fn_probesets_with_snps"]
+    print( "MESSAGE: Reading probesets with SNPs file:" )
+    print( "         " + P["fn_probesets_with_snps"] )
     f = open(P["fn_probesets_with_snps"])
     ps_start_remove = {}
     for line in f:
@@ -321,7 +327,7 @@ def read_probes_with_SNPs(P):
         ps_start_remove[ probeset + ' ' + start ] = 1
 
     f.close()
-    print "MESSAGE: VCF file analysis identified " + str(len(ps_start_remove.keys())) + " probes containing SNPs."
+    print( "MESSAGE: VCF file analysis identified " + str(len(ps_start_remove.keys())) + " probes containing SNPs." )
     return ps_start_remove
 
 
@@ -357,7 +363,7 @@ def parse_probe_BED(P, ps_start_remove):
         probe_idx += 1
 
     f.close()
-    print "MESSAGE: Found " + str(marked_probes_found_in_BED) + " of these probes in the affymetrix BED file"
+    print( "MESSAGE: Found " + str(marked_probes_found_in_BED) + " of these probes in the affymetrix BED file" )
 
     return probe_indexes_to_remove
     
@@ -381,7 +387,7 @@ def process_gene_format(P):
     for id in ids:
         ps2before[id] = probesets[id2idx[id]].n_probes()
         n_probes_total += ps2before[id]
-    print "MESSAGE: Counted " + str(len(probesets)) + " probesets containing " + str(n_probes_total) + " probes in the original PGF file"
+    print( "MESSAGE: Counted " + str(len(probesets)) + " probesets containing " + str(n_probes_total) + " probes in the original PGF file")
 
     # Remove marked probes from probesets. update the new number of probes in ps2after.
     # ps2after is only set for probesets that we modify
@@ -399,8 +405,8 @@ def process_gene_format(P):
     for id in ids:
         n_probes_after += probesets[id2idx[id]].n_probes()
 
-    print "MESSAGE: Removed " + str(n_probes_removed) + " probes for SNP adjustement."
-    print "MESSAGE: Counted " + str(n_probes_after) + " probes after SNP adjustement."
+    print( "MESSAGE: Removed " + str(n_probes_removed) + " probes for SNP adjustement." )
+    print( "MESSAGE: Counted " + str(n_probes_after) + " probes after SNP adjustement." )
     
     # the changes we make are tracked in the pre_post file
     summaries = parse_MPS(P, ps2before, ps2after, probesets_no_valid_probes)
@@ -537,7 +543,7 @@ def parse_MPS(P, ps2before, ps2after, probesets_no_valid_probes):
         RETURN:
         probe_statistics object
     """
-    print "MESSAGE: Parsing Affymetrix MPS file. This file assigns probesets to transcripts."
+    print( "MESSAGE: Parsing Affymetrix MPS file. This file assigns probesets to transcripts." )
     f = open(P["fn_mps_orig"])
     n_empty_probesets = 0
     n_mps_probesets_at_least_one_probe = 0
@@ -565,11 +571,11 @@ def parse_MPS(P, ps2before, ps2after, probesets_no_valid_probes):
                     sums.add_probeset_summary( ps, probe, n_before, n_after )
     f.close()
     
-    print "MESSAGE: The Affymetrix MPS file contained " + str(len(sums)) + " transcripts."
-    print "MESSAGE: The Affymetrix MPS file contained " + str(sums.n_control_transcripts()) + " control transcripts"
-    print "MESSAGE: The Affymetrix MPS file contained " + str( sums.n_probesets() ) + " probesets"
-    print "MESSAGE: The Affymetrix MPS file contained " + str( sums.n_probesets_with_a_probe_final() ) + " probesets with >= 1 probe after correction"
-    print "MESSAGE: Wrote a table of changes to probeset composition to " + P["fn_probe_count_changes"]
+    print( "MESSAGE: The Affymetrix MPS file contained " + str(len(sums)) + " transcripts." )
+    print( "MESSAGE: The Affymetrix MPS file contained " + str(sums.n_control_transcripts()) + " control transcripts" )
+    print( "MESSAGE: The Affymetrix MPS file contained " + str( sums.n_probesets() ) + " probesets" )
+    print( "MESSAGE: The Affymetrix MPS file contained " + str( sums.n_probesets_with_a_probe_final() ) + " probesets with >= 1 probe after correction" )
+    print( "MESSAGE: Wrote a table of changes to probeset composition to " + P["fn_probe_count_changes"] )
     
     return sums
 
@@ -597,7 +603,7 @@ def write_new_PGF_file(P, timestamp, guid, probesets):
     for probeset in probesets:
         fo.write( str(probeset) )
     fo.close()
-    print "MESSAGE: wrote new PGF file to " + P["fn_pgf_new"]
+    print( "MESSAGE: wrote new PGF file to " + P["fn_pgf_new"] )
 
 
 def write_new_MPS_file(P, guid, timestamp, summaries ):
@@ -656,7 +662,7 @@ def write_new_MPS_file(P, guid, timestamp, summaries ):
     fo.close()
     f.close()
 
-    print "MESSAGE: wrote new MPS file to " + P["fn_mps_new"]
+    print( "MESSAGE: wrote new MPS file to " + P["fn_mps_new"] )
 
 
 def write_new_probeset_file(P, summaries):
@@ -679,7 +685,7 @@ def write_new_probeset_file(P, summaries):
                     fo.write( '"' + '","'.join(a) + '"\n' )
     fo.close()
     f.close()
-    print "MESSAGE: wrote new probeset description file to " + P["fn_ps_new"]
+    print( "MESSAGE: wrote new probeset description file to " + P["fn_ps_new"] )
 
 
 def write_new_transcript_file(P, summaries):
@@ -701,7 +707,7 @@ def write_new_transcript_file(P, summaries):
                     fo.write(out + '\n' )    
     fo.close()
     f.close()
-    print "MESSAGE: wrote new transcript description file to " + P["fn_ts_new"]
+    print( "MESSAGE: wrote new transcript description file to " + P["fn_ts_new"] )
 
 
 def process_block(block_lines, probeset2idx_remove, unithead2details):
@@ -825,8 +831,8 @@ def process_IVT_format(P):
     # load these into a remove hash. 
     # for IVT, probesets in the hash will have the form 1415670_at:1
     #---------------------------------------------------
-    print "MESSAGE: Reading probesets with SNPs file:"
-    print "         " + P["fn_probesets_with_snps"]
+    print( "MESSAGE: Reading probesets with SNPs file:" )
+    print( "         " + P["fn_probesets_with_snps"] )
     f = open(P["fn_probesets_with_snps"])
     ps_remove = {}
     for line in f:
@@ -839,9 +845,9 @@ def process_IVT_format(P):
             ps_remove[ probeset ] = [probe_index]
 
     f.close()
-    print "MESSAGE: VCF file analysis identified " + str(len(ps_remove.keys())) + " probes containing SNPs."
-    print "MESSAGE: Reading CDF file:"
-    print "         " + P["fn_cdf_orig"]
+    print( "MESSAGE: VCF file analysis identified " + str(len(ps_remove.keys())) + " probes containing SNPs." )
+    print( "MESSAGE: Reading CDF file:" )
+    print( "         " + P["fn_cdf_orig"] )
     
     # spin through cdf, removing atoms which are overlapped. Store probeset_id\tX\tY
     # Then spin through Mouse430_2.probe_tab, removing overlaps
@@ -886,28 +892,28 @@ parser.add_option("-o", "--output", dest="dir_out", help="Path to write package 
 
 (options, args) = parser.parse_args()
 
-print "*** EQUALIZER"
-print "*** David Quigley, UCSF"
-print "*** Contact: dquigley@cc.ucsf.edu"
-print "*** davidquigley.com"
-print "*** Version " + VERSION
-print "*** Released " + RELEASE_DATE 
+print( "*** EQUALIZER" )
+print( "*** David Quigley, UCSF" )
+print( "*** Contact: dquigley@cc.ucsf.edu" )
+print( "*** davidquigley.com" )
+print( "*** Version " + VERSION )
+print( "*** Released " + RELEASE_DATE  )
 
 P = validate_input( options ) # Check to make sure requested files exist and commands are coherent
 
-print "MESSAGE: New package will be named: " + P["new_package_name"]
-print "MESSAGE: New files will be written to: " + P["dir_out"]
-print "MESSAGE: Affymetrix probe sequence file: " + P["fn_affy_bed"]
-print "MESSAGE: User passed the following VCF files to match against probes:"
+print( "MESSAGE: New package will be named: " + P["new_package_name"] )
+print( "MESSAGE: New files will be written to: " + P["dir_out"] )
+print( "MESSAGE: Affymetrix probe sequence file: " + P["fn_affy_bed"] )
+print( "MESSAGE: User passed the following VCF files to match against probes:" )
 for fn in P["fn_vcf"]:
-    print "         " + fn
+    print( "         " + fn )
 
-print "MESSAGE: User indicated chip was " + P["chip"] + ", version " + P["annot_revision"] + " annotation version " + P["annot_version"]
+print( "MESSAGE: User indicated chip was " + P["chip"] + ", version " + P["annot_revision"] + " annotation version " + P["annot_version"] )
 
 if not check_sequence_chr_consistency( P["fn_vcf"], P["fn_affy_bed"] ):
-    print "ERROR: Affymetrix probe BED file does not have the same chromosome string encoding as one or"
-    print "       or more of the VCF files. Chromosomes can be encoded as 'chr1' or '1'; the probe_bed "
-    print "       VCF files must all use the same encoding."
+    print( "ERROR: Affymetrix probe BED file does not have the same chromosome string encoding as one or" )
+    print( "       or more of the VCF files. Chromosomes can be encoded as 'chr1' or '1'; the probe_bed " )
+    print( "       VCF files must all use the same encoding." )
     sys.exit(0)
 
 find_probe_intersections( P )
@@ -963,15 +969,15 @@ fo = open(P["fn_R_script"], 'w')
 fo.write(r_script)
 fo.close()
 
-print "MESSAGE: Wrote R script to create package: " + P["fn_R_script"]
-print "MESSAGE: There are several ways to run this script:"
-print "         1) Open the file, run R, and paste the contents into R"
-print "         2) From the command line, type: "
-print "            R < " + P["fn_R_script"] + " --no-save"
-print " "
-print "         The script will attempt to install the bioconductor 'pdInfoBuilder' package if "
-print "         it is not already present on your machine. If you do not have the ability to "
-print "         install packages on your machine, contact your local system administrator."
-print "         To install the new package, uncomment and run the last line of the R script."
-print "         This line reads:"
-print "         #install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')"
+print( "MESSAGE: Wrote R script to create package: " + P["fn_R_script"] )
+print( "MESSAGE: There are several ways to run this script:" )
+print( "         1) Open the file, run R, and paste the contents into R" )
+print( "         2) From the command line, type: " )
+print( "            R < " + P["fn_R_script"] + " --no-save" )
+print( " " )
+print( "         The script will attempt to install the bioconductor 'pdInfoBuilder' package if " )
+print( "         it is not already present on your machine. If you do not have the ability to " )
+print( "         install packages on your machine, contact your local system administrator." )
+print( "         To install the new package, uncomment and run the last line of the R script." )
+print( "         This line reads:" )
+print( "         #install.packages('" + P["dir_out"] + "/" + pd_name + "', repos = NULL, type='source')" )
