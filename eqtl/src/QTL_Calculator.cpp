@@ -1722,6 +1722,7 @@ std::string QTL_Calculator::create_output_header(ClassMinerOptions* cmo_expr, Cl
     ss << "# test_type regression\n";
     ss << "# fraction_expr_samples_required " << fraction_required << "\n";
     ss << "# experiment_wide_0.05_threshold 1\n";
+    ss << "# sample restriction " << cmo_expr->class_a << "\n";
     return ss.str();
 }
 
