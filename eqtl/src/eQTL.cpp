@@ -139,13 +139,23 @@ int main(int argc, char *argv[]){
 	}
 	ClassMinerOptions * cmo_expr = new ClassMinerOptions();
 	ClassMinerOptions * cmo_snps = new ClassMinerOptions();
+    cmo_expr->verbose=true;
+	cmo_snps->verbose=true;
+    
 	int r=0;
 	cmo_expr->file_name_dis = options->at(r++)->value;
 	cmo_expr->file_name_sa = options->at(r++)->value;
 	cmo_expr->file_name_ga = options->at(r++)->value;
 	cmo_expr->class_a = options->at(r++)->value;
-    if(cmo_expr->class_a.size()==0)
+    if(cmo_expr->class_a.size()==0){
+        say_message(std::string( "Using all available samples"), cmo_expr->verbose);
         cmo_expr->class_a = std::string("IDENTIFIER!NULL");
+    }
+    else{
+        std::stringstream ss;
+        ss << "Restricting samples by expression attribute: " << cmo_expr->class_a;
+        say_message(ss.str(), cmo_expr->verbose);
+    }
 	cmo_snps->file_name_dis = options->at(r++)->value;
 	cmo_snps->file_name_sa = options->at(r++)->value;
 	cmo_snps->file_name_ga = options->at(r++)->value;
@@ -194,8 +204,6 @@ int main(int argc, char *argv[]){
     
 	cmo_snps->file_name_out = options->at(r++)->get_value();
 	cmo_expr->file_name_out = cmo_snps->file_name_out;
-	cmo_expr->verbose=true;
-	cmo_snps->verbose=true;
 	cmo_expr->discretization="none";
 	cmo_snps->discretization="none";
 
