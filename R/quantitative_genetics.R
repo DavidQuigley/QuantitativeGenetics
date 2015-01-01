@@ -298,7 +298,11 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # overlap.spear.pairs = function(A, B, p2s )
 #   find probe pairs in two spear files
 #
-# fisher.zscore = function(D1, n1, D2, n2){
+# fisher.zscore = function(D1, n1, D2, n2)
+#
+# correlation_vs_distance = function( symbols, chromosomes, locations, D,
+#                                window_size=1000000, 
+#                                symbols_to_test=NULL, n_perms=0){
 #
 ### ANOVA AND REGRESSION
 #
@@ -3919,6 +3923,56 @@ fisher.zscore = function(D1, n1, D2, n2){
     transB = 0.5 * log( (1+D2)/(1-D2) )
     (transA - transB) / ( sqrt( (1/(n1-3) ) + (1/(n2-3)) ) )
 }
+
+correlation_vs_distance = function( symbols, chromosomes, locations, D,
+                                window_size=1000000, 
+                                symbols_to_test=NULL, n_perms=0){
+    if( is.null(symbols_to_test) ){
+        symbols_to_test = symbols
+    }
+    g2near = hsh_new()
+    HALF_WINDOW=window_size/2
+    for(i in 1:length(symbols_to_test)){
+        gene = symbols_to_test[i]
+        gene_tss = locations[i] 
+        chrom = chromosomes[i]
+        g1 = which(chromosomes==chrom & locations<=gene_tss+HALF_WINDOW &
+               locations>=gene_tss-HALF_WINDOW)
+        hsh_set( g2near, gene, paste(symbols[g1], collapse=","))
+    }
+    
+    n_genes = rep(0, length(symbols_to_test))
+    rho_mean = rep(0, length(symbols_to_test))
+    rho_median = rep(0, length(symbols_to_test))
+    
+    for(i in 1:length(symbols_to_test)){
+        if(i %% 1000==0)
+            print(paste(i,"of",length(symbols_to_test)))
+        nearby_symbols = strsplit( hsh_get(g2near, symbols_to_test[i]), ",")[[1]]
+
+        cc=round( cor(t(D[nearby_symbols, ])),2 )
+        idx = which(rownames(cc)==symbols[i])     # which row contains symbol of interest
+        cors = as.numeric(cc[idx,])               # correlation with symbol of interest
+        
+        # calculate correlation
+        nearby_locations = locations[ match.idx( symbols, nearby_symbols)$idx.A ]
+        distance_to_symbol = abs(nearby_locations - locations[i])
+        cors = cors[setdiff(1:length(cors), idx)] # remove self-correlation of 1.0
+        rho_mean[i] = mean(cors)
+        rho_median[i] = median(cors)
+        n_genes[i] = length(cors)
+    }
+    idx_symbols_to_test = match.idx(symbols_to_test, symbols)$idx.B
+    cc = data.frame(
+                chrom.num=chromosomes[idx_symbols_to_test], 
+                tss=locations[idx_symbols_to_test],
+                n_genes, 
+                rho_mean=round(rho_mean,3), 
+                rho_median=round(rho_median,3), 
+                stringsAsFactors=FALSE, row.names=symbols_to_test)
+    cc
+}
+
 
 paired.t.test = function(ids, expr.A, expr.B, method='ttest', percent.present=0.9, verbose=T){
     # Calculate pearson or wilcox statistic for paired data sets
