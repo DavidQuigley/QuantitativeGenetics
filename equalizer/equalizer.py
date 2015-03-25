@@ -143,12 +143,13 @@ def find_probe_intersections( P ):
     
     cmd = ""
     for i,fn in enumerate(P["fn_vcf"]):
+        cmd += 'echo "MESSAGE: processing ' + fn + '"\n'
         cmd += P["dir_bedtools"] + "/intersectBed -u -a " + P["fn_affy_bed"] + " -b " + fn + " > " + P["dir_out"] + "/snps_from_vcf_" + str(i+1) + ".bed\n"
     
     cmd += "cat" 
     for i,fn in enumerate(P["fn_vcf"]):
         cmd += " " + P["dir_out"] + "/snps_from_vcf_" + str(i+1) + ".bed"
-    cmd += " | sortBed > " + P["fn_combined_bed"] + "\n"
+    cmd += " | " + P["dir_bedtools"] + "/sortBed > " + P["fn_combined_bed"] + "\n"
 
     fo = open( P["dir_out"] + "/combine_vcf.sh", 'w')
     fo.write(cmd)    
@@ -380,7 +381,7 @@ def process_gene_format(P):
     
     # the changes we make are tracked in the pre_post file
     summaries = parse_MPS(P, ps2before, ps2after, probesets_no_valid_probes)
-    summaries.write_summary_file( P["fn_probe_count_changes"] )
+    summaries.write_summary_file( P["fn_probe_count_changes"], "ST" )
         
     timestamp = datetime.datetime.today().strftime("%a %b %d %H:%M:%S PST %Y")
     guid = str(uuid.uuid1())
@@ -474,19 +475,35 @@ class Transcript_summaries():
                 return ts.probeset_summaries[probeset_id]
         return None
         
-    def write_summary_file(self, fn):
+    def write_summary_file(self, fn, chiptype):
+        if chiptype != "ST" and chiptype != "IVT":
+            raise RuntimeError("chiptype must be ST or IVT")
+        
         fo = open(fn, "w")
-        fo.write( "transcript.id\torig.n.probes\tprobeset.id\torig.probeset.n.probes\tfinal.probeset.n.probes\tinclude.in.MPS\n" )
-        for transcript_id in self.transcript_ids:
-            ts = self.ts2summary[transcript_id]
-            if ts.is_control():
-                fo.write( transcript_id + "\t0\t" + transcript_id + "\t0\t0\tyes\n")
-            else:
-                for probeset_id in ts.probeset_ids:
-                    n_orig = str(ts.probeset_summaries[probeset_id].probes_orig)
-                    n_final = str(ts.probeset_summaries[probeset_id].probes_final)
-                    include_in_MPS = ts.include_in_MPS()
-                    fo.write( transcript_id + "\t" + str(ts.n_probes_original()) + "\t" + probeset_id + "\t" + n_orig + '\t' + n_final + '\t' + include_in_MPS + '\n')
+        if chiptype=="ST":
+            fo.write( "transcript.id\torig.n.probes\tprobeset.id\torig.probeset.n.probes\tfinal.probeset.n.probes\tinclude.in.MPS\n" )
+            for transcript_id in self.transcript_ids:
+                ts = self.ts2summary[transcript_id]
+                if ts.is_control():
+                    fo.write( transcript_id + "\t0\t" + transcript_id + "\t0\t0\tyes\n")
+                else:
+                    for probeset_id in ts.probeset_ids:
+                        n_orig = str(ts.probeset_summaries[probeset_id].probes_orig)
+                        n_final = str(ts.probeset_summaries[probeset_id].probes_final)
+                        include_in_MPS = ts.include_in_MPS()
+                        fo.write( transcript_id + "\t" + str(ts.n_probes_original()) + "\t" + probeset_id + "\t" + n_orig + '\t' + n_final + '\t' + include_in_MPS + '\n')
+        elif chiptype=="IVT":
+            fo.write( "probeset.id\torig.probeset.n.probes\tfinal.probeset.n.probes\n" )
+            for transcript_id in self.transcript_ids:
+                ts = self.ts2summary[transcript_id]
+                if ts.is_control():
+                    fo.write( transcript_id + "\t0\t0\n")
+                else:
+                    for probeset_id in ts.probeset_ids:
+                        n_orig = str(ts.probeset_summaries[probeset_id].probes_orig)
+                        n_final = str(ts.probeset_summaries[probeset_id].probes_final)
+                        fo.write( probeset_id + "\t" + n_orig + '\t' + n_final + '\n')
+        
         fo.close()
     
     def n_control_transcripts(self):
@@ -773,7 +790,6 @@ def remove_probes_from_CDF(targets, fn_orig, fn_final):
         
         block.append(line)
     
-    
     new_block, XY_removed_from_block = process_block(block, targets,unithead2details)
     
     for new_line in new_block:
@@ -804,26 +820,68 @@ def process_IVT_format(P):
     print( "MESSAGE: Reading probesets with SNPs file:" )
     print( "         " + P["fn_probesets_with_snps"] )
     f = open(P["fn_probesets_with_snps"])
+    probeset_index_bearing_snp = {}
     ps_remove = {}
     for line in f:
         a = line.rstrip('\r\n').split('\t')
-        chrom, start, stop, probeset = a[0:4]
-        probeset, probe_index = probeset.split(":")
-        if probeset in ps_remove:
-            ps_remove[ probeset ].append(probe_index)
-        else:
-            ps_remove[ probeset ] = [probe_index]
-
+        chrom, start, stop, probeset_plus_index = a[0:4]
+        probeset_index_bearing_snp[probeset_plus_index]=1
+        try:
+            probeset, probe_index = probeset_plus_index.split(":")
+            if probeset in ps_remove:
+                ps_remove[ probeset ].append(probe_index)
+            else:
+                ps_remove[ probeset ] = [probe_index]
+        except ValueError:
+            # certain probe_bed tracks may intermingle individual probe and probe 
+            # consensus lines; identify individual probes by presence of colon
+            pass
+    
     f.close()
+    # restrict ps_remove to unique entries; multiple SNPs result in duplicates
+    for probeset in ps_remove.keys():
+        ps_remove[probeset] = sorted(list(set(ps_remove[probeset])))
+    
     print( "MESSAGE: VCF file analysis identified " + str(len(ps_remove.keys())) + " probes containing SNPs." )
     print( "MESSAGE: Reading CDF file:" )
     print( "         " + P["fn_cdf_orig"] )
+    
+    # Count the number of probes in each probeset
+    f = open(P["fn_probetab_orig"])
+    h = f.readline()
+    probeset2NXY = {}
+    current_probeset = ""
+    current_N = 0
+    for line in f:
+        a = line.rstrip('\r\n').split('\t')
+        probeset,x,y = a[0], a[1], a[2]
+        if probeset != current_probeset:
+            current_N=0
+            current_probeset = probeset
+        else:
+            current_N = current_N + 1
+        try:
+            probeset2NXY[ probeset ].append( [str(current_N), x, y] )
+        except:
+            probeset2NXY[ probeset ] = [ [str(current_N), x, y] ]
+    f.close()
+    
+    # Write probe count changes
+    f = open( P["fn_probe_count_changes"], 'w' )
+    f.write( 'probeset\tprobe_index\tX\tY\tprobe_removed\n')
+    for probeset in probeset2NXY.keys():
+        for n,x,y in probeset2NXY[probeset]:
+            probe_removed = "FALSE"
+            if probeset + ":" + n in probeset_index_bearing_snp:
+                probe_removed = "TRUE"
+            f.write( '\t'.join([probeset, n, x, y, probe_removed] ) + '\n')
+    f.close()
     
     # spin through cdf, removing atoms which are overlapped. Store probeset_id\tX\tY
     # Then spin through Mouse430_2.probe_tab, removing overlaps
     XY_removed=remove_probes_from_CDF(ps_remove, P["fn_cdf_orig"], P["fn_cdf_new"])
     update_probetab(XY_removed, P["fn_probetab_orig"], P["fn_probetab_new"])
-
+    
 
 #------------------------------------------------------------------------------------------
 # Begin main 
