@@ -109,7 +109,7 @@ void Attributes::restrict_identifiers( std::vector<std::string> new_identifiers 
     
     std::vector<int> idx_of_orig_to_keep, idx_orig_to_remove;
     HASH_S_I hsh_target;
-    for(int i=0; i<new_identifiers.size();i++){
+    for(int i=0; i<int(new_identifiers.size());i++){
         if( this->identifier2idx.find( new_identifiers.at(i) ) == this->identifier2idx.end() ){
             std::stringstream ss;
             ss << "called restrict_identifiers with identifier not found in attributes: " << new_identifiers.at(i);
