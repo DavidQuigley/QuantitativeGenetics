@@ -111,6 +111,9 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # pathway.summarize.result = function(R)
 #   summarize a pathway change score result 
 #
+# sample_attributes_from_GEO = function( GEO_samples, characteristics )
+#
+#
 #####################################
 # Protein quantification
 #####################################
@@ -1256,6 +1259,24 @@ find.dupes = function(fn){
     freq$keys[freq$values>1]
 }
 
+
+sample_attributes_from_GEO = function( GEO_samples, characteristics ){
+    # each sample can return a variable-length list of chars
+    # I'll simplify this by requiring a pre-defined list of characteristics
+    # more elegant would be to do hash of hashes or reshape matrix on the fly
+    sa = data.frame( matrix(NA, nrow=length(GEO_samples), ncol=length(characteristics)), 
+                            row.names=GEO_samples )
+    names(sa) = characteristics
+    nn2idx = hsh_from_vectors( characteristics, 1:length(characteristics))
+    for(i in 1:length(GEO_samples)){
+        chars = Meta(getGEO( idents[i]) )$characteristics_ch1
+        for(j in 1:length(chars)){
+            x = strsplit( chars[j], " = ", fixed=T)[[1]]
+            sa[i, hsh_get(nn2idx, x[1])] = x[2]
+        }
+    }
+    sa
+}
 
 ################################
 # Begin pathway code           #
@@ -4687,7 +4708,7 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
         legend.y = legend.xy[2]
     }
     if( !is.null(legends) ){
-        legend(legend.x,legend.y,legends, col=color.list,lty=1,lwd=3,cex=1.5)
+        legend(legend.x,legend.y,legends, col=color.list,lty=1,lwd=3,cex=1)
     }
     else{
         legend(legend.x,legend.y,sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3,cex=1.5)
