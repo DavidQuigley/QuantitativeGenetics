@@ -431,7 +431,7 @@ int main(int argc, char *argv[]){
         say_message(std::string("ANALYSIS TYPE: genome-wide by chromosome"), cmo_snps->verbose);
         say_message(std::string("Identifying best SNP for each chromosome for each probeset"), cmo_snps->verbose );
         QC->set_verbose(cmo_expr->verbose);
-        QC->calculate_genome_wide(0, true);
+        QC->calculate_genome_wide(true);
         QC->print_by_chromosome( cmo_expr, cmo_snps, fraction_required);
     }
     else{
@@ -445,7 +445,8 @@ int main(int argc, char *argv[]){
             say_message(std::string("ANALYSIS TYPE: genome-wide"), cmo_snps->verbose);
             say_message(std::string("Identifying best SNP for each probeset"), cmo_snps->verbose );
         }
-        QC->calculate_genome_wide(cis_interval, false); 
+        QC->set_cis_interval(cis_interval);
+        QC->calculate_genome_wide(false);
         QC->sort_QTLs();
         cmo_expr->version = "eQTL 1.0";
         QC->print_rqtl( cmo_expr, cmo_snps, 0, fraction_required);

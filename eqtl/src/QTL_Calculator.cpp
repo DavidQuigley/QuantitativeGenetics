@@ -122,6 +122,11 @@ QTL_Calculator::QTL_Calculator(Dataset* data_expr, Attributes* sa_expr, Attribut
     }
 }
 
+int QTL_Calculator::get_cis_interval(){
+    // 0 for genome-wide; non-zero for base interval to examine on genome
+    return this->cis_interval;
+}
+
 
 void QTL_Calculator::get_matched_snp_sample_idx( std::vector<int>& idx_to_fill ){
     // fill idx with the indices of the SNP samples we've matched to expression data
@@ -155,6 +160,9 @@ void QTL_Calculator::set_robust(bool robust){
     this->is_robust=robust;
 }
 
+void QTL_Calculator::set_cis_interval(int cis_interval){
+    this->cis_interval=cis_interval;
+}
 
 void QTL_Calculator::set_n_perms(int n_perms){
     this->n_perms = n_perms;
@@ -191,6 +199,9 @@ void QTL_Calculator::set_n_perms_max(int n_perms_max){
     this->n_perms_max = n_perms_max;
 }
 
+int QTL_Calculator::get_min_obs_per_genotype(){
+    return this->min_obs_per_genotype;
+}
 
 void QTL_Calculator::set_min_obs_per_genotype(int min){
     this->min_obs_per_genotype=min;
@@ -1483,7 +1494,7 @@ void QTL_Calculator::calculate_permutations_for_gene_probe_pairs( KeyValuesParse
 }
 
 
-void QTL_Calculator::calculate_genome_wide(int cis_interval, bool genomewide_by_chromosome){
+void QTL_Calculator::calculate_genome_wide( bool genomewide_by_chromosome ){
     // For each probe
     //     if cis_interval==0,
     //          find best pval across all loci using observed locus labels
@@ -1512,10 +1523,10 @@ void QTL_Calculator::calculate_genome_wide(int cis_interval, bool genomewide_by_
     std::vector<thread*> threads;
     std::vector<int>* idx_all_snps = new std::vector<int>();
     
-    if( cis_interval>0 ){
+    if( this->cis_interval>0 ){
         // any permutation should be performed against ALL SNPs that will be considered, not just those
         // which are relevant to a particular cis-locus. Identify these:
-        int half_window = cis_interval/2;
+        int half_window = this->cis_interval/2;
         boost::unordered_map<int,int> all_snps_for_perm;
         int idx_probe_id, locus, loc_start, loc_end;
         std::vector<int>* genotype_idx = new std::vector<int>();
@@ -1539,7 +1550,7 @@ void QTL_Calculator::calculate_genome_wide(int cis_interval, bool genomewide_by_
         std::cout << "MESSAGE: Calculating with " << idx_all_snps->size() << " SNPs selected from all CIS windows\n";
     }
     for( int thread_id=0; thread_id<this->n_threads; thread_id++){
-        if( cis_interval==0 ){
+        if( this->cis_interval==0 ){
             if(genomewide_by_chromosome){
                 // genome-wide one chromosome at a time
                 threads.push_back(new thread( boost::bind( &QTL_Calculator::process_by_chr_in_thread, this, thread_id, true_sample_idx, perm_sample_idx) ));
@@ -1551,7 +1562,7 @@ void QTL_Calculator::calculate_genome_wide(int cis_interval, bool genomewide_by_
         }
         else{
             // CIS-only
-            threads.push_back(new thread( boost::bind( &QTL_Calculator::process_cis_only_in_thread, this, thread_id, true_sample_idx, perm_sample_idx, idx_all_snps, cis_interval) ));
+            threads.push_back(new thread( boost::bind( &QTL_Calculator::process_cis_only_in_thread, this, thread_id, true_sample_idx, perm_sample_idx, idx_all_snps, this->cis_interval) ));
         }
     }
     for( int thread_id=0; thread_id<this->n_threads; thread_id++){
@@ -1698,7 +1709,8 @@ void QTL_Calculator::write_to_log( std::string msg ){
     }
 }
 
-std::string QTL_Calculator::create_output_header(ClassMinerOptions* cmo_expr, ClassMinerOptions* cmo_snps, double max_var, double fraction_required){
+std::string QTL_Calculator::create_output_header(ClassMinerOptions* cmo_expr, ClassMinerOptions* cmo_snps, double max_var,
+                                                 double fraction_required){
     std::string id_expr, id_snps;
 	char timebuf[80];
 	struct tm* newtime;
@@ -1717,6 +1729,8 @@ std::string QTL_Calculator::create_output_header(ClassMinerOptions* cmo_expr, Cl
     ss << "# Genotype_Data_File " << cmo_snps->file_name_dis << "\n";
     ss << "# Genotype_Sample_File " << cmo_snps->file_name_sa << "\n";
     ss << "# Genotype_Genes_File " << cmo_snps->file_name_ga << "\n";
+    ss << "# cis_interval_0_indicates_genomewide " << this->cis_interval << "\n";
+    ss << "# min_observations_per_genotype " << this->get_min_obs_per_genotype() << "\n";
     ss << "# min_var " << max_var << "\n";
     ss << "# n_perms " << this->n_perms << "\n";
     ss << "# test_type regression\n";
@@ -1819,7 +1833,7 @@ void QTL_Calculator::print_rqtl( ClassMinerOptions* cmo_expr, ClassMinerOptions*
         std::string gene_name_col = this->ga_expr->get_gene_name_column();
         for(int i=0; i<(int)this->qtls.size(); i++){
             q = this->qtls.at(i);
-            if(q->pvalue<1){
+            if(q->pvalue<=1 & q->pvalue >=0 ){
                 this->spear_result_string(q, result_str);
                 std::cout << result_str << "\n";
             }
@@ -1837,7 +1851,7 @@ void QTL_Calculator::print_rqtl( ClassMinerOptions* cmo_expr, ClassMinerOptions*
         std::string gene_name_col = this->ga_expr->get_gene_name_column();
         for(int i=0; i<(int)this->qtls.size(); i++){
             q = this->qtls.at(i);
-            if(q->pvalue<1){
+            if(q->pvalue<1 & q->pvalue >=0){
                 this->spear_result_string(q, result_str);
                 f_out << result_str << "\n";    
             }

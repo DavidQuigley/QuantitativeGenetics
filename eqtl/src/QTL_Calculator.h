@@ -47,19 +47,22 @@ public:
     void check_probes_in_KV( KeyValuesParser& KV);
     void get_matched_snp_sample_idx( std::vector<int>& idx );
     void get_matched_gene_sample_idx( std::vector<int>& idx );
+    int get_min_obs_per_genotype();
     int get_n_matched_samples();
+    int get_cis_interval();
     int get_size_gene_idx();
     void set_logfile( std::string fn_log );
     void set_analysis_method( int method );
     void set_min_obs_per_genotype(int min);
     void set_n_perms(int n_perms);
+    void set_cis_interval(int cis_interval);
     void set_n_perms_max(int n_perms_max);    
     void set_robust(bool robust);
     void set_thread_count(int n_threads);
     void set_verbose(bool verbose);
     
     void calculate_specific_SNPs(Matrix<double>& results, std::vector<int>& idx_snps);
-    void calculate_genome_wide(int cis_interval, bool genomewide_by_chromosome);
+    void calculate_genome_wide( bool genomewide_by_chromosome);
     void calculate_permutations_for_gene_probe_pairs( KeyValuesParser& KV ); 
     void calculate_all_regressions(ClassMinerOptions* cmo_expr, ClassMinerOptions* cmo_snps, double fraction_required, double max_pvalue_to_report);
 
@@ -95,6 +98,7 @@ private:
     bool is_robust, verbose;
     int n_perms, n_perms_max;
     int n_threads;
+    int cis_interval;
     int analysis_method;
     int index_for_next_thread;
     std::string fn_log;  
