@@ -2127,8 +2127,6 @@ void Spearman::find_DC_GWER(){
 				rho_a = this->find_correlation_r( this->data->raw_data->data, row1, this->data->a_idx, this->data->raw_data->data, row2, &perm_a_idx);
 				rho_b = this->find_correlation_r( this->data->raw_data->data, row1, this->data->b_idx, this->data->raw_data->data, row2, &perm_b_idx);
 			}
-			abs_a = abs(rho_a);
-			abs_b = abs(rho_b);
 			if( abs(rho_a-rho_b) >= max_value ){
 				max_value = abs(rho_a-rho_b);
 				if( this->verbose )
