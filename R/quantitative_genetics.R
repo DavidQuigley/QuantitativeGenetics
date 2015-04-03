@@ -3134,21 +3134,21 @@ plot.clean=function( V, ymin=NA, ymax=NA, colors=c(), cex=0.25, y.axis=T ){
 }
 
 
-sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, 
+sorted.heatmap = function(D, ga=NULL, target.symbols=NULL, target.probes=NULL, 
                          sort.by=NULL, order.rows.by.cor.with.first.symbol=FALSE, 
                          scale=FALSE, y.min=NULL, y.max=NULL, groups=NULL, 
                          col.low="blue3", col.high="yellow", col.na="black", 
-                         labels=FALSE, bottom.bar.values=NULL ){
+                         y.labels=NULL, bottom.bar.values=NULL, x.labels=NULL ){
      
      # passing a list of probes uses the probe IDs to pick exact targets.
      # If symbol==NULL, sorted by first symbol.
      probes =  c()
      symbols= c()
      if( is.null(target.probes) & is.null(target.symbols) )
-         target.probes = rownames(D)
+         target.probes = dimnames(D)[[1]]
      
      if( is.null(ga)){
-         probes = rownames(D)
+         probes = dimnames(D)[[1]]
          symbols = probes
      }
      else{
@@ -3243,16 +3243,23 @@ sorted.heatmap=function(D, ga=NULL, target.symbols=NULL, target.probes=NULL,
      df = cbind(df, v=as.numeric(DT) )
      y.mid = mean(c(y.max, y.min))
      scg = scale_fill_continuous(limits=c(y.min,y.max), low = col.low, high = col.high, na.value=col.na )
-     if(labels){
-         syc = scale_y_continuous(expand=c(0,0),breaks=dim(DT)[1]:1,labels=symbols)
-         sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[1],labels=symbols ) 
-         ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + theme(axis.title.x = element_blank() )
+     
+     if( is.null(y.labels) ){
+        y.labels = rep("", dim(DT)[1])
      }
      else{
-         ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank()
+        y.labels = symbols
      }
+     if( is.null(x.labels) ){
+        x.labels = rep("", dim(DT)[2])
+     }
+     else{
+        x.labels = dimnames(DT)[[2]]
+     }
+     syc = scale_y_continuous(expand=c(0,0),breaks=dim(DT)[1]:1,labels=y.labels)
+     sxc = scale_x_continuous(expand=c(0,0),breaks=1:dim(DT)[2],labels=x.labels)
+     ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + theme(axis.title.x = element_blank() )
 }
-
 
 do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19){
     if(length(pch)!=1 & length(pch) != dim(D)[2] )
