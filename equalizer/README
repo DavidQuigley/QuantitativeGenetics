@@ -1,21 +1,11 @@
-Equalizer is a tool that builds a customized Platform Design Information package for 
-Affymetrix microarray data.
-
-This file contains:
-
-INTRODUCTION
-REQUIREMENTS
-SELF-CONTAINED EXAMPLES
-RUNNING NOTES
-  
-
 INTRODUCTION
 ------------------------------------------------------------------------------------------
-Affymetrix microarrays are designed using a reference genome from human, mouse, or another 
-organism. Single Nucleotide Polymorphisms (SNPs) in the genomes of individual humans and 
-model organisms that vary from the reference annotations affect the binding of cDNA to 
-microarray probes, affecting the results of experiments measuring gene expression in 
-organisms with distinct genomes. Genetic experiments performed using these arrays are 
+
+Affymetrix microarrays are designed using a reference genome from human, mouse, or 
+another organism. Single Nucleotide Polymorphisms (SNPs) in the genomes of individual 
+humans and model organisms that vary from the reference annotations affect the binding of 
+cDNA to microarray probes, affecting the results of experiments measuring gene expression 
+in organisms with distinct genomes. Genetic experiments performed using these arrays are 
 subject to systemic bias unless the effect of these SNPs is accounted for.
 
 The software package equalizer drastically reduces this problem for the commonly used 
@@ -30,7 +20,7 @@ REQUIREMENTS
    Earlier outdated versions of Python may not work. 
    Python is available at http://python.org.
    
-2) bedtools (at the time of writing, I used 2.15.0) 
+2) bedtools (I have used 2.15.0 and 2.17.0) 
    bedtools is available at https://github.com/arq5x/bedtools2
 
 3) A VCF file for each genome you wish to scan for SNPs that overlap 
@@ -38,7 +28,7 @@ REQUIREMENTS
    genome provider. A sample VCF file is provided in the example bundle.
 
 4) Affymetrix microarray platform description files. Available directly from 
-   Affymetrix's NetAffx website. You also may be able to download the files you need from 
+   Affymetrix's NetAffx website. You may be able to download the files you need from 
    my personal website, http://davidquigley.com/equalizer.html
    
    For IVT arrays, where ARRNAME is your array platform:
@@ -62,52 +52,38 @@ REQUIREMENTS
    R is freely available at http://cran.r-project.org/
 
 
-SELF-CONTAINED EXAMPLES
+SELF-CONTAINED EXAMPLE
 ------------------------------------------------------------------------------------------
 
-These examples will use a small VCF file with SNPs in a single gene (Lgr5) to rewrite 
-first a M430 IVT probe description fileset and then a Gene 1.1 probe description fileset.
+A self-contained example that uses a small VCF file with SNPs in a single gene (Cdc26) 
+to rewrite a Mouse Gene ST probe description fileset and calculate eQTLs is 
+available at:
 
-You will need to specify your BEDTools installation point using the -b flag if the 
-BEDTools bin folder is not in your path.
-
-All of the data and annotation files required to run this sample can be downloaded at:
 http://davidquigley.com/software/equalizer/equalizer_example.tar.gz
 
-python equalizer.py \
--b /notebook/code/BEDTools-Version-2.15.0/bin \
--f IVT -p M430_noSprFVBSnps \
--c Mouse430_2 \
--v example.VCF \
--a M430/Mouse430_2.mm9.bed \
--s na33 -g mm9 -d 37 -i 1.0 -r "Mus musculus" -w mouse \
--u "David Quigley" -l dquigley@cc.ucsf.edu \
--y M430/Mouse430_2.na33.annot.csv \
--n M430/Mouse430_2.cdf \
--x M430/Mouse430_2.probe_tab \
--z M430/Mouse430_2.CEL \
--o M430/results/M430_FVB_SPR
+TO RUN THE EXAMPLE:
 
-# Create the new package
-sudo /usr/bin/R --no-save  < results/M430_FVB_SPR/create_package.R
+> wget http://davidquigley.com/software/equalizer/equalizer_example.tar.gz
+> tar -xzf equalizer_example.tar.gz
+  ******************************************************************
+  * IMPORTANT: Before continuing, edit the second line of the file *
+  * run_example.sh to specify your BEDTools installation point     *
+  ******************************************************************
+> sudo sh run_example.sh
 
-python equalizer.py \
--b /notebook/code/BEDTools-Version-2.15.0/bin \
--f gene -p mogene-1_1_nosprfvbSnps \
--c MoGene-1_1-st-v1 \
--v example.VCF \
--a MoGene_probes_MM9.bed \
--s na33 -g mm9 -d 37 -i 1.1 -w Mouse -r "Mus musculus" \
--y MoGene/MoGene-1_1-st-v1.na32.mm9.probeset.csv \
--t MoGene/MoGene-1_1-st-v1.na32.mm9.transcript.csv \
--q MoGene/MoGene-1_1-st-v1.r4.pgf \
--m MoGene/MoGene-1_1-st-v1.r4.mps \
--k MoGene/MoGene-1_1-st-v1.r4.clf \
--u "David Quigley" -l dquigley@cc.ucsf.edu \
--o results/MoGene_FVB_SPR
+The example has been verified to work a fresh installation of Ubuntu linux that contains 
+recent installations of R and bedtools. I have run this code on a new T2.medium instance 
+on Amazon AWS after installing Bedtools and R with the following commands:
 
-# Create the new package
-sudo R --no-save  < results/M430_FVB_SPR/create_package.R
+sudo apt-get update
+sudo apt-get install r-base
+wget https://bedtools.googlecode.com/files/BEDTools.v2.17.0.tar.gz
+tar -xzf BEDTools.v2.17.0.tar.gz
+cd bedtools-2.17.0
+sudo make 
+cd ..
+
+The T2.small instance available on Amazon AWS has insufficient RAM to run this example.
 
 RUNNING NOTES
 ------------------------------------------------------------------------------------------
@@ -117,9 +93,10 @@ IMPORTANT: IF YOU ARE NOT AN ADMINISTRATOR
 ********************************************
 
 If you do not have superuser rights on your machine, and wish to generate the R package, 
-you will have to modify create_package.R to install the package locally in a part 
-of the hard drive where you have write access, rather than in a location available to 
-the entire system.
+you will have to modify the create_package.R script created by equalizer to install the 
+package locally in a part of the hard drive where you have write access, rather than 
+in a location available to the entire system. You can also ask an administrator to install 
+the source package at any time.
 
 ********************************************
 WHAT TRACK OF THE BED FILE SHOULD I USE?
