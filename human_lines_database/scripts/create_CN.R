@@ -1,3 +1,7 @@
+# This script integrates CCLE and Sanger copy number calls into a single file for major 
+# and minor copy number. It does not directly calculate anything. In this iteration 
+# CCLE values are prefered because we do not yet have access to the raw Sanger data.
+
 source('/notebook/code/quantitative_genetics.R')
 cl = load.matrix('/datasets/human_lines_database/cell_line_attributes/cell_line_dictionary_2015_02_18.txt')
 cn.ccle.minor = load.matrix('/datasets/human_lines_database/copy_number/CN_minor_CCLE.txt.gz')
