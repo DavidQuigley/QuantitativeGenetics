@@ -80,7 +80,7 @@ x = paste( "chr", x, rep( c("p", "q"), 24), sep="")
 names( whole_arm_alt_by_chr ) = x
 names( focal_alt_by_chr ) = paste("chr", 1:24, sep="")
 
-write.matrix( n_states_by_chr, '/datasets/human_lines_database/CN_n_states_by_chr.txt')
-write.matrix( weighted_density_states_by_chr, '/datasets/human_lines_database/CN_weighted_density_states_by_chr.txt')
-write.matrix( whole_arm_alt_by_chr, '/datasets/human_lines_database/CN_whole_arm_alt_by_chr.txt')
-write.matrix( focal_alt_by_chr, '/datasets/human_lines_database/CN_focal_alt_by_chr.txt')
+write.matrix( n_states_by_chr, '/datasets/human_lines_database/copy_number/CN_n_states_by_chr.txt')
+write.matrix( weighted_density_states_by_chr, '/datasets/human_lines_database/copy_number/CN_weighted_density_states_by_chr.txt')
+write.matrix( whole_arm_alt_by_chr, '/datasets/human_lines_database/copy_number/CN_whole_arm_alt_by_chr.txt')
+write.matrix( focal_alt_by_chr, '/datasets/human_lines_database/copy_number/CN_focal_alt_by_chr.txt')
