@@ -1,0 +1,81 @@
+Show results of analysis with PICNIC
+==========================================================================================
+
+```{r echo=FALSE}
+
+fn_chr_bounds = '/datasets/human_lines_CCLE/CN/PICNIC/annotation/chr_info.csv'
+fn_probe_attributes = '/datasets/human_lines_CCLE/CN/PICNIC/annotation/ProbeRef.csv'
+
+load_PICNIC_features = function( out_root, file_root ){
+    fn = paste(out_root, '/', file_root, '_feature.TXT', sep='')
+    P_ff = read.table(fn, sep=',')
+    #P_ff = P_ff[,2:3]
+    names(P_ff) = c('SNP_ID','R', 'baf')
+    P_ff
+}
+
+load_PICNIC_segments = function(out_root, file_root ){
+    fn = paste(out_root, '/', file_root, '_feature.TXT', sep='')
+    P_seg = read.table(fn, sep=',')
+    names(P_seg) = c('segment_number', 'probe_start', 'probe_end', 'chrom', 'loc_start', 
+                     'loc_end', 'minor_copy', 'total_copy')
+    P_seg
+}
+
+plot_picnic_by_chrom = function( sample_f, sample_seg, ga, chr_bounds, chrom ){
+    
+    chr_colors = rep("lightgray", dim(sample_f)[1])
+    for(i in 1:dim(chr_bounds)[1]){
+        if(i %% 2 == 0 )
+            chr_colors[chr_bounds[i,1]:chr_bounds[i,2]] = "gold"
+    }
+    y_vals = sample_f$R[chr_bounds[chrom,1]:chr_bounds[chrom,2]]
+    print(length(y_vals))
+    x_vals = ga$pos[chr_bounds[chrom,1]:chr_bounds[chrom,2]]
+    scaled_x_vals = round( x_vals/(max(x_vals)) * 1200 )
+    scaled_y_label = round( x_vals/(max(x_vals)) * 1200 )
+
+    cc = sample_seg[sample_seg$chrom==chrom,]
+    cc$loc_start = round( cc$loc_start/(max(cc$loc_end)) * 1200 )
+    cc$loc_end = round( cc$loc_end/(max(cc$loc_end)) * 1200 )
+    plot(scaled_x_vals, y_vals, pch=19, cex=0.25, ylim=c(0,max(cc$total_copy)), 
+         col="darkgray", main=chrom, axes=FALSE, xlab="", ylab="")
+    axis(2, 0:max(cc$total_copy), las=1)
+    megabases = seq(from=0, to=max(x_vals), by=1000000) / 1000000
+    scaled_megabase_locations = round( megabases/(max(megabases)) * 1200 )
+    axis(1, labels = megabases, at=scaled_megabase_locations)
+    for(i in 1:dim(cc)[1]){
+        lines(c(cc$loc_start[i],cc$loc_end[i]), c(cc$total_copy[i], cc$total_copy[i]), col="red", lwd=3)
+        lines(c(cc$loc_start[i],cc$loc_end[i]), c(cc$minor_copy[i]-0.1, cc$minor_copy[i]-0.1), col="blue", lwd=2)    
+    }
+}
+
+ga = read.table( fn_probe_attributes, sep=',', header=TRUE, stringsAsFactors=FALSE, row.names=1)
+
+out_root = '/Volumes/2014_backup/datasets/human_lines_ccle/CN/output'
+seg_root = '/Volumes/2014_backup/datasets/human_lines_ccle/CN/segments'
+file_root = 'HONEY_p_NCLE_DNAAffy3_S_GenomeWideSNP_6_B12_293326'
+
+sample_f = load_PICNIC_features( "~/Downloads", file_root)
+sample_seg = load_PICNIC_segments( seg_root, file_root )
+
+plot_picnic_by_chrom( sample_f, sample_seg, ga, chr_bounds, 17 )
+
+
+plot_PICNIC_chrom = function(out_root, file_root, color, chromosome){
+    dir_picnic_out = paste(out_root, '/', file_root, '_feature.TXT', sep='')
+    path_to_features = paste(dir_picnic_out, '/output_', file_root, '_feature.TXT.csv', sep='')
+    path_to_segments = paste(dir_picnic_out, '/segments_', file_root, '_feature.TXT.csv', sep='')
+    sample_f = load_PICNIC_features( path_to_features )
+    sample_seg = load_PICNIC_segments( path_to_segments )
+layout(matrix(1:8,2,4, byrow=TRUE))
+par(mar=c(2,3,3,1))
+for(chrom in 17:24){
+    plot_picnic_by_chrom( hcc1187_f, hcc1187_seg, ga, chr_bounds, chr_colors, chrom )
+}
+
+
+
+
+
+```
