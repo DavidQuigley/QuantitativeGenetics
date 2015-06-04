@@ -14,7 +14,8 @@
 # USEFUL REFERENCES        #
 ############################
 CHR.LENGTHS.MOUSE = c(197195432,181748087,159599783,155630120,152537259,149517037,152524553,131738871,124076172,129993255,121843856,121257530,120284312,125194864,103494974,98319150,95272651,90772031,61342430,166650296,15902555)
-COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblue", "darkgrey")
+COLOR.WHEEL=c("black","cornflowerblue","orange","darkgreen","red","darkblue","darkgrey",
+              "bisque", "aquamarine3", "darkmagenta", "tomato")
 #
 ############################
 # LOADING AND WRITING DATA #
@@ -259,6 +260,7 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 #
 #    Helper function for quick visualization of PCA. Automatically colors based on labels.
 #
+# plot.color.grid = function(M, block.height=20, block.width=10, space.X=3, space.Y=10)
 ########################
 # STATISTICAL ANALYSIS #
 ########################
@@ -295,8 +297,11 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 #   What is the Z score required for a P value lower than the bonferroni-corrected
 #   number of tests for differential correlation
 #
-# spear = function( fn_spear, fn_expr, fn_ga, fn_sa, min_cor, fn_out, class.a="", class.b="", probe="", y="symbol" )
+# spear = function( fn_spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b, fn_out, class.a="", class.b="", probe="", y="symbol" )
 #   simple wrapper for spear 
+#
+# cor.test.spear = function( D=NULL, fn_spear, min_cor=0, min_present=0.8, probe='',
+#                                dir_tmp = '/Users/david/temp' )
 #
 # overlap.spear.pairs = function(A, B, p2s )
 #   find probe pairs in two spear files
@@ -459,6 +464,8 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # hsh_from_vectors = function( key, value=NULL )
 #   create hash key -> value
 #
+# hsh_unique_values = function( hsh, keys=NULL ){
+#   unique values in hash of vectors, iterate through keys and 
 #
 ######################
 # hashgraph class
@@ -507,7 +514,7 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 # UTILITY FUNCTIONS #
 #####################
 #
-# assign.colors = function(V){
+# assign.colors = function(V, color.override=NULL, col.missing="black", return_legend=FALSE )
 #   assign unique colors to each unique value in V
 #
 # get.split.col = function(v, string, col=0, last=F, first=F)
@@ -594,7 +601,15 @@ COLOR.WHEEL = c("black", "cornflowerblue", "orange", "darkgreen", "red","darkblu
 #
 # smooth = function(x, chrom, smooth.region = 2, outlier.SD.scale = 4, smooth.SD.scale = 2, trim=0.025)
 #
-#####################################################################
+#######################
+# CELL LINE FUNCTIONS #
+#######################
+#
+# plot_values_by_site = function( sites, CE, symbol, jitter_X = FALSE, main=NULL, show_quartiles=TRUE   
+#     General function to plot matrix values in CE broken down by values in sites
+#
+##########################################################################################
+
 
 ##################
 ### BEGIN LOAD ###
@@ -3317,6 +3332,38 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
 
 
 
+plot.color.grid=function(M, block.height=20, block.width=10, space.X=3, space.Y=10, 
+                         cex.x=1, cex.y=1, border=TRUE){
+    n.rows = dim(M)[1]
+    n.cols = dim(M)[2]
+    total.width =  ( block.width*n.cols) + ( (n.cols-1) * space.X)
+    total.height = ( block.height * n.rows ) + ( (n.rows-1) * space.Y)
+    plot(0,0,col="white", xlim=c(0,total.width), ylim=c(0,total.height), 
+         axes=F, xlab="", ylab="", bg="azure2")
+    xlab_locs = rep(0, n.cols)
+    ylab_locs = rep(0, n.rows)
+    cur.y = total.height
+    for(rr in 1:n.rows){
+        for(cc in 1:n.cols){  
+            this.x.left = (cc-1)*block.width + (cc-1)*space.X
+            this.x.right = this.x.left+block.width
+            #xlab_locs[cc] = this.x.right - (0.5*block.width)
+            xlab_locs[cc] = this.x.right - (block.width)
+            if( border )
+                rect( this.x.left , cur.y - block.height, this.x.right, cur.y, 
+                      col=M[rr,cc], border="azure2")
+            else
+                rect( this.x.left , cur.y - block.height, this.x.right, cur.y, 
+                      col=M[rr,cc], border=NA)
+        }
+        ylab_locs[rr] = cur.y - (0.5*block.height)
+        cur.y = cur.y - block.height - space.Y
+    }
+    axis(1, at=xlab_locs, labels=dimnames(M)[[2]], las=2, cex.axis=cex.x, tick=FALSE, padj=1, line=-1.5 )
+    axis(2, at=ylab_locs, labels=rownames(M), las=2, cex.axis=cex.y, tick=FALSE, hadj=1, line=-2)
+}
+
+
 ####################
 # BEGIN STATISTICS #
 ####################
@@ -3854,9 +3901,8 @@ calculate.min.DC.score = function( n.probes ){
 }
 
 
-spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b=0, fn_out, min_zscore=0, 
-                  class.a="", class.b="", probe="", y="symbol", score="", min_var="", 
-                  neighbors=F ){
+spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b="", fn_out, class.a="", class.b="", 
+                  probe="", y="symbol", score="", min_var="", min_present="", neighbors=F, seeds_only=FALSE ){
     # simple wrapper for spear 
     c1 = fn.spear
     c2 = paste( "-d", fn_expr, sep='' )
@@ -3866,10 +3912,8 @@ spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b=0, fn_out,
     c6 = "-vT"
     c7 = paste( "-o", fn_out, sep='' )
     c8 = paste( "-s", min_cor, sep='' )
-    c9 = paste( "-h", min_cor_b, sep='' )
-    c10 = paste( "-x", min_zscore, sep='' )
     
-    cmd = paste(c1, c2, c3, c4, c5, c6, c7, c8, c9, c10)
+    cmd = paste(c1, c2, c3, c4, c5, c6, c7, c8)
     if( class.a != "" ){
         aa = paste( "-a", class.a, sep='' )
         cmd = paste( cmd, aa )
@@ -3886,15 +3930,52 @@ spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b=0, fn_out,
         zz = paste( "-x", score, sep="" )
         cmd = paste(cmd, zz)
     }
+    if( min_cor_b != "" ){
+        zz = paste( "-h", min_cor_b, sep="" )
+        cmd = paste(cmd, zz)
+    }    
     if( min_var != "" ){
         zz = paste( "-m", min_var, sep="" )
+        cmd = paste(cmd, zz)
+    }
+    if( min_present != "" ){
+        zz = paste( "-n", min_present, sep="" )
         cmd = paste(cmd, zz)
     }
     if( neighbors ){
         cmd = paste(cmd, "-rT" )
     }
+    if( seeds_only ){
+        cmd = paste(cmd, "-lT")
+    }
     print( cmd )
     system(cmd)
+}
+
+cor.test.spear = function( D=NULL, fn_spear, min_cor=0, min_present=0.8, probe='',
+                                dir_tmp = '/Users/david/temp' ){
+    fn_expr = paste( dir_tmp, 'cor_temp_matrix_expr', sep='/')
+    fn_ga = paste( dir_tmp, 'cor_temp_matrix_ga', sep='/')
+    fn_sa = paste( dir_tmp, 'cor_temp_matrix_sa', sep='/')
+    fn_out =  paste( dir_tmp, 'cor_temp_out', sep='/')
+    
+    if( !is.null(D)){
+        if(!is.data.frame(D)){
+            nn = dimnames(D)[[2]]
+            D = data.frame(D)
+            names(D) = nn
+        }
+    
+        sa = data.frame(row.names=dimnames(D)[[2]], valid=rep(1, dim(D)[2]) )
+        ga = data.frame(valid=rep(1, dim(D)[1]), symbol=dimnames(D)[[1]], 
+                        stringsAsFactors=FALSE, row.names=dimnames(D)[[1]]  )
+        write.matrix( D, fn_expr)
+        write.matrix( ga, fn_ga)
+        write.matrix( sa, fn_sa )
+    }
+    spear(fn_spear, fn_expr, fn_ga, fn_sa, probe=probe, min_cor=min_cor, 
+          min_present=min_present, fn_out=fn_out )
+    read.spear(fn_out)
 }
 
 
@@ -5270,6 +5351,23 @@ hsh_from_vectors = function( v1, v2=NULL ){
 }
 
 
+hsh_unique_values = function( hsh, keys=NULL ){
+    # given hsh where values are vectors, iterate through keys and 
+    # identify the set of unique values
+    all_values = hsh_new()
+    if(is.null(keys)){
+        keys = hsh_keys(hsh)
+    }
+    for(i in 1:length(keys)){
+        if( hsh_in(hsh, keys[i] ) ){
+            values = hsh_get( hsh, keys[i])
+            for( j in 1:length(values)){
+                hsh_set( all_values, values[j], 1)
+            }    
+        }
+    }
+    sort(hsh_keys(all_values))
+}
 
 #######################
 ### BEGIN HASHGRAPH ###
@@ -5724,23 +5822,32 @@ get.split.col = function(v, string, col=0, last=F, first=F){
 }
 
 
-assign.colors = function(V, color.override=NULL ){
-    colors = rep(COLOR.WHEEL[1], length(V))
+assign.colors = function(V, color.override=NULL, col.missing="black", return_legend=FALSE ){
+    colors = rep(col.missing, length(V))
     if(is.null(color.override))
         colors.to.use=COLOR.WHEEL
     else
         colors.to.use=color.override
     uniques = sort(unique(V))
     cur.color=1
+    list_legend=c()
+    list_colors=c()
     for(i in 1:length(uniques)){
         if( cur.color>length(colors.to.use) ){
             cur.color=1
             print("Colors wrapped around")
         }
         colors[V==uniques[i]] = colors.to.use[cur.color]
+        list_legend[i] = uniques[i]
+        list_colors[i] = colors.to.use[cur.color]
         cur.color=cur.color+1
     }
-    colors
+    if( return_legend ){
+        list( labels=list_legend, colors=list_colors)
+    }
+    else{
+        colors
+    }
 }
 
 standardize = function(D){
@@ -6132,6 +6239,57 @@ correlation.tests = function(){
 
 
     d=cor.test.row.vs.genes(ids.mir.tail, expr.miRNA, expr.tail, ga.tail[,c(1,6,7)], probe.id="hmr-miR-18a", method="spearman")
+}
+
+########################
+### BEGIN CELL LINE ###
+########################
+
+plot_values_by_site = function( sites, CE, symbol=NULL, groups=NULL, jitter_X = FALSE, main=NULL,
+                                show_quartiles=TRUE, show_zero_line=TRUE ){
+    if(is.null(main))
+        main=symbol
+    sites_sorted = sort(unique(sites), decreasing=TRUE)
+    site2idx = hsh_from_vectors(  sites_sorted, 1:length(unique(sites)))
+    if(is.null(symbol) & is.vector(CE)){
+        vals=CE
+    }
+    else{
+        vals = CE[symbol,]
+    }
+    if( jitter_X )
+        vals = jitter(vals)
+    colors = rep("#cccccccc", length(vals))
+    if( !is.null(groups) ){
+        colors = assign.colors(groups, c("cornflowerblue", "black"), col.missing="#cccccccc")
+    }
+    val_max = max(vals, na.rm=TRUE)
+    val_min = min( c( floor( min(vals, na.rm=TRUE)), 0) )
+    yvals = jitter( hsh_get(site2idx, sites) ) #+ rnorm(length(vals), sd=0.1)
+    plot( vals, yvals,
+          las=1, xlab="", ylab="", xlim=c(val_min,val_max), axes=F, pch=19, 
+          col=colors, cex=0.75, main=main )
+    if( val_max>1 ){
+        axis(1, at=seq(from=val_min,to=val_max, by=1))
+    }
+    else{
+        axis(1, at=seq(from=val_min,to=1, by=0.1))
+    }
+    axis(2, at=1:length( unique(sites)), labels=sites_sorted,las=1, tick=FALSE, hadj=1)
+    for(i in 1:length(sites_sorted)){
+        v = vals[sites==sites_sorted[i]]
+        lines(c(val_min-1, val_max+1), c(i,i)-0.5, lwd=0.5, col="lightgrey" )
+        lines(c(val_min-1, val_max+1), c(i,i)+0.5, lwd=0.5, col="lightgrey" )
+        if(length(v)>0 & show_quartiles){
+            s = as.numeric(summary(v))
+            y = hsh_get( site2idx, sites_sorted[i])
+            lines(c(s[2], s[5]), c( y,y ), lwd=2, col="black")            
+            lines( c(s[3], s[3]), c( i-0.5, i+0.5 ), lwd=4, col="black")            
+        }
+    }
+    if( show_zero_line){
+        lines(c(0,0), c(-1000, 1000), lwd=0.5)
+    }
 }
 
 unit.test = function(){
