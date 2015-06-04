@@ -47,9 +47,8 @@ REQUIREMENTS
     e) ARRNAME.clf
     d) ARRNAME.bed
     
-5) (OPTIONAL)
-   R (at the time of writing, I used 3.1.1). 
-   R is freely available at http://cran.r-project.org/
+5) R (at the time of writing, I used 3.1.1). 
+   R is freely available at http://r-project.org/
 
 
 SELF-CONTAINED EXAMPLE
@@ -63,18 +62,24 @@ http://davidquigley.com/software/equalizer/equalizer_example.tar.gz
 
 TO RUN THE EXAMPLE:
 
-> wget http://davidquigley.com/software/equalizer/equalizer_example.tar.gz
-> tar -xzf equalizer_example.tar.gz
-  ******************************************************************
-  * IMPORTANT: Before continuing, edit the second line of the file *
-  * run_example.sh to specify your BEDTools installation point     *
-  ******************************************************************
-> sudo sh run_example.sh
+# RUN BEGINS
+wget http://davidquigley.com/software/equalizer/equalizer_example.tar.gz
+tar -xzf equalizer_example.tar.gz
+#  ******************************************************************
+#  * IMPORTANT: Before continuing, set the value of PYTHON_PATH,    *
+#  * BEDTOOLS_PATH, and EQUALIZER_SOURCE                            *
+#  ******************************************************************
+BEDTOOLS_PATH='/opt/bedtools2/bin'
+EQUALIZER_SOURCE='/notebook/equalizer/deploy/equalizer_0.3.tar.gz'
+sudo Rscript equalizer_example.R $BEDTOOLS_PATH $EQUALIZER_SOURCE --no-save
+# RUN ENDS
 
-The example has been verified to work a fresh installation of Ubuntu linux that contains 
-recent installations of R and bedtools. I have run this code on a new T2.medium instance 
-on Amazon AWS after installing Bedtools and R with the following commands:
+I have verified this example works on a fresh installation of Ubuntu linux that 
+contains recent installations of R and bedtools. I have run this code on a new 
+T2.medium instance on Amazon AWS after installing Bedtools and R with the 
+following commands:
 
+# INSTALL BEGINS
 sudo apt-get update
 sudo apt-get install r-base
 wget https://bedtools.googlecode.com/files/BEDTools.v2.17.0.tar.gz
@@ -82,8 +87,10 @@ tar -xzf BEDTools.v2.17.0.tar.gz
 cd bedtools-2.17.0
 sudo make 
 cd ..
+# INSTALL ENDS
 
 The T2.small instance available on Amazon AWS has insufficient RAM to run this example.
+
 
 RUNNING NOTES
 ------------------------------------------------------------------------------------------
