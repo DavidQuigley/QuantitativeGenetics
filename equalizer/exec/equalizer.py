@@ -20,7 +20,7 @@ from optparse import OptionParser
 import uuid
 
 VERSION = "0.3"
-RELEASE_DATE = "December 12 2014"
+RELEASE_DATE = "June 05 2015"
     
 def require_file(fn, what_is_it):
     if len(fn)==0:
@@ -894,17 +894,17 @@ parser.add_option("-v", "--vcf", dest="fn_list_vcf", help="Path to VCF files, co
 parser.add_option("-a", "--affy", dest="fn_affy_bed", help="Path to affymetrix probe BED file", default="")
 parser.add_option("-b", "--bedtools", dest="dir_bedtools", help="Path to bedTools bin folder", default="")
 
-parser.add_option("-s", "--annot_version", dest="annot_version", help="Annotation version, default na32", default="na32")
-parser.add_option("-e", "--annot_revision", dest="annot_revision", help="Affy chip library revision, default 4", default="4")
-parser.add_option("-g", "--genome_version_ucsc", dest="genome_version_ucsc", help="UCSC Genome version, default mm9", default="mm9")
-parser.add_option("-d", "--genome_version_ncbi", dest="genome_version_ncbi", help="NCI Genome version, default 37", default="37")
-parser.add_option("-c", "--chip", dest="chip", help="Affy chip, default MoGene-1_1-st-v1", default="MoGene-1_1-st-v1")
-parser.add_option("-i", "--chip_version", dest="chip_version", help="chip version string, default 1.1", default="1.1")
-parser.add_option("-r", "--species", dest="species", help="species name, default Mus musculus", default="Mus musculus")
+parser.add_option("-s", "--annot_version", dest="annot_version", help="Annotation version", default="")
+parser.add_option("-e", "--annot_revision", dest="annot_revision", help="Affy chip library revision", default="")
+parser.add_option("-g", "--genome_version_ucsc", dest="genome_version_ucsc", help="UCSC Genome version", default="")
+parser.add_option("-d", "--genome_version_ncbi", dest="genome_version_ncbi", help="NCI Genome version", default="")
+parser.add_option("-c", "--chip", dest="chip", help="Affy chip", default="")
+parser.add_option("-i", "--chip_version", dest="chip_version", help="chip version string", default="")
+parser.add_option("-r", "--species", dest="species", help="species name", default="")
 
-parser.add_option("-u", "--author", dest="author", help="Author Name for package, default David Quigley", default="David Quigley")
-parser.add_option("-l", "--email", dest="email", help="Author email for package, default dquigley@cc.ucsf.edu", default="dquigley@cc.ucsf.edu")
-parser.add_option("-w", "--organism", dest="organism", help="species name, default Mouse", default="Mouse")
+parser.add_option("-u", "--author", dest="author", help="Author Name for package", default="")
+parser.add_option("-l", "--email", dest="email", help="Author email for package", default="")
+parser.add_option("-w", "--organism", dest="organism", help="species name", default="")
 
 parser.add_option("-n", "--file_CDF", dest="fn_CDF", help="Path to affymetrix CDF file (IVT format only)", default="")
 parser.add_option("-x", "--file_probe_tab", dest="fn_probe_tab", help="Path to affymetrix probe_tab (IVT format only)", default="")
