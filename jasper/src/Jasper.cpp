@@ -477,10 +477,10 @@ JasperFrame::JasperFrame(const wxString& title): wxFrame(NULL, wxID_ANY, title){
 		cp.write(prop_path);
 	}
 #endif
-	// NOTE: the call to investigaion->set_current is in JasperTree.cpp,
+	// NOTE: the call to investigation->set_current is in JasperTree.cpp,
 	// JasperTree::refresh_from_directory(). This is eventually called during
 	// initialization and any other time investigation details may have changed.
-	try{
+    try{
 		this->investigation = new Investigation(prop_path);
 		this->loaded_properties = true;
 	}
