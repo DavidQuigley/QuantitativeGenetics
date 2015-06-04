@@ -8,7 +8,7 @@ dir_PICNIC_outdir = '/mnt/speed/quigleyd/CN/PICNIC_outdir'
 dir_PICNIC_software = '/mnt/speed/quigleyd/software/PICNIC'
 existing = os.listdir(dir_PICNIC_outdir + '/raw')
 
-f = open(dir_HOME + 'scripts/PICNIC_LIBRARY_HEADER')
+f = open(dir_HOME + '/scripts/PICNIC_LIBRARY_HEADER')
 LD_header = ''.join( f.readlines() )
 f.close()
 

@@ -1,4 +1,10 @@
-source('/notebook/code/quantitative_genetics.R')
+source('/notebook/code/src/R/quantitative_genetics.R')
+args <- commandArgs(trailingOnly = TRUE)
+if( length(args) != 2 )
+    stop("Two arguments are required: dir_segment_beds, fn_out")
+dir_seg = args[1]
+fn_out = args[2]
+
 dir_seg = '/datasets/human_lines_CCLE/CN/segment_beds'
 files=list.files(dir_seg, pattern='.*BED')
 cell_line = c()
@@ -18,4 +24,4 @@ for(i in 1:length(files)){
     minor = c( minor, get.split.col( get.split.col( bed$V4, "minor:", last=TRUE), ",", first=TRUE) )
 }
 beds = data.frame( cell_line, chrom, loc_start, loc_end, minor, major, stringsAsFactors=FALSE)
-write.table(beds, '/datasets/human_lines_database/copy_number/CCLE_segments.txt', row.names=FALSE, quote=FALSE)
+write.table(beds, fn_out, row.names=FALSE, quote=FALSE)

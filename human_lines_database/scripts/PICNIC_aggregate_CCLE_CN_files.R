@@ -1,4 +1,4 @@
-source('/notebook/code/quantitative_genetics.R')
+source('/notebook/code/src/R/quantitative_genetics.R')
 
 args <- commandArgs(trailingOnly = TRUE)
 if( length(args) != 4 )

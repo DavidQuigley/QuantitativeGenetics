@@ -2,11 +2,18 @@
 # IT ALSO LIFTS THEM TO HG19, using the results of a call to liftOver.
 
 import os
+import argparse
+fn_dictionary = '/notebook/code/src/human_lines_database/cell_line_attributes/cell_line_dictionary.txt'
 
-fn_dictionary = '/datasets/human_lines_database/cell_line_attributes/cell_line_dictionary_2015_01_22.txt'
-dir_segments = '/Volumes/2014_backup/datasets/human_lines_ccle/CN/segments'
+#dir_segments = '/Volumes/2014_backup/datasets/human_lines_ccle/CN/segments'
+#dir_bed = '/datasets/human_lines_ccle/CN/segment_beds'
+parser = argparse.ArgumentParser(description='Convert segments to bed')
+parser.add_argument('dir_segments', help='input segment file directory')
+parser.add_argument('dir_output', help='output BED directory')
+args = parser.parse_args()
 
-dir_bed = '/datasets/human_lines_ccle/CN/segment_beds'
+dir_segments = args.dir_segments
+dir_bed = args.dir_output
 
 # following code lifts over old segment locations to new hg19
 fn_pos_old = '/datasets/human_lines_CCLE/CN/PICNIC/annotation/Snp6FeatureMappings.csv'
@@ -54,7 +61,8 @@ for line in f:
 f.close()
 
 fn_segments = os.listdir(dir_segments)
-fn_segments.remove(".DS_Store")
+if ".DS_Store" in fn_segments:
+    fn_segments.remove(".DS_Store")
 
 n_found = 0
 
