@@ -113,6 +113,7 @@ QTL_Calculator::QTL_Calculator(Dataset* data_expr, Attributes* sa_expr, Attribut
     this->n_perms=0;
     this->n_perms_max=0;
     this->index_for_next_thread=0;
+    this->min_obs_per_genotype=0;
     this->verbose=true;
     this->analysis_method = METHOD_REGRESSION;
     match_expr_and_snps( shared_g_p_col );
