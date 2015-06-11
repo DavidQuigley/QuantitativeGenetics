@@ -20,7 +20,7 @@ check_file = function( fn ){
 #'   
 #'   To run this function, \strong{you must have Python and bedtools installed locally}.
 #'   
-#'   The files Affymetrix where (sourced from Netaffx) is listed are available 
+#'   The files where (sourced from Netaffx) is listed are available 
 #'   from Affymetrix's Netaffx website. You may also be able to find copies at 
 #'   davidquigley.com . 
 #'   
@@ -55,7 +55,7 @@ equalize_IVT = function(
         fn_CDF, fn_probe_tab, fn_CEL, fn_probeset_csv,
         dir_out){
     # This function is a wrapper for equalizer.py.
-    # It is used for IVT-format arrays (e.g. HGU133A, M430 2.0)
+    # It is used for IVT-format arrays (e.g. HGU133A, M430)
     # Confirm all required files exist, build arguments, run script 
     check_file( fn_python )
     check_file( dir_bedtools_bin )
@@ -91,7 +91,6 @@ equalize_IVT = function(
     args = c(args, paste("-z", fn_CEL,              collapse=" ") )
     args = c(args, paste("-o", dir_out,             collapse=" ") )
     
-    #print(paste(args, collapse=" "))
     system2( fn_python, args )
 }
 
@@ -182,7 +181,6 @@ equalize_gene = function(
     args = c(args, paste("-m", fn_mps,              collapse=" ") )
     args = c(args, paste("-k", fn_clf,              collapse=" ") )
     args = c(args, paste("-o", dir_out,             collapse=" ") )
-        
-    #print(paste(args, collapse=" "))
+    
     system2( fn_python, args )
 }
