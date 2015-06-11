@@ -21,9 +21,8 @@ Description: Gene expression microarrays measure the levels of messenger
     microarray platform, allowing accurate assessment of germline influence on 
     gene expression.
 Depends: R (>= 3.0.2)
-Imports: 
-    pdInfoBuilder
-    findpython
+Imports: pdInfoBuilder,
+         findpython
 Authors@R: person("David", "Quigley", email = "david.a.quigley@gmail.com", role = c("aut", "cre"))
 License: Apache 2.0
 URL: http://davidquigley.com
