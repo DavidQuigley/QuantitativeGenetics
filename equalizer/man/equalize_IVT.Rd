@@ -59,7 +59,7 @@ equalize_IVT(fn_python, dir_bedtools_bin, package_name, fn_vcf_list, affy_bed,
 \details{
 To run this function, \strong{you must have Python and bedtools installed locally}.
 
-The files Affymetrix where (sourced from Netaffx) is listed are available
+The files where (sourced from Netaffx) is listed are available
   from Affymetrix's Netaffx website. You may also be able to find copies at
   davidquigley.com .
 }
