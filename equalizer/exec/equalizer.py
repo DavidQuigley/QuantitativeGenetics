@@ -76,7 +76,7 @@ def validate_input(options):
     require_file( options.dir_out, "output directory" )
     
     require_not_zero( options.annot_version, "must indicate annotation version (e.g. na32)")
-    require_not_zero( options.annot_revision, "must indicate annotation verison (e.g. 4)")
+    require_not_zero( options.annot_revision, "must indicate annotation revision (e.g. 4)")
     require_not_zero( options.genome_version_ucsc, "must indicate annotation version (e.g. mm9)")
     require_not_zero( options.genome_version_ncbi, "must indicate annotation version (e.g. 37)")
     require_not_zero( options.chip, "must indicate chip (e.g. MoGene-1_1-st-v1)")
