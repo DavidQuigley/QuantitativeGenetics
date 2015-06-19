@@ -197,6 +197,8 @@ write.matrix( ga[ keep,], paste( dir_output, '/expression/mammary/MoGene_gene_at
 rm(expr)
 rm(ga)
 rm(FS)
+rm(m)
+gc()
 
 #------------------------------------------------------------
 # MoGene Mammary corrected annotation
