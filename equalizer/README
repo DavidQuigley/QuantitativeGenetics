@@ -58,8 +58,9 @@ SELF-CONTAINED EXAMPLES
 
 These examples require R, python, and bedtools. I have verified they work on a 
 fresh installation of Ubuntu linux that contains recent installations of R and 
-bedtools. I have run this code on a T2.medium instance on Amazon AWS. To do 
-this, start an instance and install Bedtools and R with the following commands:
+bedtools. I have run this code on a T2.large instance on Amazon AWS; the 
+T2.medium instance has insufficient RAM to run the full example below. 
+Start an instance and install Bedtools and R with the following commands:
 
 # INSTALL BEGINS
 sudo apt-get update
@@ -70,8 +71,6 @@ cd bedtools-2.17.0
 sudo make 
 cd ..
 # INSTALL ENDS
-
-The T2.small instance on Amazon AWS in June 2015 has insufficient RAM.
 
 RUN A MINIMAL EXAMPLE:
 --------------------------------------------------------------------------------
