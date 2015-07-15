@@ -54,7 +54,7 @@ void ClassifierDialog::CreateControls(std::string filename){
 	alg::replace_all(fn_ruleset, ".ruleset", "");
 	
 	wxStaticText* lbl_file_name = new wxStaticText( this, wxID_ANY, wxT("File Name:") );
-	this->txt_file_name = new wxTextCtrl( this, ID_CLASS_TXT_FILE_NAME, wxString::FromAscii(fn_ruleset.c_str()), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_file_name = new wxTextCtrl( this, ID_CLASS_TXT_FILE_NAME, wxString::FromAscii(fn_ruleset.c_str()), wxDefaultPosition, wxSize(200, 22) );
 	
 	wxStaticText* lbl_method = new wxStaticText( this, wxID_ANY, wxT("Method:") );
 	wxArrayString ars_method;
@@ -64,10 +64,10 @@ void ClassifierDialog::CreateControls(std::string filename){
 	this->cho_method->SetSelection(0);
 	
 	this->lbl_rounds = new wxStaticText( this, wxID_ANY, wxT("Boosting rounds:") );
-	this->txt_rounds = new wxTextCtrl( this, ID_CLASS_TXT_ROUNDS, wxT("20"), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_rounds = new wxTextCtrl( this, ID_CLASS_TXT_ROUNDS, wxT("20"), wxDefaultPosition, wxSize(70, 22) );
 	
 	this->lbl_max_rules = new wxStaticText( this, wxID_ANY, wxT("Max rules per class:") );
-	this->txt_max_rules = new wxTextCtrl( this, ID_CLASS_TXT_MAX_RULES, wxT("100"), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_max_rules = new wxTextCtrl( this, ID_CLASS_TXT_MAX_RULES, wxT("100"), wxDefaultPosition, wxSize(70, 22) );
 	
 	wxStaticText* lbl_loocv = new wxStaticText( this, wxID_ANY, wxT("Leave One Out CV?") );
 	this->chk_loocv = new wxCheckBox(this, ID_CLASS_CHK_LOOCV, wxString::FromAscii(""));
