@@ -58,7 +58,7 @@ void CorrelationOneProbeDialog::CreateControls(){
 	strftime(timebuf, 80, "%Y_%m_%d_%H_%M_%S", newtime);
 
 	wxStaticText* lbl_file_name = new wxStaticText( this, wxID_ANY, wxT("File Name:") );
-	this->txt_file_name = new wxTextCtrl( this, ID_CORR1P_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_file_name = new wxTextCtrl( this, ID_CORR1P_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 22) );
 	this->txt_file_name->ChangeValue(wxString::FromAscii(timebuf));
     wxStaticText* lbl_probe_id = new wxStaticText( this, wxID_ANY, wxT("Probe or Gene:") );
     this->txt_probe_id= new wxTextCtrl( this, ID_CORR1P_PROBE_ID, wxT(""));

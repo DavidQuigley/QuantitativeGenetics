@@ -52,7 +52,7 @@ void ClassificationApplyDialog::CreateControls(std::string filename){
     
     this->filename = filename;
     wxStaticText* lbl_file_name = new wxStaticText( this, wxID_ANY, wxT("File Name:") );
-	this->txt_file_name = new wxTextCtrl( this, ID_CLASS_A_TXT_FILE_NAME, wxT(""), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_file_name = new wxTextCtrl( this, ID_CLASS_A_TXT_FILE_NAME, wxT(""), wxDefaultPosition, wxSize(200, 22) );
 
     wxStaticText* lbl_investigations = new wxStaticText( this, wxID_ANY, wxT("Choose an Investigation"), wxDefaultPosition, wxDefaultSize, 0 );
 	std::string investigations_str = this->investigation->cp->get("Filesets", "names");

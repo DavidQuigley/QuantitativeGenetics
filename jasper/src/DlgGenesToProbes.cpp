@@ -40,7 +40,7 @@ void GenesToProbesDialog::CreateControls(){
 
 	wxStaticText* lbl_genes = new wxStaticText( this, wxID_ANY, wxT("Genes:") );
 	this->txt_genes= new wxTextCtrl( this, ID_G2P_TXT_GENES, wxT(""), wxDefaultPosition, wxSize(150, 80), wxTE_MULTILINE );
-	this->btn_convert = new wxButton( this, ID_G2P_BTN_CONVERT, wxT("&Convert"), wxDefaultPosition, wxSize(130,20));
+	this->btn_convert = new wxButton( this, ID_G2P_BTN_CONVERT, wxT("&Convert"), wxDefaultPosition, wxSize(130,22));
 	wxStaticText* lbl_probes = new wxStaticText( this, wxID_ANY, wxT("Probes:") );
 	this->txt_probes = new wxTextCtrl( this, ID_G2P_TXT_PROBES, wxT(""), wxDefaultPosition, wxSize(150, 80), wxTE_MULTILINE );
 

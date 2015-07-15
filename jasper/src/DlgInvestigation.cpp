@@ -44,7 +44,7 @@ void InvestigationDialog::CreateControls()
 {
 	// CONTROLS
 	wxStaticText* lbl_investigations = new wxStaticText( this, wxID_STATIC, wxT("Investigation Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	this->txt_investigations = new wxTextCtrl ( this, ID_INVESTIGATION, wxEmptyString, wxDefaultPosition, wxSize(200,20), 0 );
+	this->txt_investigations = new wxTextCtrl ( this, ID_INVESTIGATION, wxEmptyString, wxDefaultPosition, wxSize(200,22), 0 );
 	this->pnl_investigation = new InvestigationPropertiesPanel(this, wxID_ANY, this->investigation);
 	wxSizer* sizer_ok = CreateButtonSizer(wxOK|wxCANCEL);
 	if(investigation->is_mac){

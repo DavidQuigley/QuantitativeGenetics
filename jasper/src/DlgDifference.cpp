@@ -60,21 +60,21 @@ void DifferenceDialog::CreateControls(std::string rs_filename)
 	wxStaticBoxSizer* static_perm_sizer = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromAscii("Permutation testing") );
 
 	wxStaticText* lbl_file_name = new wxStaticText( this, wxID_ANY, wxT("File Name:") );
-	this->txt_file_name = new wxTextCtrl( this, ID_DIFF_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_file_name = new wxTextCtrl( this, ID_DIFF_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 22) );
 	this->txt_file_name->ChangeValue(wxString::FromAscii(timebuf));
 	wxStaticText* lbl_trim = new wxStaticText( this, wxID_ANY, wxT("Expression trim %:"));
-	this->txt_trim = new wxTextCtrl( this, ID_DIFF_TRIM, wxT("5"), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_trim = new wxTextCtrl( this, ID_DIFF_TRIM, wxT("5"), wxDefaultPosition, wxSize(70, 22) );
 	this->txt_trim->SetValue( wxT("0") );
 
 	wxStaticText* lbl_doperms = new wxStaticText( this, wxID_ANY, wxT("Calculate permutations"));
 	this->chk_doperms= new wxCheckBox(this, ID_DIFF_CHK_DOPERMS, wxString::FromAscii(""));
 	wxStaticText* lbl_max_p = new wxStaticText( this, wxID_ANY, wxT("Max. P value to report:"));
-	this->txt_max_p = new wxTextCtrl( this, ID_DIFF_TXT_MAX_P, wxT("1"), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_max_p = new wxTextCtrl( this, ID_DIFF_TXT_MAX_P, wxT("1"), wxDefaultPosition, wxSize(70, 22) );
 	this->txt_max_p->SetValue( wxT("1") );
 	//wxStaticText* lbl_discretization = new wxStaticText( this, wxID_ANY, wxT("Discretization:"));
 	//this->discretization = new PanelDiscretization(this, ID_DISCRETIZATION_PANEL, this->investigation);
 	wxStaticText* lbl_perms = new wxStaticText( this, wxID_ANY, wxT("Number of permutations:"));
-	this->txt_perms = new wxTextCtrl( this, ID_DIFF_TXT_MAX_P, wxT("1000"), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_perms = new wxTextCtrl( this, ID_DIFF_TXT_MAX_P, wxT("1000"), wxDefaultPosition, wxSize(70, 22) );
 	this->txt_perms->SetValue( wxT("1000") );
 
 	wxStaticBox* static_a = new wxStaticBox(this, wxID_ANY, wxString::FromAscii("Class A Definition"));

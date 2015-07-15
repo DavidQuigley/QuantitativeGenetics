@@ -89,7 +89,7 @@ void GOFilterDialog::CreateControls(){
 	this->loaded_annotation = this->fn_annotations.at(0);
 
 	wxStaticText* lbl_go_terms = new wxStaticText( this, wxID_ANY, wxString::FromAscii("GO Term:"));
-	this->txt_searchterms = new wxTextCtrl( this, ID_GOFILTER_SEARCHTERMS, wxString::FromAscii(""), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_searchterms = new wxTextCtrl( this, ID_GOFILTER_SEARCHTERMS, wxString::FromAscii(""), wxDefaultPosition, wxSize(200, 22) );
 	this->cho_annotation = new wxChoice( this, ID_GOFILTER_ANNOTATION, wxDefaultPosition, wxDefaultSize, this->ars_annotations);
 	this->cho_annotation->SetSelection(species_idx);
 	this->btn_search = new wxButton( this, ID_GOFILTER_BTNSEARCH, wxString::FromAscii("&Search"));
@@ -261,7 +261,7 @@ GeneFilterDialog::GeneFilterDialog(Investigation* investigation){
 void GeneFilterDialog::CreateControls(){
 
 	wxStaticText* lbl_find = new wxStaticText( this, wxID_ANY, wxString::FromAscii("Find identifiers for gene:"));
-	this->txt_gene_name = new wxTextCtrl( this, ID_TXT_GENE_NAME, wxString::FromAscii(""), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_gene_name = new wxTextCtrl( this, ID_TXT_GENE_NAME, wxString::FromAscii(""), wxDefaultPosition, wxSize(70, 22) );
 	wxButton* btn_search = new wxButton( this, ID_BTN_SEARCH, wxString::FromAscii("&Search"));
 
 	this->lbx_identifiers = new wxListBox(this, ID_LBX_IDENTIFIERS, wxDefaultPosition, wxSize(130, 70), 0, NULL, wxLB_SINGLE );
@@ -453,9 +453,9 @@ PanelLimits::PanelLimits(wxWindow* parent, int id, Investigation* investigation)
 	if( this->investigation->is_mac){
 	    btn_size=120;
 	}
-	this->btn_remove = new wxButton( this, CTL_BTN_REMOVE, wxString::FromAscii("Remove"), wxDefaultPosition, wxSize(btn_size, 20));
-	this->btn_add_sample = new wxButton( this, CTL_BTN_ADD_SAMPLE, wxString::FromAscii("Add Sample Limit"), wxDefaultPosition, wxSize(btn_size, 20));
-	this->btn_add_gene = new wxButton( this, CTL_BTN_ADD_GENE, wxString::FromAscii("Add Gene Limit"), wxDefaultPosition, wxSize(btn_size, 20));
+	this->btn_remove = new wxButton( this, CTL_BTN_REMOVE, wxString::FromAscii("Remove"), wxDefaultPosition, wxSize(btn_size, 22));
+	this->btn_add_sample = new wxButton( this, CTL_BTN_ADD_SAMPLE, wxString::FromAscii("Add Sample Limit"), wxDefaultPosition, wxSize(btn_size, 22));
+	this->btn_add_gene = new wxButton( this, CTL_BTN_ADD_GENE, wxString::FromAscii("Add Gene Limit"), wxDefaultPosition, wxSize(btn_size, 22));
 	this->btn_remove->Enable(false);
 	wxFont font(this->btn_add_gene->GetFont());
 	font.SetPointSize(wxSMALL_FONT->GetPointSize());

@@ -66,12 +66,12 @@ void TmevDialog::CreateControls(std::string rs_filename)
     }
     this->rdo_all->SetValue(true);
     this->txt_probes = new wxTextCtrl( this, ID_TMEV_TXT_PROBES, wxT(""), wxDefaultPosition, wxSize(150, 80), wxTE_MULTILINE );
-    this->btn_GO = new wxButton( this, ID_TMEV_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(150,20));
+    this->btn_GO = new wxButton( this, ID_TMEV_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(150,22));
     this->txt_probes->Show(false);
     this->btn_GO->Show(false);
 
 	wxStaticText* lbl_min_percent_required = new wxStaticText( this, wxID_ANY, wxT("Minimum % called present:"));
-	this->txt_min_percent_present = new wxTextCtrl( this, ID_TMEV_TXT_MIN_PERCENT_PRESENT, wxT("0"), wxDefaultPosition, wxSize(40, 20) );
+	this->txt_min_percent_present = new wxTextCtrl( this, ID_TMEV_TXT_MIN_PERCENT_PRESENT, wxT("0"), wxDefaultPosition, wxSize(40, 22) );
 	this->txt_min_percent_present->SetValue( wxT("0") );
 
 	wxSizer* sizer_ok = CreateButtonSizer(wxOK|wxCANCEL);

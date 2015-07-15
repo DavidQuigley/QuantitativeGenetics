@@ -971,6 +971,10 @@ void JasperFrame::OnDocumentation(wxCommandEvent& WXUNUSED(event)){
 	std::string helpfile = this->investigation->cp->get(std::string("Internal"), std::string("helpfile"));
 	if( helpfile.size()==0 )
 		helpfile = std::string("CARMEN_documentation.pdf");
+    if ( this->investigation->is_mac )
+        std::cout << "I'm running on a mac\n";
+    else
+        std::cout << "I'm on a PC\n";
 	if( this->investigation->is_mac ){
 		ss << "open \"" << homedir << "/Carmen.app/Contents/MacOS/" << helpfile << "\"";
         std::cout << ss.str();

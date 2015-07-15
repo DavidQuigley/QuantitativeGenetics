@@ -52,8 +52,8 @@ PlotDialog::PlotDialog( Investigation* investigation, Dataset* dataset){
 	this->txt_probes = new wxTextCtrl( this, ID_PLOT_TXT_PROBES, wxString::FromAscii(""), wxDefaultPosition, wxSize(150, 150), wxTE_MULTILINE );
     wxStaticText* lbl_gene = new wxStaticText( this, wxID_ANY, wxString::FromAscii("Add Gene:") );
 	
-    this->txt_gene = new wxTextCtrl( this, ID_PLOT_TXT_GENE, wxString::FromAscii(""), wxDefaultPosition, wxSize(100, 20));
-    this->btn_add_gene = new wxButton( this, ID_PLOT_BTN_ADD, wxString::FromAscii("&Add"), wxDefaultPosition, wxSize(50,20));
+    this->txt_gene = new wxTextCtrl( this, ID_PLOT_TXT_GENE, wxString::FromAscii(""), wxDefaultPosition, wxSize(100, 22));
+    this->btn_add_gene = new wxButton( this, ID_PLOT_BTN_ADD, wxString::FromAscii("&Add"), wxDefaultPosition, wxSize(50,22));
 
     wxStaticText* lbl_group_by = new wxStaticText( this, wxID_ANY, wxString::FromAscii("Group By:") );
     wxArrayString ars_group_by, ars_limit_to, ars_is_or_is_not, ars_label_attribute;
@@ -79,9 +79,9 @@ PlotDialog::PlotDialog( Investigation* investigation, Dataset* dataset){
 	wxStaticText* lbl_limit_display_to = new wxStaticText( this, wxID_ANY, wxString::FromAscii("Limit to:") );
 	this->cho_limit_to = new wxChoice( this, ID_PLOT_CHO_LIMIT_BY, wxDefaultPosition, wxDefaultSize, ars_limit_to );
 	this->cho_limit_to->SetSelection(0);
-    this->cho_is_or_is_not = new wxChoice( this, ID_PLOT_CHO_IS_OR_IS_NOT, wxDefaultPosition, wxSize(50, 20), ars_is_or_is_not);
+    this->cho_is_or_is_not = new wxChoice( this, ID_PLOT_CHO_IS_OR_IS_NOT, wxDefaultPosition, wxSize(50, 22), ars_is_or_is_not);
     this->cho_is_or_is_not ->SetSelection(0);
-    this->cho_limit_to_value = new wxChoice( this, ID_PLOT_CHO_LIMIT_TO_VALUE, wxDefaultPosition, wxSize(50, 20), ars_limit_to_value);
+    this->cho_limit_to_value = new wxChoice( this, ID_PLOT_CHO_LIMIT_TO_VALUE, wxDefaultPosition, wxSize(50, 22), ars_limit_to_value);
 	this->cho_limit_to_value->SetSelection(0);
     this->cho_limit_to_value->Enable(false);
     this->cho_is_or_is_not->Enable(false);
@@ -97,7 +97,7 @@ PlotDialog::PlotDialog( Investigation* investigation, Dataset* dataset){
 	this->ars_key_locations.Add(wxT("Top Left"));
 	this->ars_key_locations.Add(wxT("Lower Right"));
 	this->ars_key_locations.Add(wxT("Lower Left"));
-	this->cho_key_location = new wxChoice( this, ID_PLOT_KEY_LOCATION, wxDefaultPosition, wxSize(120,20), ars_key_locations);
+	this->cho_key_location = new wxChoice( this, ID_PLOT_KEY_LOCATION, wxDefaultPosition, wxSize(120,22), ars_key_locations);
 	this->cho_key_location->SetSelection(0);
 
 	this->ars_height.Add(wxT("600"));

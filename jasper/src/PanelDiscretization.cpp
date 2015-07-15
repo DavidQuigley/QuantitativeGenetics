@@ -67,7 +67,7 @@ PanelDiscretization::PanelDiscretization(wxWindow* parent, int id, Investigation
 	for(int i=0; i<(int)bounds.size(); i++)
 		ars_disc_bounds.Add(wxString::FromAscii(this->bounds.at(i).first.c_str()));
 
-	this->cho_disc_bounds = new wxChoice( this, ID_CHOICE_DISC_BOUNDS, wxDefaultPosition, wxSize(120,20), ars_disc_bounds );
+	this->cho_disc_bounds = new wxChoice( this, ID_CHOICE_DISC_BOUNDS, wxDefaultPosition, wxSize(120,22), ars_disc_bounds );
 	this->cho_disc_bounds->SetSelection(0);
 	this->cho_disc_bounds->Enable(false);
 

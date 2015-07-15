@@ -38,7 +38,7 @@ void NewAnnotationDialog::CreateControls()
 {
 	// CONTROLS
 	wxStaticText* lbl_annotation_name= new wxStaticText( this, wxID_STATIC, wxT("Annotation Name:"), wxDefaultPosition, wxDefaultSize, 0 );
-	this->txt_annotation_name = new wxTextCtrl ( this, ID_NEW_ANNOTATION_NAME, wxEmptyString, wxDefaultPosition, wxSize(200,20), 0 );
+	this->txt_annotation_name = new wxTextCtrl ( this, ID_NEW_ANNOTATION_NAME, wxEmptyString, wxDefaultPosition, wxSize(200,22), 0 );
 	wxStaticText* lbl_fn_annotation = new wxStaticText( this, wxID_STATIC, wxT("Annotation Name:"), wxDefaultPosition, wxDefaultSize, 0 );
 	wxButton* btn_annotation = new wxButton( this, ID_NEW_ANNOTATION_SET, wxT("Browse"), wxDefaultPosition, wxDefaultSize, 0 );
 	this->lbl_fn_annotation_value = new wxStaticText( this, wxID_STATIC, wxT("(not set)"), wxDefaultPosition, wxDefaultSize, 0 );

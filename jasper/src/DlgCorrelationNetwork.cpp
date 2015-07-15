@@ -75,7 +75,7 @@ void CorrelationNetworkDialog::CreateControls(){
     wxStaticBoxSizer* static_output_sizer = new wxStaticBoxSizer(wxVERTICAL, this, wxString::FromAscii("Output Settings") );
 
     wxStaticText* lbl_file_name = new wxStaticText( this, wxID_ANY, wxT("File Name:") );
-    this->txt_file_name = new wxTextCtrl( this, ID_CORR_NET_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 20) );
+    this->txt_file_name = new wxTextCtrl( this, ID_CORR_NET_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 22) );
     this->txt_file_name->ChangeValue(wxString::FromAscii(timebuf));
 
 	wxArrayString ars_new_file;
@@ -89,7 +89,7 @@ void CorrelationNetworkDialog::CreateControls(){
 	}
 
 	wxStaticText* lbl_min_corr = new wxStaticText( this, wxID_ANY, wxT("Minimum correlation: +/-"));
-	this->txt_min_corr = new wxTextCtrl( this, ID_CORR_NET_TXT_MIN_CORR, wxT("0.7"), wxDefaultPosition, wxSize(60, 20) );
+	this->txt_min_corr = new wxTextCtrl( this, ID_CORR_NET_TXT_MIN_CORR, wxT("0.7"), wxDefaultPosition, wxSize(60, 22) );
 	this->txt_min_corr->SetValue( wxT("0.7") );
 	wxStaticText* lbl_min_clique = new wxStaticText( this, wxID_ANY, wxT("Minimum clique size:"));
 	wxArrayString ars_min_clique;
@@ -101,9 +101,9 @@ void CorrelationNetworkDialog::CreateControls(){
 	this->cho_min_clique->SetSelection(0);
 
 	this->txt_seeds = new wxTextCtrl( this, ID_CORR_NET_TXT_SEEDS, wxT(""), wxDefaultPosition, wxSize(200, 70), wxTE_MULTILINE );
-	this->btn_GO = new wxButton( this, ID_CORR_NET_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(130,20));
-	this->txt_gene = new wxTextCtrl( this, ID_CORR_NET_TXT_GENE, wxT(""), wxDefaultPosition, wxSize(200, 20));
-	this->btn_add_gene = new wxButton( this, ID_CORR_NET_BTN_ADD_GENE, wxT("&Add Gene"), wxDefaultPosition, wxSize(100,20));
+	this->btn_GO = new wxButton( this, ID_CORR_NET_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(130,22));
+	this->txt_gene = new wxTextCtrl( this, ID_CORR_NET_TXT_GENE, wxT(""), wxDefaultPosition, wxSize(200, 22));
+	this->btn_add_gene = new wxButton( this, ID_CORR_NET_BTN_ADD_GENE, wxT("&Add Gene"), wxDefaultPosition, wxSize(100,22));
 	wxStaticText* lbl_limit_seeds = new wxStaticText( this, wxID_ANY, wxT("Limit network to seeds"));
 	this->chk_limit_seeds = new wxCheckBox(this, ID_CORR_NET_CHK_LIMIT_SEEDS, wxString::FromAscii(""));
 
@@ -111,13 +111,13 @@ void CorrelationNetworkDialog::CreateControls(){
 	this->limit_A->disable_gene_limits();
 
 	wxStaticText* lbl_min_present = new wxStaticText( this, wxID_ANY, wxT("Minimum % Present:"));
-	this->txt_min_present = new wxTextCtrl( this, ID_CORR_NET_TXT_MIN_PRESENT, wxT("90"), wxDefaultPosition, wxSize(60, 20) );
+	this->txt_min_present = new wxTextCtrl( this, ID_CORR_NET_TXT_MIN_PRESENT, wxT("90"), wxDefaultPosition, wxSize(60, 22) );
 	this->txt_min_present->SetValue( wxT("90") );
 	this->lbl_eqtl_file_name = new wxStaticText( this, wxID_ANY, wxT("eQTL Source File:") );
 	this->lbl_eqtl_file_name_value = new wxStaticText( this, wxID_ANY, wxT("(none)") );
-	this->btn_eqtl = new wxButton( this, ID_CORR_NET_BTN_EQTL, wxT("&Browse"), wxDefaultPosition, wxSize(70,20));
+	this->btn_eqtl = new wxButton( this, ID_CORR_NET_BTN_EQTL, wxT("&Browse"), wxDefaultPosition, wxSize(70,22));
 	this->lbl_maximum_pvalue= new wxStaticText( this, wxID_ANY, wxT("Maximum eQTL P value:") );
-	this->txt_maximum_pvalue= new wxTextCtrl( this, ID_CORR_NET_TXT_MAXIMUM_PVALUE, wxString::FromAscii("1.0"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_maximum_pvalue= new wxTextCtrl( this, ID_CORR_NET_TXT_MAXIMUM_PVALUE, wxString::FromAscii("1.0"), wxDefaultPosition, wxSize(50, 22) );
 	this->chk_require_eqtl = new wxCheckBox(this, ID_CORR_NET_CHK_REQUIRE_EQTL, wxString::FromAscii(""));
 	this->lbl_require_eqtl= new wxStaticText( this, wxID_ANY, wxT("Require that gene has eQTL"));
 	this->chk_allow_uncorrelated = new wxCheckBox(this, ID_CORR_NET_CHK_ALLOW_UNCORRELATED, wxString::FromAscii(""));

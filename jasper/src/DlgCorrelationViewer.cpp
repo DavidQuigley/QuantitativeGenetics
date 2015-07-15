@@ -43,10 +43,10 @@ CorrelationViewerDialog::CorrelationViewerDialog( std::string filename, Investig
 
 void CorrelationViewerDialog::CreateControls(std::string filename){
 	wxStaticText* lbl_gene_name = new wxStaticText( this, wxID_ANY, wxT("Gene Name:") );
-	this->txt_gene_name = new wxTextCtrl( this, ID_COR_V_TXT_GENE_NAME, wxT(""), wxDefaultPosition, wxSize(100, 20) );
+	this->txt_gene_name = new wxTextCtrl( this, ID_COR_V_TXT_GENE_NAME, wxT(""), wxDefaultPosition, wxSize(100, 22) );
 	
 	wxStaticText* lbl_min_abs_corr = new wxStaticText( this, wxID_ANY, wxT("Minimum Correlation: +/-") );
-	this->txt_min_abs_corr = new wxTextCtrl( this, ID_COR_V_TXT_MIN_ABS_CORR, wxT("0.7"), wxDefaultPosition, wxSize(70, 20) );
+	this->txt_min_abs_corr = new wxTextCtrl( this, ID_COR_V_TXT_MIN_ABS_CORR, wxT("0.7"), wxDefaultPosition, wxSize(70, 22) );
 	
     this->btn_save = new wxButton( this, ID_COR_V_BTN_SAVE, wxT("Save") );
 	this->btn_go = new wxButton( this, ID_COR_V_BTN_GO, wxT("Go") );

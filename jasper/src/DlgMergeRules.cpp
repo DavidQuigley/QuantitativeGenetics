@@ -54,7 +54,7 @@ bool MergeRulesDialog::CreateControls(std::string filename){
 	std::cout << "1\n";
 	this->filename = filename;
 	wxStaticText* lbl_threshold = new wxStaticText( this, wxID_ANY, wxT("Merge rules that are:") );
-	this->txt_threshold = new wxTextCtrl( this, ID_TXT_THRESHOLD, wxT("100"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_threshold = new wxTextCtrl( this, ID_TXT_THRESHOLD, wxT("100"), wxDefaultPosition, wxSize(50, 22) );
 	wxButton* btn_refresh = new wxButton( this, ID_BTN_REFRESH, wxT("Merge") );
 	wxStaticText* lbl_percent = new wxStaticText( this, wxID_ANY, wxT("% similar") );
 	this->lbl_results = new wxStaticText( this, ID_LBL_RESULTS, wxT("Results:") );
