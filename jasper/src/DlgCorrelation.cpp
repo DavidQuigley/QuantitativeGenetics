@@ -41,20 +41,16 @@ using namespace std;
 IMPLEMENT_CLASS( CorrelationDialog, wxDialog )
 
 CorrelationDialog::CorrelationDialog( Investigation* investigation ){
-    std::cout << "DEBUG: ENTERED CorrelationDialog\n";
     this->investigation = investigation;
-	SetExtraStyle(wxWANTS_CHARS);
 	wxDialog::Create( NULL, wxID_ANY, wxT("Calculate Correlation"), wxDefaultPosition, wxDefaultSize, wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
 	CreateControls();
 	GetSizer()->Fit(this); 
 	GetSizer()->SetSizeHints(this); 
 	Centre();
-	std::cout << "DEBUG: calling redraw from CorrelationDialog\n";
     redraw();
 }
 
 void CorrelationDialog::CreateControls(){
-    std::cout << "DEBUG: ENTERED CreateControls\n";
 	char timebuf[80];
 	struct tm* newtime;
 	time_t long_time;
@@ -77,7 +73,7 @@ void CorrelationDialog::CreateControls(){
 		static_correlation_sizer->GetStaticBox()->SetFont( font );
 		static_probe_sizer->GetStaticBox()->SetFont( font );
 	}
-	this->txt_file_name = new wxTextCtrl( this, ID_CORR_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_file_name = new wxTextCtrl( this, ID_CORR_TXT_FILE_NAME, wxString::FromAscii(timebuf), wxDefaultPosition, wxSize(200, 22) );
 	this->txt_file_name->ChangeValue(wxString::FromAscii(timebuf));
 	wxStaticText* lbl_min_corr = new wxStaticText( this, wxID_ANY, wxT("Minimum Correlation"));
     wxStaticText* lbl_min_zscore = new wxStaticText( this, wxID_ANY, wxT("Minimum Z score"));
@@ -85,8 +81,8 @@ void CorrelationDialog::CreateControls(){
     wxStaticText* lbl_plus_minus_corr = new wxStaticText( this, wxID_ANY, wxT("+/-"));
     wxStaticText* lbl_plus_minus_zscore = new wxStaticText( this, wxID_ANY, wxT("+/-"));
     
-	this->txt_min_corr = new wxTextCtrl( this, ID_CORR_TXT_MIN_CORR, wxT("0.0"), wxDefaultPosition, wxSize(50, 20) );
-    this->txt_min_zscore = new wxTextCtrl( this, ID_CORR_TXT_MIN_ZSCORE, wxT("0.0"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_min_corr = new wxTextCtrl( this, ID_CORR_TXT_MIN_CORR, wxT("0.0"), wxDefaultPosition, wxSize(50, 22) );
+    this->txt_min_zscore = new wxTextCtrl( this, ID_CORR_TXT_MIN_ZSCORE, wxT("0.0"), wxDefaultPosition, wxSize(50, 22) );
 	this->txt_min_corr->SetValue( wxT("0.0") );
     this->txt_min_zscore->SetValue( wxT("0.0") );
 	wxArrayString methods;
@@ -100,7 +96,7 @@ void CorrelationDialog::CreateControls(){
 	choices[1] = wxString::FromAscii("One probe vs. all others");
 	this->rdo_single = new wxRadioBox(this, ID_RADIO_SINGLE, wxString::FromAscii(""), wxDefaultPosition, wxSize(200, 70), 2, choices, 2, wxRA_SPECIFY_ROWS);
 	this->lbl_probe_id = new wxStaticText( this, wxID_ANY, wxT("Seed:"));
-	this->txt_probe_id= new wxTextCtrl( this, ID_PROBE_ID, wxT(""), wxDefaultPosition, wxSize(200, 20) );
+	this->txt_probe_id= new wxTextCtrl( this, ID_PROBE_ID, wxT(""), wxDefaultPosition, wxSize(200, 22) );
 	this->lbl_probe_list = new wxStaticText( this, wxID_ANY, wxT("Limit to probes:"));
 	this->txt_probe_list = new wxTextCtrl( this, ID_CORR_PROBELIST, wxT(""), wxDefaultPosition, wxSize(150, 100), wxTE_MULTILINE);
 
@@ -108,7 +104,7 @@ void CorrelationDialog::CreateControls(){
 	wxStaticText* lbl_differential = new wxStaticText( this, wxID_ANY, wxT("Calculate differential correlation"));
 
 	this->lbl_min_delta_corr = new wxStaticText( this, wxID_ANY, wxT("Minimum Change in Correlation:"));
-	this->txt_min_delta_corr = new wxTextCtrl( this, ID_CORR_TXT_DELTA_CORR, wxT("0.0"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_min_delta_corr = new wxTextCtrl( this, ID_CORR_TXT_DELTA_CORR, wxT("0.0"), wxDefaultPosition, wxSize(50, 22) );
 	this->lbl_condition1 = new wxStaticText( this, wxID_ANY, wxT("Sample group 1"));
 	this->lbl_condition2 = new wxStaticText( this, wxID_ANY, wxT("Sample group 2"));
 	this->limit_A = new PanelLimits(this, ID_CORR_PANEL_A, investigation);
@@ -117,12 +113,12 @@ void CorrelationDialog::CreateControls(){
     this->limit_B->disable_gene_limits();
 
     wxStaticText* lbl_min_present = new wxStaticText( this, wxID_ANY, wxT("Minimum % Present:"));
-	this->txt_min_present = new wxTextCtrl( this, ID_CORR_TXT_MIN_PRESENT, wxT("90"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_min_present = new wxTextCtrl( this, ID_CORR_TXT_MIN_PRESENT, wxT("90"), wxDefaultPosition, wxSize(50, 22) );
 	this->txt_min_present->SetValue( wxT("90") );
 	wxStaticText* lbl_min_var = new wxStaticText( this, wxID_ANY, wxT("Minimum Variance:"));
-	this->txt_min_var = new wxTextCtrl( this, ID_CORR_TXT_MIN_VAR, wxT("0.0"), wxDefaultPosition, wxSize(50, 20) );
+	this->txt_min_var = new wxTextCtrl( this, ID_CORR_TXT_MIN_VAR, wxT("0.0"), wxDefaultPosition, wxSize(50, 22) );
 	this->txt_min_var->SetValue( wxT("0.0") );
-	this->btn_GO = new wxButton( this, ID_CORR_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(120,20));
+	this->btn_GO = new wxButton( this, ID_CORR_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(120,22));
 
 	wxSizer* sizer_ok = CreateButtonSizer(wxOK|wxCANCEL);
 
