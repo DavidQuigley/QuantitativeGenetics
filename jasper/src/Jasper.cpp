@@ -349,8 +349,7 @@ void JasperGrid::Update(std::string filename){
 			this->SetColLabelValue(1, wxString::FromAscii("probe 1"));
 			this->SetColLabelValue(2, wxString::FromAscii("symbol 2"));
 			this->SetColLabelValue(3, wxString::FromAscii("probe 2"));
-			ss << "r (" << lblA << ")";
-			this->SetColLabelValue(4, wxString::FromAscii(ss.str().c_str()));
+			this->SetColLabelValue(4, wxString::FromAscii("rho"));
             this->SetColLabelValue(5, wxString::FromAscii("Z score"));
 		}
 		int i=0;
@@ -519,7 +518,7 @@ JasperFrame::JasperFrame(const wxString& title): wxFrame(NULL, wxID_ANY, title){
 	//}
 	this->SetUpMenu();
     CreateStatusBar(2);
-	SetStatusText(_T("CARMEN 1.2"));
+	SetStatusText(_T("CARMEN 1.3"));
 	wxFlexGridSizer *sizer_top = new wxFlexGridSizer(2,1,0,0);
 	sizer_top->AddGrowableRow(1,1);
 	sizer_top->AddGrowableCol(0,1);
@@ -659,7 +658,7 @@ void JasperFrame::OnQuit(wxCommandEvent& WXUNUSED(event)){
 }
 
 void JasperFrame::OnAbout(wxCommandEvent& WXUNUSED(event)){
-	wxMessageBox(wxString::FromAscii("CARMEN 1.3\nDavid Quigley\nBalmain Lab, UCSF\nBuild date August 15 2014"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(wxString::FromAscii("CARMEN 1.3\nDavid Quigley\nBalmain Lab, UCSF\nBuild date July 20 2015"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
 }
 
 
