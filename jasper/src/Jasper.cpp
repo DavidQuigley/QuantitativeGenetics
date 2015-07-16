@@ -338,9 +338,11 @@ void JasperGrid::Update(std::string filename){
 			std::stringstream ss2;
 			ss2 << "r (" << lblB << ")";
 			this->SetColLabelValue(5, wxString::FromAscii(ss2.str().c_str()));
+            this->AutoSizeColumn(4);
+            this->AutoSizeColumn(5);
 			this->SetColLabelValue(6, wxString::FromAscii("r (change)"));
             this->SetColLabelValue(7, wxString::FromAscii("Z score"));
-			show_full = true;
+            show_full = true;
 		}
 		else{
 			this->AppendCols(6);
