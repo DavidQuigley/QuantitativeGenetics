@@ -56,7 +56,8 @@ int main(int argc, char *argv[]){
     options->push_back( new Option("extra_gene_attribute", "x", "Name of numeric gene attribute to append to network", "", OPT_OPTIONAL));
     options->push_back( new Option("ontology_path", "h", "Path to ontology file", "", OPT_OPTIONAL));
     options->push_back( new Option("annotation_path", "i", "Path to gene annotation file", "", OPT_OPTIONAL));
-
+    
+    options->push_back( new Option("cytoscape_version", "w", "Major version of Cytoscape, {2,3}, defaults to 3", "3", OPT_OPTIONAL));
     options->push_back( new Option("base_filename", "o", "Base name of output files", "", OPT_REQUIRED));
 	options->push_back( new Option("verbose", "v", "Print out progress to screen, T or F.  Defaults to F.", "F", OPT_OPTIONAL));
 
@@ -102,8 +103,12 @@ int main(int argc, char *argv[]){
 	ss << "If --ontology_path and --annotation_path are passed, using the CARMEN annotation formats,\n";
 	ss << "genes in the network will have attributes corresponding to their gene ontology annotations\n";
 	ss << "To add a numeric column from the --gene_path file as an attribute (e.g. chromosome, if numeric)\n";
-	ss << "pass --extra_gene_attribute\n";
+	ss << "pass --extra_gene_attribute\n\n";
 
+    ss << "CYTOSCAPE MAJOR VERSION\n";
+	ss << "The code targets Cytoscape 3.0 by default. To generate files suitable for Cytoscape 2.x,\n";
+    ss << "pass --cytoscape_version=2\n";
+    
 	int retval=read_args(argc, argv, options, ss.str());
 	if( retval==-2 )
 		return(0);
@@ -153,7 +158,8 @@ int main(int argc, char *argv[]){
 	std::string extra_ga_column = options->at(r++)->value;
 	std::string fn_ontology = options->at(r++)->value;
 	std::string fn_annotation = options->at(r++)->value;
-	std::string fn_base = options->at(r++)->value;
+	std::string cytoscape_major_version = options->at(r++)->value;
+    std::string fn_base = options->at(r++)->value;
 	bool verbose = false;
 	if(options->at(r++)->value.compare("T")==0)
 		verbose = true;
@@ -202,6 +208,7 @@ int main(int argc, char *argv[]){
 			exit(0);
 		}
 	}
+    
 	sp->set_verbose(verbose);
 	sp->set_require_eqtl(require_eQTL); // defaults to false
 	sp->set_fn_eqtl(fn_eQTL); // defaults to empty
@@ -270,8 +277,18 @@ int main(int argc, char *argv[]){
 			GO_parser = new GOAnnotationParser(fn_ontology);
 			gene_parser = new GeneAnnotationParser(fn_annotation, *GO_parser);
 		}
-		sp->write_to_cytoscape(min_abs_corr, fn_base, ga, GO_parser, gene_parser, fn_eQTL, max_perm_pval, require_eQTL);
-		if( GO_parser != NULL ){
+        if( cytoscape_major_version.compare("2")==0 ){
+            sp->write_to_cytoscape(min_abs_corr, fn_base, ga, GO_parser, gene_parser, fn_eQTL, max_perm_pval, require_eQTL);
+        }
+        else if( cytoscape_major_version.compare("3")==0){
+            sp->write_to_cytoscape_v3(min_abs_corr, fn_base, ga, GO_parser, gene_parser, fn_eQTL, max_perm_pval, require_eQTL);
+        }
+		else{
+            std::cout << "ERROR: cytoscape major version must be either 2 or 3\n";
+			std::cout.flush();
+			exit(0);
+        }
+        if( GO_parser != NULL ){
 			delete GO_parser;
 			delete gene_parser;
 		}

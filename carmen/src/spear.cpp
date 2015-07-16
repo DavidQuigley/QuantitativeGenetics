@@ -3207,6 +3207,196 @@ void Spearman::get_gene_name(Graph* G, int idx, std::string& g1){
     delete splitter;
 }
 
+void Spearman::get_go_attributes_into_vectors( GOAnnotationParser* go, GeneAnnotationParser* gene_parser, std::string gene, std::vector<std::string> &bp, std::vector<std::string> &mf, std::vector<std::string> &cc ){
+    // populates vectors bp, mf, cc with appropriate GO annotations
+    bp.clear();
+    mf.clear();
+    cc.clear();
+    if( gene_parser == NULL)
+        return;
+    GeneAnnotation* gene_annot;
+    GOAnnotation* go_annot;
+    try{
+        gene_annot = gene_parser->get_annotation( gene );
+    
+        for(int g=0; g<int(gene_annot->GO_annotations.size() ); g++){
+            go_annot = go->get_annotation( gene_annot->GO_annotations.at(g) );
+            if(      go_annot->branch == GOAnnotation::GO_BP ){
+                bp.push_back(go_annot->description);
+            }
+            else if( go_annot->branch == GOAnnotation::GO_MF ){
+                mf.push_back(go_annot->description);
+            }
+            else if( go_annot->branch == GOAnnotation::GO_CC ){
+                cc.push_back(go_annot->description);
+            }
+        }
+    }
+    catch( std::string str){
+        // pass
+    }
+}
+
+void Spearman::write_to_cytoscape_v3(double min_abs, std::string fn_base, Attributes* ga, GOAnnotationParser* go, GeneAnnotationParser* gene_parser, std::string fn_eQTL, double max_perm_pval, bool require_eQTL){
+    // Cytoscape version 3 can be automated by passing in a script that reads table and
+    // network files. This is distinct from version 2, which takes a network file and a
+    // set of node/edge description files.
+    
+    Graph* G = new Graph();
+	Graph* G_QTL = new Graph();
+	HASH_I_VECTOR_STR g2p;
+	if( this->verbose ){
+		std::cout << "MESSAGE: Writing Cytoscape files to base " << fn_base << "\n";
+		std::cout.flush();
+	}
+	prepare_graphs( G, G_QTL, g2p, min_abs, ga, fn_eQTL, max_perm_pval, require_eQTL);
+	this->fn_out = fn_base + "_summary.spear";
+	this->write_spears();
+    
+    std::string fn_net(fn_base + "_network.txt");
+	std::string fn_noa(fn_base + ".noa");
+    std::ofstream f_net(fn_net.c_str());
+    std::ofstream f_noa(fn_noa.c_str());
+    if( !f_net.is_open() )
+		throw std::string( "Unable to open file for writing: " + fn_net);
+    if( !f_noa.is_open() )
+		throw std::string( "Unable to open file for writing: " + fn_noa);
+    std::vector<std::vector<int>*>* e = new std::vector<std::vector<int>*>();
+	G->edges(e);
+	std::string g1, g2;
+	double rho, pval;
+	int idx1, idx2;
+    std::string Dir;
+    //gene1	gene2	interaction	rho pval
+    //a	b	gg	0.5 0
+    int n_cor_edges_written=0, n_eqtl_edges_written=0, n_genes_written=0, n_loci_written=0;
+	n_cor_edges_written = int(e->size());
+    
+    f_net << "gene1\tinteraction\tgene2\tRhoA\tDir\tpval\n";
+    for(int i=0; i<(int)e->size(); i++){
+		idx1 = e->at(i)->at(0);
+		idx2 = e->at(i)->at(1);
+        get_gene_name(G, idx1, g1);
+        get_gene_name(G, idx2, g2);
+        rho = G->edge_weight( idx1, idx2 );
+        if( rho >= 0 )
+            Dir = "direct";
+        else
+            Dir = "inverse";
+        if( rho==1 ){ // work around Cytoscape bug
+            f_net << g1 << "\tgg\t" << g2 << "\t1.0\t" << Dir << "\tNA\n";
+        }
+        else if( rho == -1 ){
+            f_net << g1 << "\tgg\t" << g2 << "\t-1.0\t" << Dir << "\tNA\n";
+        }
+        else{
+            f_net << g1 << "\tgg\t" << g2 << "\t" << rho << "\t" << Dir << "\tNA\n";
+        }
+		n_cor_edges_written += 1;
+	}
+    G_QTL->edges(e);
+	n_eqtl_edges_written = int(e->size());
+	for(int i=0; i<(int)e->size(); i++){
+		idx1 = e->at(i)->at(0);
+		idx2 = e->at(i)->at(1);
+        get_gene_name( G_QTL, idx1, g1 );
+        get_gene_name( G_QTL, idx2, g2 );
+        pval = G_QTL->edge_weight( idx1, idx2 );
+        if( pval==1 ) // work around Cytoscape bug
+            f_net << g1 << "\tgs\t" << g2 << "\tNA\tNA\t1.0\n";
+        else if(pval==0 )
+            f_net << g1 << "\tgs\t" << g2 << "\tNA\tNA\t0.0\n";
+        else
+            f_net << g1 << "\tgs\t" << g2 << "\tNA\tNA\t" << pval << "\n";
+        delete e->at(i);
+	}
+	delete e;
+    
+    if( this->col_extra_attributes.size()>0 ){
+        if( ga->attribute2idx.find(this->col_extra_attributes)==ga->attribute2idx.end() )
+            throw new std::string( "Gene attributes does not have column: " + this->col_extra_attributes);
+    }
+    std::string val_extra_attribute;
+    // write out node types {gene,locus} and possible extra attribute
+    f_noa << "source\tNodeType\tNodeAttribute\tBiological_process\tMolecular_function\tCellular_component\n";
+	std::vector<int> nodes;
+	G->nodes(nodes);
+	n_genes_written = int(nodes.size());
+    HASH_S_I gene_seen;
+    std::vector<std::string> bp_list,mf_list,cc_list;
+    std::stringstream ss_bp, ss_mf, ss_cc;
+
+	for(int i=0; i<int(nodes.size()); i++){
+		get_gene_name( G, nodes.at(i), g1 );
+        val_extra_attribute = ga->prop_for_identifier( ga->identifiers.at( nodes.at(i) ), this->col_extra_attributes);
+        
+        this->get_go_attributes_into_vectors( go, gene_parser, g1, bp_list, mf_list, cc_list );
+        if( int( bp_list.size() )==0 ){ bp_list.push_back( std::string("NA") ); }
+        if( int( mf_list.size() )==0 ){ mf_list.push_back( std::string("NA") ); }
+        if( int( cc_list.size() )==0 ){ cc_list.push_back( std::string("NA") ); }
+        ss_bp.str( "" ); ss_mf.str( "" ); ss_cc.str("");
+        ss_bp.clear(); ss_mf.clear(); ss_cc.clear();
+        for(int j=0; j<int(bp_list.size()); j++){ ss_bp << bp_list.at(j); if( j<( int(bp_list.size()) - 1)) { ss_bp << "::";} }
+        for(int j=0; j<int(mf_list.size()); j++){ ss_mf << mf_list.at(j); if( j<( int(mf_list.size()) - 1)) { ss_mf << "::";} }
+        for(int j=0; j<int(cc_list.size()); j++){ ss_cc << cc_list.at(j); if( j<( int(cc_list.size()) - 1)) { ss_cc << "::";} }
+        f_noa << g1 << "\tgene\t" << val_extra_attribute << "\t" << ss_bp.str() << "\t" << ss_mf.str() << "\t" << ss_cc.str() << "\n";
+        gene_seen[g1]=1;
+	}
+	G_QTL->nodes(nodes);
+	for(int i=0; i<int(nodes.size()); i++){
+		if( G_QTL->node_type( nodes.at(i) )==NODE_LOCUS ){
+            get_gene_name( G_QTL, nodes.at(i), g1 );
+            f_noa << g1 << "\tlocus\tNA\tNA\tNA\tNA\n";
+			n_loci_written += 1;
+		}
+        else{
+            get_gene_name( G_QTL, nodes.at(i), g1 );
+            if( gene_seen.find(g1) == gene_seen.end() ){
+                val_extra_attribute = ga->prop_for_identifier( ga->identifiers.at( nodes.at(i) ), this->col_extra_attributes);
+                this->get_go_attributes_into_vectors( go, gene_parser, g1, bp_list, mf_list, cc_list );
+                if( int(bp_list.size() )==0 ){ bp_list.push_back(std::string("NA")); }
+                if( int(mf_list.size() )==0 ){ mf_list.push_back(std::string("NA")); }
+                if( int(cc_list.size() )==0 ){ cc_list.push_back(std::string("NA")); }
+                ss_bp.str( "" ); ss_mf.str( "" ); ss_cc.str("");
+                ss_bp.clear(); ss_mf.clear(); ss_cc.clear();
+                for(int j=0; j<int(bp_list.size()); j++){ ss_bp << bp_list.at(j); if( j<( int(bp_list.size()) - 1)) { ss_bp << "::";} }
+                for(int j=0; j<int(mf_list.size()); j++){ ss_mf << mf_list.at(j); if( j<( int(mf_list.size()) - 1)) { ss_mf << "::";} }
+                for(int j=0; j<int(cc_list.size()); j++){ ss_cc << cc_list.at(j); if( j<( int(cc_list.size()) - 1)) { ss_cc << "::";} }
+                f_noa << g1 << "\tgene\t" << val_extra_attribute << "\t" << ss_bp.str() << "\t" << ss_mf.str() << "\t" << ss_cc.str() << "\n";
+                gene_seen[g1]=1;
+            }
+        }
+	}
+	f_noa.close();
+
+    
+    // write command script
+    std::string fn_cmd(fn_base + "_cytoscape_commands.txt");
+	std::ofstream f_cmd(fn_cmd.c_str());
+	if( !f_cmd.is_open() )
+		throw new std::string( "Unable to open file for writing: " + fn_cmd);
+    f_cmd << "network import file file=\"" << fn_net << "\"";
+    f_cmd << " firstRowAsColumnNames=true startLoadRow=2 indexColumnSourceInteraction=1";
+    f_cmd << " indexColumnTargetInteraction=3 indexColumnTypeInteraction=2\n";
+    f_cmd << "table import file file=\"" << fn_noa << "\"";
+    f_cmd << " firstRowAsColumnNames=true keyColumnIndex=1 startLoadRow=1\n";
+    f_cmd << "vizmap load file file=\"" << fn_cytoscape_props << "\"\n";
+    f_cmd << "vizmap apply styles=\"Correlation\"\n";
+    f_cmd.close();
+    
+    delete G_QTL;
+	delete G;
+	for( boost::unordered_map<int, std::vector<std::string>* >::iterator i=g2p.begin(); i != g2p.end(); i++){
+		delete i->second;
+	}
+	if( this->verbose ){
+		std::cout << "MESSAGE: Wrote " << n_cor_edges_written << " gene-gene edges\n";
+		std::cout << "MESSAGE: Wrote " << n_eqtl_edges_written << " gene-locus edges\n";
+		std::cout << "MESSAGE: Wrote " << n_genes_written << " genes\n";
+		std::cout << "MESSAGE: Wrote " << n_loci_written << " loci\n";
+	}
+    
+}
 
 void Spearman::write_to_cytoscape(double min_abs, std::string fn_base, Attributes* ga, GOAnnotationParser* go, GeneAnnotationParser* gene_parser, std::string fn_eQTL, double max_perm_pval, bool require_eQTL){
 

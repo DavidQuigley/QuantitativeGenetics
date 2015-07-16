@@ -155,6 +155,7 @@ public:
 	void write_to_cytoscape(double min_abs, std::string base_location, Attributes* ga);
 	void write_to_cytoscape(double min_abs, std::string base_location, Attributes* ga, GOAnnotationParser* go, GeneAnnotationParser* gene_parser);
 	void write_to_cytoscape(double min_abs, std::string fn_base, Attributes* ga, GOAnnotationParser* go, GeneAnnotationParser* gene_parser, std::string fn_eQTL, double max_perm_pval, bool require_eQTL);
+    void write_to_cytoscape_v3(double min_abs, std::string fn_base, Attributes* ga, GOAnnotationParser* go, GeneAnnotationParser* gene_parser, std::string fn_eQTL, double max_perm_pval, bool require_eQTL);
 	double find_spearman_from_ranks( Matrix<double>* ranks1, int row1, Matrix<double>* ranks2, int row2);
 	double find_spearman_from_ranks( Matrix<double>* ranks, int row1, int row2, std::vector<int>& cols1, std::vector<int>& cols2 );
 	void shuffle_ranks_between_labels(Matrix<double>* ranks_obs_a, Matrix<double>* ranks_obs_b, Matrix<double>* ranks_perm_a, Matrix<double>* ranks_perm_b );
@@ -189,7 +190,8 @@ private:
 	void calculate_differential_correlation_GWER();
 	void calculate_ranks( Matrix<float>* raw_data, int row, std::vector<int>* idx, std::vector<int>& ranks);
 	void convert_spears_to_graph(Graph* G, Attributes* ga, boost::unordered_map<int, std::vector<std::string>* >& g2p, double min_abs);
-	void generate_result_header(std::string& header);
+	void get_go_attributes_into_vectors( GOAnnotationParser* go, GeneAnnotationParser* gene_parser, std::string gene, std::vector<std::string> &bp, std::vector<std::string> &mf, std::vector<std::string> &cc );
+    void generate_result_header(std::string& header);
 	void limit_ids_by_var();
     void limit_ids_by_NA();
     double fisher_zscore(double rhoA, double rhoB, int nA, int nB);
