@@ -297,7 +297,9 @@ COLOR.WHEEL=c("black","cornflowerblue","orange","darkgreen","red","darkblue","da
 #   What is the Z score required for a P value lower than the bonferroni-corrected
 #   number of tests for differential correlation
 #
-# spear = function( fn_spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b, fn_out, class.a="", class.b="", probe="", y="symbol" )
+#spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b="", fn_out, 
+#                  class.a="", class.b="", probe="", y="symbol", score="", min_var="", 
+#                  min_present="", neighbors=F, seeds_only=FALSE, diff_cor=FALSE, permutations=0 ){
 #   simple wrapper for spear 
 #
 # cor.test.spear = function( D=NULL, fn_spear, min_cor=0, min_present=0.8, probe='',
@@ -3901,8 +3903,9 @@ calculate.min.DC.score = function( n.probes ){
 }
 
 
-spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b="", fn_out, class.a="", class.b="", 
-                  probe="", y="symbol", score="", min_var="", min_present="", neighbors=F, seeds_only=FALSE ){
+spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b="", fn_out, 
+                  class.a="", class.b="", probe="", y="symbol", score="", min_var="", 
+                  min_present="", neighbors=F, seeds_only=FALSE, diff_cor=FALSE, permutations=0 ){
     # simple wrapper for spear 
     c1 = fn.spear
     c2 = paste( "-d", fn_expr, sep='' )
@@ -3947,6 +3950,13 @@ spear = function( fn.spear, fn_expr, fn_ga, fn_sa, min_cor, min_cor_b="", fn_out
     }
     if( seeds_only ){
         cmd = paste(cmd, "-lT")
+    }
+    if( diff_cor ){
+        cmd = paste(cmd, "-jT")
+    }
+    if( permutations>0 ){
+        zz = paste("-z", permutations, sep="")
+        cmd = paste(cmd, zz )
     }
     print( cmd )
     system(cmd)
