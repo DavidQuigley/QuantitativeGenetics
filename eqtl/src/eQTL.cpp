@@ -234,7 +234,7 @@ int main(int argc, char *argv[]){
             
         }
         if( ( per_chromosome || cis_interval != 0) && locus_columns.size()==0 ){
-            crash(std::string( "Cannot specify cis-only analysis or per-chromosome analysis without passing --cis_columns parameter."));
+            crash(std::string( "Cannot specify cis-only analysis or per-chromosome analysis without passing --locus_columns parameter."));
         }
         if( per_chromosome && cis_interval != 0 ){
             crash( std::string("Cannot specify both cis-only analysis AND per-chromosome analysis simultaniously") );
@@ -430,6 +430,13 @@ int main(int argc, char *argv[]){
     else if(per_chromosome){
         say_message(std::string("ANALYSIS TYPE: genome-wide by chromosome"), cmo_snps->verbose);
         say_message(std::string("Identifying best SNP for each chromosome for each probeset"), cmo_snps->verbose );
+        std::stringstream sint;
+        QC->set_cis_interval(cis_interval);
+        if( cis_interval==0 )
+            sint << "Using cis-interval: whole-chromosome";
+        else
+            sint << "Using cis-interval " << cis_interval;
+        say_message(sint.str(), cmo_snps->verbose );
         QC->set_verbose(cmo_expr->verbose);
         QC->calculate_genome_wide(true);
         QC->print_by_chromosome( cmo_expr, cmo_snps, fraction_required);
