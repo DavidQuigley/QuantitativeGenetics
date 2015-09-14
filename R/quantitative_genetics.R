@@ -1272,7 +1272,7 @@ vector.to.file = function( V, file="/users/dquigley/temp/test.txt" ){
 
 find.dupes = function(fn){
     x = read.table(fn, sep='\t', header=T, stringsAsFactors=F)
-    freq = count.appearances(x[,1])
+    freq = count.appearances(as.character(x[,1]))
     freq$keys[freq$values>1]
 }
 
