@@ -1,0 +1,433 @@
+---
+title: "Module 3: Descriptive Statistics for a single variable"
+author: "David Quigley"
+date: "September 25, 2015"
+output: 
+    html_document:
+        toc: true
+        css: swiss.css
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set(comment = NA)
+knitr::opts_chunk$set( prompt=TRUE ) 
+
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+    if (before) par(mar = c(2, 2, 1, 1))  # smaller margin on top and right
+})
+knitr::knit_hooks$set(left.mar = function(before, options, envir) {
+    if (before) par(mar = c(2, 4, 1, 1))  # smaller margin on top and right
+})
+knitr::knit_hooks$set(med.mar = function(before, options, envir) {
+    if (before) par(mar = c(4, 4, 1, 1))  # smaller margin on top and right
+})
+knitr::knit_hooks$set(bottom.mar = function(before, options, envir) {
+    if (before) par(mar = c(3, 2, 1, 1))  # smaller margin on top and right
+})
+```
+
+
+```{r echo=FALSE}
+height = c(7,8,7,9.5)
+weight = c(4,3.2, 3.7, 5.4)
+myTable=data.frame(height, weight)
+rownames(myTable)=c('Flopsy','Mopsy','Cottontail','Peter')
+
+my_observations = rnorm(1000, mean=50, sd=10)
+my_bivariate = c( rnorm(1000, mean=50, sd=5), rnorm(1000, mean=65, sd=5) )
+pap_no = c( 9,17,9,0,15,12,7,0,0,0,13,10,0,0,0,8,1,7,4,
+  7,2,12,1,4,0,35,6,9,0,0,12,16,16,0,6,3,0,4,
+  0,0,0,0,3,2,1,7,5,23,2,3,3,5,0,3,5,17,1,
+  1,4,21,0,0,2,14,5,2,0,3,6,2,1)
+
+MCV = c( 59.5,49.0,48.7,50.1,49.9,54.5,57.0,63.2,47.5,65.1,63.5,61.3,77.3,50.2,50.9,66.4,62.1,49.7,58.2,60.0,54.8,45.3,48.8,61.2,47.8,53.4,60.1,61.4,
+57.9,61.2,62.1,64.6,61.3,45.8,65.9,47.6,59.4,63.5,52.2,51.8,75.9,51.3,60.6,55.7,69.3,50.5,57.7,54.6,67.7,60.5,54.4,58.6,73.6,60.0,53.2,49.6,
+56.4,62.0,48.9,52.9,50.1,56.3,56.6,64.3,59.3,57.3,57.2,48.1,46.6,45.2,48.7,60.6,48.0,47.5,52.7,49.7,56.4,51.2,46.1,43.8,51.7,47.4,59.0,54.1,
+47.9,43.6,47.6,53.7,45.2,48.7,49.7,46.6,51.2,46.1,50.6,54.2,47.4,52.7,51.7,50.6,49.5,55.1,51.9,59.6,46.3,51.0,48.3,50.2,56.5,56.3,46.5,45.8,
+55.3,47.0,49.8,47.6,56.9,55.4,52.9,58.1,58.2,56.0,57.0,48.6,55.4,58.3,57.2,58.6,55.0,65.5,60.7,45.5,44.1,47.2,50.4,46.7,55.1,52.5,53.1,55.2,
+52.3,50.5,48.9,45.2,53.3,48.4,55.0,55.4,49.2,43.6,52.2,51.6,49.0,51.0,60.4,45.7,55.0,50.5,46.8,46.4,46.5,54.4,46.1,48.4,56.1,55.2,56.8,58.1,
+47.7,55.0,58.6,55.2,47.2,46.5,58.2,56.7,58.9,57.3,54.2,54.6,54.9,55.7,54.7,56.1,55.3,51.1,48.3,46.2,51.6,54.7,49.9,54.0,55.8,49.6,46.2,58.4,
+52.4,44.7,47.8,59.2,57.3,49.6,45.9,44.3,57.0,44.4,47.8,49.4,50.7,56.0,47.6,52.8,46.0,47.6,51.4,55.4,45.5,46.2,47.1,51.3,52.4,49.4,48.0,46.2)
+
+```
+
+
+
+**This module defines what is meant by a statistical variable. It introduces the fundamental tools used to describe the behavior of a variable, including the mean, standard deviation, histograms, and normal distribution.**
+
+--------------------------------------------------------------------------------
+
+Types of data
+===============
+
+Regardless of whether the experiment is a laboratory intervention, a randomized controlled trial, or an observational study of a human population, we will gather a sample of observations of the world and use these to model entire populations of subjects. This is true whether the data describe the natural sleep habits of teenagers or the response of engineered cell lines to chemotherapy. 
+
+Statisticians call observed data "*random variables*" to indicate that their values are not pre-determined. The use of the word "random" does *not* mean that the observations are entirely the result of chance, like flipping a coin. It means that the value for a given observation is due, in part, to chance effects, and repetition of the experiment would not produce identical results. We use the term *random variable* even for data where all of the possible values for that observation can be enumerated. 
+
+Variables have qualities that allow us to place them into one of several categories. These qualities are important because they determine what kind of analysis can be performed. The most frequently encountered categories of observation are *continuous*, *ordinal*, and *categorical* data.
+
+Continuous variables
+----------------------------
+
+Continuous data are numbers that can take any real value; that is, they could be anywhere on a number line. Height and weight are continuous variables. Age in days is continuous, even if we constrain it to be rounded to the nearest whole number. Numbers that are constrained to be integers are a special case of continuous variables. 
+
+Ordinal variables
+----------------------------
+
+Variables that are not numbers, but which can be sorted into an invariant order, are ordinal. Ordinal variables do not need to have a specific numerical range. "weight group: Low, Medium, High" and "tumor grade: Grade I, Grade IIA, Grade IIB, Grade III, Grade IV" are ordinal variables. Some specialized statistics such as the Cochran–Armitage test for trend can be applied to ordinal variables.
+
+Categorical variables
+----------------------------
+
+Categorical data are observations that fall into cleanly definable groups that lack an ordering. The eye color of a patient can be coded as a categorical variable: (*Brown*, *Blue*, *Green*, *Grey*).  
+
+The same data can be represented by different types of variables
+------------------------------------------------------------------------
+
+**The form of a variable involves a choice by the investigator**. This choice has consequences. As an example, considler Body Mass Index (BMI), a measure of obesity that incorporates height and weight. BMI is a continuous variable. You could make different choices about how to represent BMI in your experiment.
+
+* **Continuous variable**: report the raw BMI value. 
+* **Ordinal variable**: divide subjects into Low, Medium, and High BMI. To place subjects into a category requires making a decision about the cut-off values for each category. Different choices of cut-off can have large consequences for the interpretation of the data you collect.
+* **Categorical variable**: divide patients into Obese and Not Obese categories. Again, the choice of cut-off is crucial. 
+
+continuous | ordinal | categorical
+---------- | ------- | -----------
+25         | medium  | not-obese
+21         | low     | not-obese
+41         | high    | obese
+32         | high    | obese
+29         | medium  | not-obese
+42         | high    | obese
+
+**The same BMI data, three ways**
+
+The choice of how to fit continuous data into categories is very important. In some analysis, where there is no common convention, you will be able to decide on your own categories. These decisions have to be well-motivated, and ideally should take place before you see the data that will be generated. If the categories are fit to the data *post hoc*, they can be a serious source of bias.
+
+In some cases, standardized value for the ranges of data that should fit into a particular category will be established by informal common scientific conventions or by formal standards bodies. Knowing whether these standard definitions apply to your analysis is extremely important for clear communication and for clinical relevance if your study describes medical information. 
+
+Factors
+----------------------------
+
+Statisticians often refer to categorical variables as *factors*. Although categorical variables are sometimes coded using numbers, this can lead to confusion if you apply a statistical test that interprets the numbers as having an inherent meaning. R has a function *factor()* which converts a vector of categorical variables, usually words, into factors. The variable then retains its apperance as words, but R will know that these words should be treated as categories.
+
+**Example 1: converting strings to factors**
+```{r}
+eye_color = c("brown", "blue", "blue", "green","blue","grey")
+eye_color
+f_eye_color = factor(eye_color)
+f_eye_color
+```
+
+Note that after using the *factor()* function, printing out the variable *f_eye_color* returns both the strings and a list of the **Levels**, or unique names, that make up the factor.
+
+Counts are derived from categorical data
+------------------------------------------
+
+Counts are integers of value zero or higher. Counts refer to the number of times we observed the outcome of some process. As such, counts are not a primary data type, but rather a summary of the number of times we saw each possible element in a categorical or ordinal group. Counts are of particular interest because they are the appropriate data for Fisher's Exact Test and the chi-squared test.
+
+
+Displaying observations of a single variable
+================================================
+
+Data should be communicated in as informative and straightforward a manner as possible. The human eye is one of the most important tools in statistical analysis. Statistical analysis is partly a mathematical exercise, but it is also an exploratory exercise. Always look at the data you are trying to interpret. 
+
+The choice of visual plot is dictated in part by the form of the data, in part by the specific question you wish to ask of the data, and in part by the conventions and expectations of the community of scientists to whom you want to communicate. 
+
+Scatter plots and Bar plots
+------------------------------------
+
+One choice for continuous data is to make a one-dimensional plot of the values. As an example I'd like to show the heights of the rabbits in our cohort. The observations were (`r paste(myTable$height, sep=',')`). We have four individual rabbits but two share the same height, which will hide one data point since the data will be plotted on top of each other. One way to deal with this is to add a random horizontal scatter to the points using R's *jitter()* function.
+
+```{r, fig.height=2, fig.width=2,  left.mar=TRUE, echo=FALSE}
+plot( c(1,1,1,1), myTable$height, ylim=c(0,10), xlim=c(0.8, 1.2),
+      ylab="height in inches", xlab="", axes=FALSE, main="No jitter", pch=19 )
+box()
+axis(2, seq(from=0, to=10, by=2), las=1)
+
+
+x_locations = jitter( c(1,1,1,1), factor=5 )
+plot( x_locations, myTable$height, ylim=c(0,10), xlim=c(0.8, 1.2),
+      ylab="height in inches", xlab="", axes=FALSE, main="With jitter", pch=19 )
+box()
+axis(2, seq(from=0, to=10, by=2), las=1)
+```
+
+Plotting individual points this way obscures the connection between a particular subject and its height. If that relationship is important to convey, a **bar plot** would be better choice. The height of each bar is determined by the numerical value of the data. We'll use the *barplot()* function in R. 
+
+```{r, fig.height=2, fig.width=3.5, echo=FALSE}
+par(mar=c(5,4,1,1))
+barplot( myTable$height, names.arg=rownames(myTable), las=2,
+         ylab="height in inches", xlab="", ylim=c(0,10), col="black"  )
+```
+
+Histograms summarize continuous data
+----------------------------------------------------------------
+
+Once we start gathering a lot of data, it becomes unwieldy and uninformative to look at individual values, either as two-dimensional plots or as a barplot. Here is a set of 1000 observations:
+
+```{r, fig.height=3, fig.width=8, left.mar=TRUE, echo=FALSE }
+plot(my_observations,  pch=19, ylab="", xlab="",
+     ylim=c(0,100), axes=FALSE, main="Observation 1")
+box()
+axis(2, seq(from=0, to=100, by=10), las=1)
+```
+
+We can see some trends right away: the data tend to lie between 30 and 70, and no value is larger than 90 nor smaller than 10. However, it's not clear where the most common value is. It would be convenient to summarize these data in a simpler format that preserves the important information while reducing clutter
+
+A **histogram** is a helpful method to summarize our data and look for trends. The simplest form of histogram is constructed by dividing the possible values of the observed data into bins, and then counting how many observations fall into each bin. The histogram barplot then shows the count of values in each bin, rather than the raw data itself:
+
+
+```{r, fig.height=2.5, fig.width=4, med.mar=TRUE, echo=FALSE}
+h=hist(my_observations, las=1, xlab="", 
+        col="lightgray", main="Obs. 1: histogram (frequency)")
+```
+
+```{r echo=FALSE}
+freq_break_begin=h$breaks[which(h$counts==max(h$counts))][1]
+freq_break_end=h$breaks[which(h$counts==max(h$counts))[1]+1]
+```
+
+This histogram is divided into bins of size `r h$breaks[2]-h$breaks[1]`. The bin that spans the range `r freq_break_begin` to `r freq_break_end` has `r max(h$counts)` observations, the most frequent range. We can see that the frequency of values larger or smaller than this range trails off steadly in either direction. 
+
+**Density plots**
+
+An alternate way to display a histogram is a called a *density plot*. In a density plot, the area covered by the histogram bars is constrained to sum to 1. Note that area is the product of bar height and bar width, so short wide bars can cover as much area as tall narrow bars.
+
+```{r, fig.height=2.5, fig.width=4, med.mar=TRUE, echo=FALSE}
+h=hist(my_observations, las=1, xlab="", freq=FALSE, ylim=c(0,0.05),
+       col="lightgray", main="Obs. 1: histogram (density)")
+```
+
+
+**How many peaks?**
+
+Histograms can also make it clear whether there is a single peak of most frequent values, or more than one such peak. However, careful study of the data may be required to make this clear. A new dataset of 2000 observations makes this point:
+
+```{r, fig.height=2.5, fig.width=8, left.mar=TRUE, echo=FALSE, left.mar=TRUE }
+plot(sample(my_bivariate),  pch=19, ylab="", xlab="",
+     ylim=c(0,100), axes=FALSE, main="Observation 2")
+box()
+axis(2, seq(from=0, to=100, by=10), las=1)
+```
+
+```{r, fig.height=2, fig.width=4.5, med.mar=TRUE, echo=FALSE, left.mar=TRUE }
+h=hist(my_bivariate, las=1, xlab="", main="Observation 2: histogram", ylim=c(0,400), col="lightgray" )
+```
+
+In this second observation, a histogram makes it clear that there are two peaks in the frequencies, one around 50 and one around 65. The shape of the distribution suggests something about the process that generated the data. Statisticians refer to the most frequent value in a data set as the *mode* of the distribution, and a distribution of observations with two peaks is called a *bimodal distribtion*.
+
+**Bimodal distributions in mouse blood**
+
+In 2013, the Balmain lab performed a Complete Blood Count (CBC) analysis on whole blood taken from `r length(MCV)` healthy eight week old mice. The CBC panel is a standard measure of macroscopic blood phenotypes such as the relative frequency of red blood cells in the total population. The Mean Corpuscular Volume is an estimate of the average red blood cell size, measured in fL.
+
+Plotting the measured values using a histogram gives information about the distribution of values. Here I present two different histograms from the same data, one with fewer bars and another with more bars:
+
+```{r, fig.height=2.5, fig.width=3, left.mar=TRUE, echo=FALSE, left.mar=TRUE }
+hist(MCV, breaks=5, main="MCV, wider bins", col="lightgray", xlim=c(40,80), ylim=c(0,80), las=1 )
+hist(MCV, breaks=20, main="MCV, narrower bins", col="lightgray", xlim=c(40,80), ylim=c(0,40), las=1 )
+```
+
+In the plot on the left, each bar represents a wider bin of data. This plot suggests there is a single peak of frequency around 45 fL. The plot on the right shows the same data plotted using smaller bins, and suggests that there may actually be two distinct peaks of MCV levels in this population, one around 45 fL and one around 55 fL. The mice in this study were a genetically heteogeneous mix of two parental strains, and it turns out that control of MCV levels was strongly associated with the individual mouse's genotype at one locus in the genome.
+
+
+Summarizing data: mean and median
+======================================================
+
+The most succinct summary of a set of continuous observed data uses a single number to represent all of the observations. A formal way to refer to this is the "central tendency" of the data. Informally, we often describe this value as the average value. There are several ways to calculate an average, but the most frequently used values are the **mean** and the **median**. We will see that these values are important and useful but not generally sufficient on their own.
+
+Central tendency: the mean
+-------------------------------
+
+There are several ways of calculating central tendency, but the mean is the quantity most people are talking about when they informally refer to, "the average". The mean is the sum of all measurements, divided by the number of measurements.
+
+
+**$\large{ \textit{mean} = \mu = \frac{ \sum\limits_{i=1}^N{v} }{N} }$**
+
+**Notation for the mean of N values**
+
+
+In mathematical notation, the greek letter sigma (Σ) means "sum over"; this notation can be read, "the mean, which has the symbol μ (mu), is equal to the sum of all N of the values *v*, divided by N".
+
+```{r echo=FALSE, small.mar=TRUE, fig.height=2, fig.width=3}
+par(mar=c(3,1,1,1))
+vals = rnorm(10, mean=10, sd=3)
+valskew=c()
+ylocs =  jitter( rep(1,length(vals)), 3)
+plot( c(vals, valskew),  
+      c( ylocs, rep(1, length(valskew) ) ),
+      pch=19, axes=FALSE, xlab="", ylab="", xlim=c(0, 50), ylim=c(0.8, 1.2), col="#11111133" )
+box()
+axis(1, seq(0,50,10))
+mu = mean( c(vals, valskew) )
+lines( c(mu, mu), c(0.8, 1.2), lwd=2)
+legend( 25, 1.2, c("mean"), lty=c(1), lwd=2, box.col="white" )
+
+```
+
+**Observations, mean at solid line**
+
+Central tendency: the median
+-------------------------------
+
+The median is calculated by ordering all of the observations and reporting the value in the middle of the list. If there is an even number of observations, the median is the mean of those two observations.
+
+
+
+When the mean and median diverge
+--------------------------------------------------------
+
+Using only one number to stand in for the whole dataset can be misleading. If observations tend to be equally likely to be larger or smaller than the mean, then the mean will be useful. However, there are many possible distributions of observations where the mean can be highly misleading.
+
+
+
+
+```{r echo=FALSE, small.mar=TRUE, fig.height=2, fig.width=3}
+par(mar=c(3,1,1,1))
+plot( c(vals, valskew),  
+      c( ylocs, rep(1, length(valskew) ) ),
+      pch=19, axes=FALSE, xlab="", ylab="", xlim=c(0, 50), ylim=c(0.8, 1.2), col="#11111133" )
+box()
+axis(1, seq(0,50,10))
+mu = mean( c(vals, valskew) )
+lines( c(mu, mu), c(0.8, 1.2), lwd=2)
+med = median( vals )
+lines( c(med, med), c(0.8, 1.2), lwd=2, lty=2)
+legend( 25, 1.24, c("mean", "median"), lty=c(1,2), lwd=2, box.col="white" )
+
+
+valskew = c(26, 38, 35, 49)
+plot( c(vals, valskew),  
+      c( ylocs, rep(1, length(valskew) ) ),
+      pch=19, axes=FALSE, xlab="", ylab="", xlim=c(0, 50), ylim=c(0.8, 1.2), col="#11111133" )
+box()
+axis(1, seq(0,50,10))
+mu = mean( c(vals, valskew) )
+lines( c(mu, mu), c(0.8, 1.2), lwd=2)
+med = median( vals )
+lines( c(med, med), c(0.8, 1.2), lwd=2, lty=2)
+legend( 25, 1.24, c("mean", "median"), lty=c(1,2), lwd=2, box.col="white" )
+
+```
+
+On the left side, data where the mean and median give very similar results. On the right side, a few extreme values push the mean up nearly 10 units compared to the median. When the mean is larger than the median, the distribution is called a **heavy-tailed distribution** that displays **skew**. Skewed distributions are not equally likely to have points on either side of the mean; in this case the skew is to the right.
+
+The median is stable in the face of a small number of extreme values, since it is determined by the value of the middle of the distribution rather than being calculated from all of the observations together. This stability is often highly desirable, and will be discussed further in the **Robust Statistics module**. The mean is still very useful, however, because it has mathematical properties that we will describe when we introduce the normal distribution.
+
+
+Range and percentiles
+----------------------------------
+
+Range is simply the highest and lowest value in the distribution. 
+
+Percentiles are values such that a given percentage of the observations are as small or smaller than that value. Five percent of the values in a distribution will be lower than or equal to the fifth percentile value; half of the values in a distributionw will be at or below the fiftieth percentile, and 90% of the values will be lower than or equal to the 90th percentile. The median value is, by definition, the 50th percentile.
+
+Dividing the observations into four pieces by percentile yields quartiles, the 25^th^, 50^th^, and 75^th^ percentiles.
+
+
+
+
+Box and whiskers plots
+----------------------------------
+
+The box and whiskers plot is a summary plot that communicates five things at once:
+
+1. the median (middle line)
+2. 25th and 75th quartiles (box top and bottom)
+3. the +/- 1.5 times the interquartile range (whiskers)
+
+Individual points that fall out of this range are plotted as points. 
+
+The R function to make box and whiskers plots is *boxplot()*.
+
+```{r, left.mar=TRUE, fig.height=3, fig.width=3, echo=FALSE}
+vv = rnorm( 100, mean=5)
+par(mar=c(2,3,1,1))
+hist(vv, las=1, xlim=c(0,10), main="Histogram" )
+box()
+boxplot( vv, las=1, ylim=c(0, 10), boxwex=0.5, main="Box and whiskers" )
+```
+
+This box plot shows a distribution with close to equal distribution around the mean value.
+
+```{r, left.mar=TRUE, fig.height=3, fig.width=3, echo=FALSE}
+vv2 = c( rnorm( 100, mean=5), rnorm( 10, mean=9), 12,12,14,15 )
+par(mar=c(2,3,1,1))
+hist(vv2, las=1, xlim=c(0,20), main="Histogram, slight right skew")
+box()
+boxplot( vv2, las=1, ylim=c(0, 20), boxwex=0.5, main="Box and whiskers" )
+```
+
+**Heavy-tailed data**
+
+This plot shows a different distribution showing some skew to larger values; the median has not changed much, but the more extreme values are plotted as individual points in the box and whiskers plot.
+
+```{r, left.mar=TRUE, fig.height=3, fig.width=3, echo=FALSE}
+vv2 = vv2[vv2>4.5]
+vv2 = c(vv2, 7,8,8,9,9,10,11)
+par(mar=c(2,3,1,1))
+hist(vv2, las=1, xlim=c(0,20), main="Histogram right-skew", breaks=10)
+box()
+boxplot( vv2, las=1, ylim=c(0, 20), boxwex=0.5, main="Box and whiskers, right-skew" )
+```
+
+This plot shows the same data as in the previous distribution, but with all values less than 4.5 removed and more values above the median. The median has increased slightly, but note that the median is now almost identical to the 25th percentile, and the 10th percentile whisker is very short compared to the 90th percentile whisker. This indicates compresssion in the distribution.
+
+
+Summarizing data: variance and standard deviation
+======================================================================
+
+The mean provides a single point estmate the middle value of the data. The variance summarizes the amount of spread, or dispersion, around the mean of the observations. To calculate the variance we sum the average difference between each individual measurement and the mean, and then divide by the number of measurements. If a distribution is more spread out, then these deviations will be larger on average and the variance will in turn be higher. Since observations could be larger than or smaller than the mean, we compute the square the differences.
+
+$\large{ \textit{variance} = \sigma^2 = \frac{ \sum\limits_{i=1}^N{ (v_n - \mu)^2 }} {N} }$
+
+Note that because we sum over the square of the differences, as opposed to simply using a positive distance such as the absolute value, a point's influence over the variance increases dramatically as the distance from the mean increases. As a result, even if most observations are relatively close to the mean, it takes only one value that is quite distant from the mean to make the variance very large.
+
+The variance is mathematically important, but since we square the individual deviations from the mean in order to calculate the variance, the variance itself is not in the same units as the underlying measurements. That is, if your measure is in inches, the variance will be in inches-squared. This is often inconvenient, so we usually take the square root of the variance to match up the units measuring dispersion with the units measuring mean. The square root of the variance is called the standard deviation.
+
+$\large{ \textit{standard deviation} = \sigma = \sqrt{ \textit{variance} } }$
+
+The mean and standard deviation together do a good job of describing the central tendency and spread of many data sets that are generated by natural processes. They are particularly useful when the data tend to cluster near the mean and fall off in frequency in either direction in a bell-shaped distribution called the *normal distribution*. 
+
+The normal distribution
+======================================================================
+
+For centuries observers of the natural world have known that natural phenomena that act as random variables, such as the height of pine trees in a forest, tend to follow a bell-shaped distribution. Most subjects have values near the center of the distribution. More extreme values are progressively rarer, with frequencies that drop off to near-zero values quickly. This distribution was formalized as the so-called Normal distribution
+
+The normal distribution plays a fundamental role in biostatistics, and we will spend some time exploring its uses.
+
+Features of the normal distribution
+------------------------------------------------
+
+A Normal distribution has several features:
+
+* It is always positive; away from the middle it gets very close to zero, but never crosses zero.
+* The area under the curve is always equal to one
+* The curve is symmetric around the midpoint
+
+The X axis for a Normal curve is measured in standard units. 
+
+```{r echo=FALSE, fig.width=4, fig.height=3}
+par(mar=c(4,4,2,1))
+x = seq(-4,4,length=1000)
+y = dnorm(x,mean=0, sd=1)
+plot(x,y, type="l", lwd=1, ylab="Density", xlab="Standard units", main="standard normal curve")
+```
+
+The mean of this distribution is zero, and the standard deviation is one.
+
+The standard normal distribution 
+------------------------------------------------
+
+* describing a curve using the mean and variance
+* Obtaining z-scores from the mean and standard deviation
+
+reasoning about the rarity of events using the z score
+------------------------------------------------
+
+
+
+Error bars
+
+When do I use the SD? When do I use the SEM?
+

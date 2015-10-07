@@ -1,0 +1,433 @@
+---
+title: "Module 2: Just Enough R to get Started"
+author: "David Quigley"
+date: "September 25, 2015"
+output: 
+    html_document:
+        toc: true
+        css: swiss.css
+---
+
+
+```{r global_options, include=FALSE}
+knitr::opts_chunk$set( comment = NA )
+knitr::opts_chunk$set( prompt=TRUE ) 
+
+knitr::knit_hooks$set(small.mar = function(before, options, envir) {
+    if (before) par(mar = c(2, 2, 1, 1))  # smaller margin on top and right
+})
+knitr::knit_hooks$set(med.mar = function(before, options, envir) {
+    if (before) par(mar = c(4, 4, 1, 1))  # smaller margin on top and right
+})
+```
+
+--------------------------------------------------------------------------------
+
+
+Introduction
+========================================
+
+
+**This module explains:**
+
+* what R is
+* why R is used by many academic biostatististicians 
+* how to load data into R
+* how to extract data from R vectors, matrixes, and data frames
+* how to call built-in methods
+* how to make simple plots
+
+Most people working near genetics, genomics, or statistics have heard of R. This oddly named tool has become ubuquitous in the world of academic statistics. R is powerful but also obscure, and has a justifiable reputation for bearing a steep learning curve. 
+
+The intention of this module is to provide just enough R that someone with no experience could download R and use it to complete the exercises in these modules. For a more complete introduction to R, I suggest the excellent **Introductory statistics with R**, by Peter Dalgaard, published by Springer in 2008. If you are on the UCSF campus, it is available online for free via the library.
+
+What problem does R solve?
+------------------------------
+
+Any non-trivial numerical analysis will be done using some kind of software. A common first choice of software for many people who want to keep track of numbers, and who are not professional statisticians is Microsoft Excel. Excel makes it easy to perform simple tasks like adding two columns of numbers. You can sort columns, highlight rows, embed little plots in the sheets, and add up columns of numbers. You can freely intermix columns of words with columns of numbers. The barrier to getting started is very low. However, there are important drawbacks to using Excel for any important analytical task. From the point of view of a statistician, the drawbacks are fatal.
+
+* To perform many elementary statistical tasks requires purchasing expensive add-on software. Excel is not designed as a tool for performing statistical analysis; its primary strength is tracking columns of numbers.  
+* It is nearly impossible to produce professional-quality plots in Excel. It’s almost as though Microsoft went out of its way to make the default choices as horrifying as possible. 
+* Excel automatically mangles gene names, silently turning *MARCH8* and *SEPT5* into dates. 
+* The freedom to put anything you want into a column is a curse in the presence of typos and mishandled data
+* Perhaps most seriously, work in Excel leaves **no paper trail**. The most common result of an analysis in Excel is a series of tabbed notebooks, scattered across many files, where it is not clear how to get from the original data to the final result. The result of the analysis is usually divorced from the source data. When questions arise about the way the data were analyzed, whether by your own attempt to remember what you did two weeks ago or by an external reviewer checking the integrity of your work, this does not make it easy to do good science.
+
+An ideal tool for statistical analysis should have several properties:
+
+1. It should be easy to follow the steps from loading raw data to results and figures
+2. Routine analyses should be possible 
+3. It should be powerful enough for professional statisticians.
+4. It should be possible to make professional-quality vector graphics that you can submit to a journal
+5. It should be free.
+6. It should be easy enough for beginners to use
+
+There are several professional statistics packages that have been around for many years, including SPSS, SAS, STATA. Most of these tools have drop-down menus with the various commands organized in categories. A large number of biostatisticians use another program, called R. R fulfills all of the requirements I just set, except for the last one. Starting R you get a blank screen, with no friendly interface of point and click commands.  R can be intimidating to someone who has never made a computer work by typing in commands. Unlike other professional-strength tools like GraphPad and SPSS, there is no drop down menu for “linear regression” or “correlation”. When you turn on R, you get a big blank white screen and a little blinking prompt where you can type in commands. 
+
+Why would anyone choose to use a tool where you have to remember the sometimes-cryptic names of commands and type them in one after another? There are several real advantages to working this way, and the strengths of the advantages are so large that they justify the annoyance of using a tool with a learning curve.
+
+1. R is free and open-source. It’s hard to understate the importance of this advantage, particularly in an academic setting.
+2. Because all of R code is entered as text, it is very natural to write down the commands and run them from a text file. This means that every step of your analysis can be re-run. Imagine being able to replay every step of a complex molecular biology experiment, or a large clinical trial. 
+3. Non-trivial statistical tasks are straightforward in R if you know the right incantations to type in. 
+4. Many academic biostatisticians work in R, and publish extensions to R that make it easy to apply their work to your data. This rich ecosystem of free software packages is one of the non-obvious strengths of R.
+5. With some effort, R can produce beautiful, publication-quality vector plots that work natively in Illustrator and other professional tools used to make high-quality figures.
+
+
+
+Obtaining R and RStudio
+========================================
+
+There are two related programs that I'll refer to in this module: R, and RStudio.
+
+Downloading R
+----------------
+
+R is open source, and free to anyone. Working in R will require the use of a text editing application, which functions like a word processor for writing programs. NOTE: Microsoft Word is not a suitable text editor. If you don't already have a favorite text editing program, you should probably use the **RStudio** wrapper around R.
+
+R can be downloaded for free from http://r-project.org. 
+
+Downloading RStudio
+------------------------
+
+Many people now use a free tool called **RStudio** to work with R. RStudio is the product of a company with the same name; it is free, with the option of paying the company if you want a commercial license and technical support. RStudio is just a wrapper around the R program, and it's not required to use R. However, RStudio seamlessly integrates a text editor program with R, which is very helpful if you aren't used to using a text editor. 
+
+RStudio can be downloaded for free from https://www.rstudio.com.
+
+
+Interacting with R	
+========================================
+
+When you open R, you see a command prompt:
+
+![R console](images/module02_Rconsole.png)
+
+You type in a line of text, R evaluates your words as a command, and R does something. The command prompt, where you type, is indicated by a greater than sign: **>**. I’ll illustrate by typing a math problem:
+
+**Example 1: 2+2**
+```{r}
+2 + 2
+```
+
+R returns “4”, the expected result. You can ignore the [1] written before the 4. 
+
+In this modules, the R command is printed in a box with a grey background, and then R output that follows is printed in a box with a white background.
+
+R comes with all of the functions you might need in routine statistical analysis. All of the examples in these modules will be written in R code. 
+
+Creating vectors of numbers
+----------------------------
+
+We usually want to operate on groups of numbers rather than doing one operation at a time. Examples:
+
+* what's the average of a list of numbers?
+* what's the largest value in a list?
+* What's the value of my variables if I log~2~ transform them?
+
+The three most important ways to group numbers in R are **vectors**, **matrixes**, and **data frames**. Since R uses the word “list” to refer to another data type that we won’t discuss yet, we’ll call these ordered lists of numbers by their official R name, **vectors**. 
+
+To create a vector, we use a command with the cryptic name *c()*. This command is a **function**. 
+
+>The c() command is one way to create a vector
+
+The *c()* function can be remembered as short for *combine* or *concatenate*. You call this command by writing a c, followed by a list of numbers separated by commas and wrapped in parentheses. If you write in a vector without asking R to do anything with the vector, R will write the contents of the vector back.
+
+**Example 2: Define a vector**
+```{r} 
+c(1,2,3,4)
+```
+
+Functions usually takes one or more variable items as input, perform an operation using those items, and returns an output. There are functions that don't take any variables as input, but we'll ignore those for now. The word function has a correspondence in mathematics; you may recall that a function is a relationship between one or more input variables that will produce an output. 
+
+We can modify all of the vector's elements by an operation with a single value (such as adding two), or by an operation upon a vector of the same length. If we perform an operation with a vector of the same length, each element in the first vector will be paired with its corresponding element at the same index in the second vector.
+
+**Example 3: vector operations**
+```{r} 
+c(1,2,3,4) + 2
+c(1,2,3,4) + c(3,4,5,6)
+```
+
+
+
+You can also create vectors of words. In programming jargon, these words are called "strings".
+
+**Example 4: vectors of words**
+```{r} 
+c("mitochondria", "nucleus", "cytoplasm", "golgi")
+```
+
+We can't do math on these words, but as we'll describe in Module 3, the attributes we're interested in are sometimes categories, rather than values. To define a word (called a character string in R jargon) we write an element surrounded by either single quotes, or double quotes. Don't start a character string with single quotes and end one with double quotes.
+
+
+Retreiving a particular value in a vector
+--------------------------------------------------------------------
+
+Items in a vector have an order, starting at 1. We can extract the first or third item in a vector by following the vector with an index wrapped in square brackets:
+
+**Example x: indexes into a vector**
+```{r} 
+c(8,12,13,19)[1]
+c(8,12,13,19)[3]
+```
+
+Colon notation for ranges of numbers
+------------------------------------------------------------------------
+
+The colon notation is a shortcut way to specify a range of values:
+
+**Example x: slices of a vector**
+```{r} 
+2:4
+```
+
+We can pull out a continuous sequence of elements in a vector by listing the first and last element separated by a colon:
+
+**Example x: slices of a vector**
+```{r} 
+c(8,12,13,19)[1:3]
+c(8,12,13,19)[2:4]
+```
+
+Matrix: a two-by-two grid of numbers
+--------------------------------------
+
+If we have a grid of numbers, the data can be organized in a matrix. To define a matrix from scratch, tell R how many rows and how many columns it should have:
+
+**Example x: an empty matrix**
+```{r} 
+matrix( nrow=3, ncol=2 )
+```
+
+Note that since we didn't pass any data the matrix, all of the elements of the matrix are **NA**. NA is a special symbol meaning missing data; NA is not the same as 0. Zero means you have a measurement, and that measurement is equal to 0. NA means data are missing. We can start with a single value in all elements:
+
+**Example x: a matrix of zeros**
+```{r} 
+matrix( 0, nrow=3, ncol=2 )
+```
+
+If we have a vector with the correct length, we can fill the matrix with that vector:
+
+**Example x: a matrix filled from a vector**
+```{r} 
+matrix( c(1,2,3,4,5,6), nrow=3, ncol=2 )
+```
+
+Note that the matrix is filled in columns. If you wanted the matrix filled by rows, you can specify that:
+
+**Example x: a matrix filled from a vector by rows**
+```{r} 
+matrix( c(1,2,3,4,5,6), nrow=3, ncol=2, byrow=TRUE )
+```
+
+We can do the same math on matrixes that we did on vectors:
+
+**Example x: matrix times three**
+```{r} 
+matrix( c(1,2,3,4,5,6), nrow=3, ncol=2, byrow=TRUE ) * 3
+```
+
+
+Naming variables
+=========================
+
+It would be convenient to have a meaningful way to refer to our vectors and matrixes. Groups of numbers usually have some meaningful connection, so giving the vector a name that helps us remember what the numbers mean would be useful. Just as in algebra, we can give a single number, vector, or matrix a name and call it a variable. We can then operate on that variable just as we would operate on the original. Prefer to give your variables meaningful, spelled-out names, so when you return to your statistical analysis later or when someone else reads it, the variable names make your intentions clearer.
+
+**Example x: naming variables: scalars**
+```{r} 
+height = 1.7
+height
+height + 2
+height = height + 3
+height
+```
+
+Note that when we assign a value to a variable, here called height, R does not print back the value of the variable. However, if we ask R for the value, it R will print it back to us. 
+
+Vectors can also be variables. We can assign new values to vectors by referring to their index. It is possible to refer to more than one index at the same time, making it possible to rewrite vectors in complex ways.
+
+**Example x: naming variables: vectors**
+```{r} 
+weights = c(8,12,13,19)
+weights[1]
+weights + 2
+weights[2] = 11
+weights
+```
+
+There is another assignment symbol that looks like an arrow, but I prefer to use an equals sign because it reminds me of an algebraic equation, and because it is a common idiom in other programming languages. I just casually referred to R as a programming language, because writing commands in R is a form of programming. It is possible to write complicated programs in R, but we won’t be covering that kind of thing in these lessons. There are some excellent online courses in R programming that you can work through; please see the references associated with this module if you’re interested in looking into them.
+
+Making sequences
+------------------
+
+A sequence is a set of numbers that have some consistent relationship. We can generate a sequence of integers by writing them as *start:end*. For more complex sequences, we can use the *seq(from, to, by)* built-in function.
+
+**Example x: sequences**
+```{r} 
+1:5
+seq(from=1, to=5, by=1)
+seq(from=0, to=100, by=10)
+```
+
+
+Built-in functions: sum, mean, and log
+=======================================================
+
+The pattern of feeding one or more values into a command using a comma-separated list of elements surrounded by parentheses is common. Microsoft Excel uses the same pattern; after I press return, the bottom cell will read “6”:
+
+The equivalent command in R is also called *sum()*:
+
+**Example x: sum of a vector**
+```{r}
+sum( c(1,2,3) )
+```
+
+Note that for some generic function calling *myFunction( 1,2,3 )* will not usually give the same result as *myFunction( c(1,2,3) )*. The first version, without the *c()*, will often result in an error message or unexpected behavior. You can see this more clearly using the *mean()* command, which takes the arithmetic average of a vector:
+
+**Example x: the wrong way to get the mean of 1,2,3**
+```{r}
+mean( 1,2,3 )
+```
+
+**Example x: the correct way to get the mean of 1,2,3**
+```{r}
+mean( c(1,2,3) )
+```
+
+The full explanation for this requires knowing more about R than we want to know at the moment, but the basic idea is that to operate on a group of numbers, wrap them in the *c()* command. The *mean(1,2,3)* command returns 1 because *mean()* only operates on the first item you pass it, so it is calculating the mean of c(1) and returning the correct answer.
+
+Useful built-in functions
+---------------------------
+
+name   | definition
+------ | -----------------------------------------------------------------
+c      | combine a list of numbers or words into a vector
+sum    | sum
+mean   | average
+median | median
+log2   | log base 2
+log10  | log base 10
+ln     | natural log
+min    | smallest value
+max    | largest value
+round  | round to zero; round( x, n ) rounds x to n places
+sqrt   | square root
+seq    | sequence, specifying from, to, and increment
+length | length of a vector
+dim    | number of rows and columns (**dim**ensions) of a matrix or data frame
+
+
+Chaining functions together
+---------------------------
+
+As a short-cut, one can write functions chained together rather than separately one at a time 
+
+**Example x: chaining functions together**
+```{r}
+heights = c(7,23,12,4,45,6,19,8)
+log2(heights)
+mean( log2(heights) )
+round( mean( log2(heights) ), 2 )
+
+```
+
+Getting data into R: data frames
+=================================
+
+Typing in numbers by hand only works for toy examples; in the real world, we will usually have large collections of data. In fields such as genomics, where the number of individual data points frequently far exceeds the number of samples, it is convenient to organize data as we do in a spreadsheet, where each column represents an individual sample, and each row represents a distinct piece of information captured. This organization is preferable when we have thousands of different kinds of information, because it’s easier to deal with files that have a lot of lines than files that have a lot of columns. It would then be handy to have a data object that corresponds to this format, allowing us to pull out entire rows or columns by their header or to pick individual samples by their (row, column) index. The data frame is the R object that handles this situation. A data frames is a collection of vectors of the same length, where the vectors are stored vertically.
+
+Data frames can be read from a text file using the *read.table()* command. Since tables are generally large, the most useful form of this command stores the data frame in a variable. Here we will assume that you have already set a variable called filename with the complete path to a suitable input file.
+
+**Example x: syntax to read a table**
+```{r eval=FALSE} 
+filename = "/path/to/filename.txt"
+myTable = read.table(filename, header=TRUE, stringsAsFactors=FALSE)
+```
+
+For this example, I am loading in a small data frame called *myTable* behind the scenes so you don't have to have a local copy on your hard drive.
+
+```{r echo=FALSE}
+height = c(7,8,7,9.5)
+weight = c(4,3.2, 3.7, 5.4)
+myTable=data.frame(height, weight)
+rownames(myTable)=c('Flopsy','Mopsy','Cottontail','Peter')
+```
+
+
+Note that there are three different things inside of the parentheses in this call to the read.table() command, separated by commas. The first variable, filename, is the path to the file we’re reading.
+
+In addition to filename, this call contains two additional parameters: header and stringsAsFactors. These parameters are passed "by name", meaning that they are specifically named in the command invocation, using the convention name=value. Some commands have a very large number of optional parameters, and passing parameters by name helps to keep things unambiguous. The first parameter for *read.table()* is not optional and is always the filename to load, so it is not necessary to pass it by name. The second parameter, header, tells R that the first line of the file is a header that contains column names. If there were no header than R would just assign numbered column names that don’t carry any intrinsic meaning; it’s much easier if you use meaningful column names. The third parameter is more obscure; it tells R that if your data contain any words, to leave the words alone and not convert them into factors. Factors will be described in Module 6.
+
+Now that you have read *myTable* into a variable, you can ask what its column headers are and look at the data they contain.
+
+**Example x: indexing into a data frame**
+```{r} 
+myTable
+names(myTable)
+myTable$height
+myTable[1,1]
+myTable[2,1]
+myTable[1,2]
+```
+
+Students who are familiar with English-language children’s literature will have noticed that this dataset concerns the physiological properties of four rabbits.
+
+We can also look at all of the elements in a row using the row names. The *rownames()* and *colnames()* functions will report back the row and column names, respectively. Here I’ll show all of the elements for the row with the identifier, "Flopsy." I’ll warn you about a tricky point here: notice that I had to put a comma after the row name, because the data frame has both rows and columns. When we don’t put any value in a row or column like that, R automatically returns the whole row or column.
+
+**Example x: index into a table by row name or column name**
+```{r} 
+rownames( myTable )
+colnames( myTable ) 
+myTable['Flopsy',]
+myTable[,'weight']
+myTable[,]
+```
+
+If we only give a row or column name but forget the comma, R prints out an obscure-sounding error:
+
+```{r eval='FALSE'} 
+#myTable['Flopsy']
+#Error in `[.data.frame`(myTable, "Flopsy") : undefined columns selected
+```
+
+Making a data frame from vectors
+-------------------------------------------------------
+
+If you have one or more vectors of the same length, you can make a data frame from them using the *data.frame()* function.
+
+**Example x: making a data frame using data.frame()**
+```{r}
+height = c(7,8,7,9.5)
+weight = c(4,3.2, 3.7, 5.4)
+rabbit_names = c('Flopsy', 'Mopsy', 'Cottontail', 'Peter')
+myTable=data.frame(height, weight, row.names=rabbit_names)
+myTable
+```
+
+
+The difference between data frames and matrixes
+------------------------------------------------------
+
+* Data frames always have column names and row names. Matrixes don't have these things; they have something else called *dimnames*, but we don't have to worry about these things.
+
+* Matrixes are made up of a single kind of data, either numbers or words. Data frames can be a mix of different kinds of data in their columns.
+
+* Many functions that expect a number can read natively out of a matrix and will not be happy with a data frame. The reasons for this are related to how these kinds of data are stored in R; in short, R can be sure that a matrix of numbers will be entirely comprised of numbers, while a data frame might be a mix.
+
+* *read.table()* returns data frames. 
+
+Data frames can be coerced to a matrix using the *data.matrix()* function. If you try this on a data frame that contains a mix of words and numbers, the words will converted to NA.
+
+
+Declarative selection using boolean variables and *where*
+========================================================
+
+Often we want to select all of the elements from a vector that share some property. For example, we might want all elements greater than 10. We can say this in words as, "give me all elements in the vector where the value is greater than 10". This is called a **declarative selection**, because rather than enumerating all of the values we want, we are *declaring* the properties of those variables and letting R do the work of finding them for us. 
+
+We can use a **boolean vector** for this job. Boolean variables are either TRUE or FALSE, in the logical sense. If we define a vector of boolean variables and apply that vector to select out of a data vector of the same length, we will get back only those elements where the boolean vector has the value TRUE.
+
+**Example x: boolean vectors**
+```{r}
+height = c(1,12,3,66,44,3,5,6,6,344)
+height > 10
+is_greater_10 = height > 10
+height[ is_greater_10 ]
+```
+

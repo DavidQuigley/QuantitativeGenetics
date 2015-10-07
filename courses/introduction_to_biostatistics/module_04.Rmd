@@ -1,0 +1,161 @@
+---
+title: "Module 4: Hypothesis testing and P values"
+author: "David Quigley"
+date: "September 25, 2015"
+output: 
+    html_document:
+        toc: true
+        css: swiss.css
+---
+
+
+The P value is defined as follows: P is **the probability of observing an effect as large or larger than observed, if the null hypothesis were true**. We can break this definition into several pieces and understand them one by one.
+
+* **The probability of observing...**
+    + P is a probability. I will briefly describe the mechanics of probability, because along with its informal meaning probability has a specific formal meaning and we can do arithmetic with probabilities.
+
+* **...an effect as large or larger than observed...**
+    + P depends on both effect size and sample size.
+
+* **if the null hypothesis were true?**
+    + P tests the assumption that the null hypothesis is true. It does not test the assumption that the alternate hypothesis is true. This goes back to Popper and the black swan problem.
+
+Elementary calculations with probability
+==========================================
+
+A major stimulus to working out the mathematics of probability was to allow people to reason about outcomes when gambling. Probability is a quantitative measure of the chance that an event that could in theory be repeated many times will occur on any given repetition. Probability can be expressed as a percentage between 0% (no chance of occurrence) and 100% (certainty of occurence). Probability can equivalently be expressed on a scale from 0 to 1. For some simple kinds of events, such as the flip of a fair coin, it is easy to calculate the probability of all outcomes. We can use a shorthand notation of P(an event) to mean “the probability that an event will occur”. P(an event) can be calculated by:
+
+$\large{ \textit{P(event)} = \frac{ \textit{number of ways event can occur } } { \textit{total number of possible outcomes} } }$
+
+Flipping a coin and seeing *heads*:
+
+$\large{ \textit{ P(heads) } = \frac{1}{2} = 0.5 = 50 \% }$
+
+There is one way to get heads, and two sides to the coin, so the probability of heads is 0.5 or 50%. In 10 flips of a coin, we would expect five flips to come up heads. Expectation has a formal meaning in probability, but here we mean the informal sense of what would surprise us the least. Other outcomes, such as six heads, or four heads, are possible, and not very surprising. Intuitively, we would be more surprised to see two heads in 10 flips than six heads in 10 flips. The mechanics of probability allow us to predict how likely any outcome would be with a fair coin. 
+
+When rolling a die with six faces, we can likewise calculate the probability of rolling a *three*:
+
+$\large{ \textit{ P(3) } = \frac{1}{6} = 0.167 = 16.7 \% }$
+
+The probability of not rolling a three, that is to say, of rolling any of one, two, four, five, or six, is 
+
+$\large{ \textit{ 1 - P(3) } = \frac{5}{6} = 0.83 = 83 \% }$
+
+Independent events
+----------------------
+
+When the probability of two distinct events do not influence each other, we can call the events independent. To obtain the probability of two independent events both occurring, we multiply their individual probabilities together. Thus, the probability of rolling a *three* and then rolling a *four* are:
+
+$\large{ \textit{ P(3 then 4) } = \frac{1}{6} \times \frac{1}{6} = \frac{1}{36} = 0.0278 = 2.78 \% }$
+
+
+In testing properties of the natural world we often measure something with a continuous effect size: patient lifespan, the deviation from expected frequency of a trait among fruit flies, the growth rate of a cell. Our experimental results must therefore be tested using a model that produces a statistic that reflects the difference in this effect size and the consistency of the difference. We then need a way to ask, what is “the probability of observing an effect as large or larger than observed if the null hypothesis were true?” This is, not coincidentally, the definition of a P value. 
+
+
+Where did P < 0.05 come from?
+================================================
+
+Now that we have a way to quantify the likelihood of an event, we can use that tool to reason about the outcome of scientific experiments. One of the first people to do this was Sir Ronald Fisher, who invented much of modern statistics. Much of Fisher’s work was developed to evaluate agricultural experiments. A typical experiment might ask whether using a new fertilizer resulted in larger harvests of wheat. It would take a whole season to learn the result of a single trial, providing a strong incentive to design efficient trials. Fisher developed the P value as a tool for evaluating the strength of evidence against the null hypothesis; that is, the hypothesis that an intervention had no effect. Quoting one of his early writings gives a clue to a question that many people ask: what is so special about P < 0.05? 
+
+>“If one in twenty does not seem high enough odds, we may, if we prefer it, draw the line at one in fifty (the 2 per cent point) or one in a hundred (the 1 per cent point). Personally, the writer prefers to set a low standard of significance at the 5 percent point... A scientific fact should be regarded as experimentally established only if a properly designed experiment rarely fails to give this level of significance.” 
+(*Statistical Methods for Research Workers*)
+
+So this is the essential origin of P < 0.05. There is no deep statistical theory that judges this level of statistical significance to be particularly important. Fisher’s argument was that low P values, in repeated experiments, were interesting and unlikely to be seen in the absence of a real effect. There are several points to make here. First, that using Fisher’s method, a P value is a tool used for post hoc interpretation of the results of an experiment. This interpretation was continuous, with no cut-off value determining a decision point. The P value here is used for inference, not for a decision procedure. A P value of 0.048 would be interpreted as nearly indistinguishable from a P value of 0.052.
+
+
+Making decisions with P values: hypothesis testing
+===============================================================
+
+A subsequent use of P values was popularized by Neyman and Pearson, who developed a hypothesis testing framework. This framework, which was so widely adopted that many people think of it as the only way to do statistics, uses P values to make a decision. Here a particular P value is set before the experiment is performed. This P value, which has the technical name of alpha, is set as a cut-off. The most familiar alpha level is 0.05, but any value could in principle be used. Deciding on an alpha level for decision-making has several useful implications. The first, most obvious one, is that there is clarity about what to do with the results of a statistical interpretation. This is particularly important in very large, expensive experiments such as clinical trials, where the parties performing the experiment may have a vested financial interest in the results. In this framework, given an alpha level of 0.05, a result where P = 0.048 has very different implications from P = 0.052.
+
+Another important implication is that it is possible to plan about how frequently one is willing to make two distinct types of mistakes. The first mistake is to reject the hypothesis of no effect, that is the null hypothesis, when in fact the truth of the matter is the intervention had no effect. This error, technically referred to as a Type One error by Neyman and Pearson, can be though of as, “I shouldn’t have published that result”. The second sort of error comes from incorrectly failing to reject the null hypothesis; that is, to miss a real effect.  This error is technically referred to as a Type Two error, and can be though of as, “I missed the result and could have published it.” 
+
+There is a trade-off between the likelihood of making a type one and type two error; with greater statistical stringency we reduce the chances of type one and increase the chances of type two. The type two error is quantified by statistical power, which has the technical name of beta. Like the alpha, the beta is also a percentage. It represents the percentage of the time one will correctly reject the null hypothesis of no effect. Given a statistical model, alpha and beta levels, and an expected effect size, one can plan how many individual subjects to include in the study. A common formulation is to ask, “how many replicate samples must I include in my study to have an 80% power to detect an effect of given size, rejecting the null hypothesis at a 5% alpha level?” 
+
+Critiques of the P value
+===============================================================
+
+Although the use of a particular P value cut-off has been justifiably criticized as arbitrary, the ability to make power calculations, and to interpret positive and negative results in light of the power available to perform a test, is extremely valuable. 
+
+Another critique of the P value cannot be as easily answered, and that is that P values are not the same as effect sizes. We are generally interested in the size of an effect, whether that effect measures the result of an intervention or the association between two variables. P values are a function of both effect size and sample size. By increasing the sample size, one can drive the P value arbitrarily low, even when the effect size is too small to be meaningful. It is likewise the case that even in the presence of a truly strong effect, very small sample sizes will result in large P values. 
+
+
+How effective are P values when we perform many tests?
+===============================================================
+
+Let us imagine someone hands you a coin and asks you to evaluate whether it is fair, or if it is biased to land on one side preferentially. You test the coin by flipping it 10 times. On nine of those flips the coin comes up heads. How do you evaluate this result? We can form the question, if we assume the coin is fair, what is the probability of seeing at least nine heads in ten flips? Using the probability calculations we described earlier, we can ask how many ways there are to make nine or ten heads in 10 flips, and divide that by the number of possible outcomes. remember that order matters, so flipping “heads, tails, heads” is a different outcome from flipping “tails, heads, heads” even though each outcome has two heads and one tails.
+
+There are four possible orderings of two coin flips, so 
+
+$\textit{ P(at least one of two flips is heads ) }$
+
+$= \frac{( TH \textit{ or } HH )} {2^2} = \frac{( 1 + 1 )} {2^2} = \frac{2}{4} = 0.5$
+
+There are eight possible orderings of three coin flips, so 
+
+$\textit{ P(at least two of three flips is heads ) }$
+
+$= \frac{( THH \textit{ or } HTH \textit{ or } HHT \textit{ or } HHH )} {2^3} = \frac{( 3 + 1 )} {2^3} = \frac{4}{8} = 0.5$
+
+We can generalize this observation to higher number of flips:
+
+$\textit{ P( at least three of four flips are heads ) }$
+$= \frac{( 4 + 1 )} {2^4} = 0.3125$
+
+$\textit{ P( at least nine of ten flips are heads ) }$
+$= \frac{ ( 10 + 1 ) } {2^{10}} = 0.0107$
+
+So the P value for our observation is 1.07%. An alpha-level test at 0.05 would reject the hypothesis that this is a fair coin. Approximately one experiment out of 100 would be expected to return this result even with a fair coin, and many people would be convinced that this is a reasonably rare event.
+
+What would happen if we repeated the experiment many times?
+
+Running this test 100 times in a row **with a fair coin**, the calculations we just performed would lead us to expect to flip nine or ten heads one time. However, and this is a very important point, it takes a much smaller number of repetitions than to greatly exceed the alpha level cut-off.
+
+Given a fair coin, if
+
+$P(\textit{9 heads or 10 heads}) = 0.0107$, 
+
+then 
+
+$P( \textit{neither 9 heads nor 10 heads} )$
+
+$= 1 - P( \textit{ 9 or 10 heads})) = 0.989$ 
+
+Using the multiplication rule for independent events, the probability not seeing 9 or 10 heads, and therefore coming to the conclusion that the coins are all fair, in two separate trials is:
+
+$= (1-0.0107)^2$
+$= 97.8 \%$
+
+As the number of trials increases, the chances that at least one trial will turn up 9 or 10 heads becomes much higher. At 65 trials:
+
+$= (1-0.0107)^{65}$
+$= 49.7 \%$
+
+This means that in 65 trials of a fair coin, we would expect to see at least nine heads more often than not. In 100 trials we would expect to see at least nine heads 66% of the time.
+
+The family-wise Error Rate
+========================================
+
+One approach is to constrain the overall likelihood of ever incorrectly rejecting the null hypothesis. This is done by lowering the alpha level in proportion to the number of tests that are performed. All of the tests that are performed are collectively called the family of tests, so these methods control the “Family-wise error rate”. The most widely known method is the Bonferroni correction, which simply divides the alpha level cut-off by the number of tests performed. This means a Bonferroni correction of an 0.05 alpha-level cut-off for 100 tests would be:
+
+$= \frac{0.05}{100}$
+$= 0.0005$
+
+The Bonferroni correction is considered very conservative; you are unlikely to be criticized for insufficient stringency if you use it. However, it makes the statistical assumption that all tests are independent, like a set of coin flips. This assumption may not be appropriate, and you run the risk of low statistical power. Another approach with increased power, at the cost of making more erroneous calls of significance, is to control the false discovery rate.
+
+The False Discovery Rate
+==========================================
+
+A False Discovery means performing a hypothesis test and concluding that the evidence favors rejecting the null hypothesis when the true state of reality is the null should not have been rejected. The False Discovery Rate (abbreviated FDR) is the proportion of False Discoveries divided by the total number of tests. The idea behind the False Discovery Rate correction is that we may choose to accept the cost of a modest number of incorrect hypothesis test decisions in order to gain power that will let us make a much larger number of correct decisions. Applying a 5% FDR, if we performed 500 tests and identified 100 tests below the alpha-level cut-off, we would expect five of them to be false discoveries and 95 of them to be true discoveries. Using the same data and applying a method that controls the Family-wise Error Rate, we might identify 10 tests below the alpha-level cut-off, and expect a 5% chance that a single one of those 10 tests was a false discovery. 
+
+The practical reason for chosing between these two approaches is driven by the relative costs of making type one and type two errors. In some applications, such as clinical trials, we generally wish to err on the side of being conservative because the stakes are high and the cost of replication is enormous. In other applications, such as a preliminary genetic screen testing an uncertain hypothesis in the laboratory, where we expect to identify a relatively large number of true positives, the cost of making a few erroneous calls is low compared to the cost of missing an important new piece of biology, and all results will be subjected to extensive follow-up in any case.
+
+
+A common method of controlling the False Discovery Rate is to use a method published by Benjamini and Hochberg:
+
+To control at FDR q for m tests
+
+1)	rank the P values from lowest to highest
+2)	find the highest index k such that 
+	$P_k \leq \frac{k} { m \times q}$
+
