@@ -1,3 +1,5 @@
+# Example call:
+#sh /notebook/code/src/parsers/TCGA_download_RNAseq.sh 2015 04 02 HNSC /datasets/human_hnscc_TCGA/rnaseq
 BYY=$1
 BMM=$2
 BDD=$3
@@ -17,13 +19,13 @@ tar -xf gdac.broadinstitute.org_${BTISSUE}.Merge_Clinical.Level_1.${BYY}${BMM}${
 rm gdac.broadinstitute.org_${BTISSUE}.Merge_Clinical.Level_1.${BYY}${BMM}${BDD}00.0.0.tar
 mv gdac.broadinstitute.org_${BTISSUE}.Merge_Clinical.Level_1.${BYY}${BMM}${BDD}00.0.0/${BTISSUE}.clin.merged.txt sample_attributes_merged_${BTISSUE}.txt
 rm -r gdac.broadinstitute.org_${BTISSUE}.Merge_Clinical.Level_1.${BYY}${BMM}${BDD}00.0.0
-
-wget http://gdac.broadinstitute.org/runs/stddata__${BYY}_${BMM}_${BDD}/data/${BTISSUE}/${BYY}${BMM}${BDD}/gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.1.0.tar.gz
-gunzip gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.1.0.tar.gz
-tar -xf gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.1.0.tar
-rm gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.1.0.tar
-mv gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.1.0/${BTISSUE}.clin.merged.picked.txt sample_attributes_${BTISSUE}.txt
-rm -r gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.1.0  
+wget http://gdac.broadinstitute.org/runs/stddata__${BYY}_${BMM}_${BDD}/data/${BTISSUE}/${BYY}${BMM}${BDD}/gdac.broadinstitute.org_HNSC.Clinical_Pick_Tier1.Level_4.2015040200.0.0.tar.gz
+#wget http://gdac.broadinstitute.org/runs/stddata__${BYY}_${BMM}_${BDD}/data/${BTISSUE}/${BYY}${BMM}${BDD}/gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.0.0.tar.gz
+gunzip gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.0.0.tar.gz
+tar -xf gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.0.0.tar
+rm gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.0.0.tar
+mv gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.0.0/${BTISSUE}.clin.merged.picked.txt sample_attributes_${BTISSUE}.txt
+rm -r gdac.broadinstitute.org_${BTISSUE}.Clinical_Pick_Tier1.Level_4.${BYY}${BMM}${BDD}00.0.0  
 
 python /notebook/code/src/parsers/parse_TCGA_rnaseq_normalized.py \
 --file_in $DATA_DIR/rnaseq_${BTISSUE}_rsem_genes_normalized.txt \
