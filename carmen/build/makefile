@@ -1,6 +1,12 @@
 BOOST_DIR=/usr/local/boost_1_56_0
 CC=g++
+OS := $(shell uname)
+ifeq $(OS) Darwin
 CFLAGS=-I$(BOOST_DIR) -Isrc -O3 -Wall -c -pthread -stdlib=libc++
+else
+CFLAGS=-I$(BOOST_DIR) -Isrc -O3 -Wall -c -pthread
+endif
+
 ODIR=obj
 RM := rm -rf
 
