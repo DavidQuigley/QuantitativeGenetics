@@ -1,4 +1,7 @@
 ODIR=obj
+BINDIR=bin
+$(shell mkdir -p $(ODIR)) 
+$(shell mkdir -p $(BINDIR)) 
 SRC_DIR=src
 BOOST_DIR=/home/david/software/boost_1_57_0
 CC=g++
