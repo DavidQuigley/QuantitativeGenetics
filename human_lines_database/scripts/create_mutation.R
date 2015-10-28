@@ -74,7 +74,7 @@ sanger = sanger[sanger$mut_desc != "Unknown",]
 sanger = sanger[sanger$mut_desc != "Insertion - In frame",]
 sanger = sanger[sanger$mut_desc != "No detectable mRNA/protein",]
 sanger = sanger[!(sanger$mut_desc=="Substitution - Missense" & sanger$mut_somatic_status=="PASSENGER/OTHER"),]
-sanger = sanger[!(sanger$mut_desc=="Substitution - Missense" & sanger$mut_somatic_status==""),]
+#sanger = sanger[!(sanger$mut_desc=="Substitution - Missense" & sanger$mut_somatic_status==""),]
 
 # remove genes that are not present in primary gene list
 # attempt to rescue genes with incorrect names by cross-referencing their ensembl id
