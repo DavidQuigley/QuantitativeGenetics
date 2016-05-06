@@ -25,18 +25,56 @@ shinyUI(fluidPage(
     sidebarLayout(
         sidebarPanel(
         fileInput("file", label = "File",width="200px" ),
-        textInput("xlab", label = "X axis label", value = "Log drug concentration", width="150px"),
-        textInput("ylab", label = "Y axis label", value = "viability", width="150px"),
-        selectInput("xmax", label = "Maximum X value", 
+        h4("Labels"),
+        textInput("xlab", label = "X axis", value = "Log drug concentration", width="200px"),
+        textInput("ylab", label = "Y axis", value = "viability", width="200px"),
+        hr(),
+        h4("X axis"),
+        fluidRow(
+            column( width=4, selectInput("min_x", label = "From", 
                     choices = list("1e1" = 1, "1e2" = 2,"1e3" = 3, "1e4" = 4, 
                                    "1e5" = 5, "1e6" = 6, "1e7" = 7), 
-                    selected = 5, width="150px"),
-        selectInput("ymax", label = "Maximum Y value", 
-                    choices = list("1" = 1, "1.1" = 1.1,"1.2" = 1.2), 
-                    selected = 1, width="150px"),
-        checkboxInput("sf50", label = "Show SF50", value = TRUE),
-        textInput("legend_x", label = "Legend X location", value = "10", width="150px"),
-        textInput("legend_y", label = "Legend Y location", value = "0.2", width="150px"),
+                    selected = 1, width="75px") ),
+            column( width=4, selectInput("max_x", label = "To", 
+                    choices = list("1e1" = 1, "1e2" = 2,"1e3" = 3, "1e4" = 4, 
+                                   "1e5" = 5, "1e6" = 6, "1e7" = 7), 
+                    selected = 5, width="75px") )
+        ),
+        
+        fluidRow(
+            column( width=4, selectInput("show_x_logtic", label = "Inner ticks", 
+                        choices = list("Yes"=TRUE, "No"=FALSE), 
+                        selected = TRUE, width="150px") ),
+            column( width=4, selectInput("show_x_exponent", label = "Values as", 
+                        choices = list("10^N" = TRUE, "N" = FALSE ),
+                        selected = TRUE, width="150px") )   
+        ),
+        fluidRow( 
+            column( width=8, 
+                    selectInput("axis_pointsize", label = "Axis Point size", 
+                                choices = list("1" = 1, "1.5" = 1.5,"2" = 2), 
+                                selected = 1, width="100px") )
+        ),
+        hr(),
+        h4("Y axis"),
+        fluidRow( 
+            column( width=4, strong("From:"), br(), strong("0") ),
+            column( width=4, selectInput("max_y", label = "To", 
+                    choices = list("1" = 1, "1.05"=1.05, "1.1" = 1.1, "1.2" = 1.2, "1.3"=1.3, "1.4"=1.4, "1.5"=1.5), 
+                    selected = 1, width="150px"))
+        ),
+        selectInput("barmultiple", label = "Error Bar SEM", 
+                    choices = list("1" = 1, "2" = 2,"3" = 3), 
+                    selected = 1, width="75px"),
+        checkboxInput("sf50", label = "Show EC50", value = TRUE),
+        hr(),
+        h4("Legend location"),
+        fluidRow(
+            column( width=4,
+                textInput("legend_x", label = "X", value = "1", width="150px")),
+            column( width=4,
+                textInput("legend_y", label = "Y", value = "0.2", width="150px") )
+        ),
         downloadButton("download_PDF")
         ),
         # Show a plot of the generated distribution
