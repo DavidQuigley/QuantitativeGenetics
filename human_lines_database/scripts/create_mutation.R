@@ -23,7 +23,7 @@ fn_ensembl = '/datasets/human_lines_database/annotations/ensembl_transcripts_hg1
 fn_genentech = '/datasets/human_lines_genentech/140331_cellLineMutations_compressed_by_gene.txt'
 
 cmd_cut_cosmic = paste( "cut -f 1,5,13,14,15,16,17,18,20,22", fn_cosmic_raw, ">", fn_cosmic)
-cmd_cut_sanger = paste("cut -f 1,2,5,6,13,15,16,17,20,21", fn_sanger_raw, ">", fn_sanger)
+cmd_cut_sanger = paste("cut -f 1,2,5,6,13,15,16,17,18,20,21", fn_sanger_raw, ">", fn_sanger)
 
 #cut -f 1,50 /datasets/human_lines_genentech/140331_cellLineMutations.txt | uniq | sort -f -k 2 > /datasets/human_lines_genentech/sam_id
 
