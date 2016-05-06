@@ -3107,9 +3107,9 @@ color.dendrogram.labels = function(n){
 plot.cluster.colors=function( M, colors, force.flat=F, show.labels=T ){
     # Still a hack, but less awful
     d = (dist(as.matrix(t(M))))
-    if( is.null(names(M)) )
+    if( is.null(dimnames(M)[[2]]) )
         stop("columns must have unique names")
-    lookup = data.frame( leaf.name = names(M), color=colors, stringsAsFactors=F )
+    lookup = data.frame( leaf.name = dimnames(M)[[2]], color=colors, stringsAsFactors=F )
     if(force.flat)
         hangval = -1
     else
@@ -3748,7 +3748,7 @@ write.eqtl.to.cytoscape = function( fn.base, EQTL, SPEAR, snps, probes, all.S, S
 }
 
 write.spear.to.cytoscape = function( fn.base, DF, DF.node.attr=NULL ){
-    CYTOSCAPE = '/Applications/Cytoscape_v2.8.1/cytoscape.sh'
+    CYTOSCAPE = '/Applications/Cytoscape_v2.8.3/cytoscape.sh'
     VIZ = '/notebook/code/release/Correlation.props'
     fn.sif = paste( fn.base, '.sif', sep='')
     edge.attr = c()
