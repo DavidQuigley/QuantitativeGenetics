@@ -32,9 +32,9 @@ shinyUI(fluidPage(
         h4("X axis"),
         fluidRow(
             column( width=4, selectInput("min_x", label = "From", 
-                    choices = list("1e1" = 1, "1e2" = 2,"1e3" = 3, "1e4" = 4, 
-                                   "1e5" = 5, "1e6" = 6, "1e7" = 7), 
-                    selected = 1, width="75px") ),
+                    choices = list("0"=0, "1e1" = 1, "1e2" = 2,"1e3" = 3, 
+                                   "1e4" = 4, "1e5" = 5, "1e6" = 6, "1e7" = 7), 
+                    selected = 0, width="75px") ),
             column( width=4, selectInput("max_x", label = "To", 
                     choices = list("1e1" = 1, "1e2" = 2,"1e3" = 3, "1e4" = 4, 
                                    "1e5" = 5, "1e6" = 6, "1e7" = 7), 

@@ -62,12 +62,18 @@ shinyServer(function(input, output, session) {
                              treatments = "drug", 
                              hour=0, 
                              fct=drc::LL.3() )
+            par(mar=c(5,5,3,1))
+            if( as.numeric(input$axis_pointsize) > 1.5 ){
+                par(mar=c(8,8,3,1))
+                par(mgp=c(5,1,0))
+            }
             plot( fitted,
                   cex.axis=as.numeric(input$axis_pointsize),
                 xlab=input$xlab,
                 ylab=input$ylab,
                 show_x_log_tics=as.logical(input$show_x_logtic),
                 show_x_exponent=as.logical(input$show_x_exponent),
+                show_EC50 = as.logical(input$sf50),
                 bar_multiple=bar_multiple, 
                 log10_xmin=as.numeric(input$min_x),
                 log10_xmax=as.numeric(input$max_x),
@@ -154,6 +160,11 @@ shinyServer(function(input, output, session) {
                              treatments = "drug", 
                              hour=0, 
                              fct=drc::LL.3() )
+            par(mar=c(5,5,3,1))
+            if( as.numeric(input$axis_pointsize) > 1.5 ){
+                par(mar=c(8,8,3,1))
+                par(mgp=c(5,1,0))
+            }
             plot( fitted,
                   xlab=input$xlab,
                   ylab=input$ylab,
@@ -161,6 +172,7 @@ shinyServer(function(input, output, session) {
                   show_x_exponent=as.logical(input$show_x_exponent),
                   cex.axis=as.numeric(input$axis_pointsize),
                   bar_multiple=bar_multiple, 
+                  show_EC50 = as.logical(input$sf50),
                   log10_xmin=as.numeric(input$min_x),
                   log10_xmax=as.numeric(input$max_x),
                   ylim=c(0, as.numeric(input$max_y) ),
