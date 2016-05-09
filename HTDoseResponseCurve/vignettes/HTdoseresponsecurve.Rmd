@@ -1,0 +1,534 @@
+---
+title: "HTDoseResponseCurve Vignette"
+author: "David Quigley"
+date: "April 14, 2016"
+output: pdf_document
+---
+
+Analysis of Dose Response Curves at multiple timepoints with HTDoseResponseCurve
+================================================================================
+
+**David Quigley**  
+University of California, San Francisco
+
+********************************************************************************
+
+This vignette describes version 0.1 of the *HTDoseResponseCurve* package.
+
+Introduction
+================================================================================
+
+Summary
+--------------------------------------------------------------------------------
+
+The HTDoseResponseCurve library makes it straightforward to analyze and plot drug exposure experiments performed by high-throughput analysis of cells in 24, 96, or 384 well plates. This library is particularly suited to experiments where one or more cell plates have been measured repeatedly over time. Although HTDoseResponseCurve can read data from any source, it can natively consume the raw files exported by the [Incucyte Cell Analysis System](http://www.essenbioscience.com/essen-products/incucyte/).
+
+*HTDoseResponseCurve* fits curves using the [drc library](https://cran.r-project.org/web/packages/drc), available on CRAN.
+
+This library grew out of our laboratory's need to fit dose response curves to drug screens in cell lines. These screens are typically performed on one or more 96- or 384-well plates, and may involve repeated capture of data about the cellular phenotype over time. 
+
+Key Features
+--------------------------------------------------------------------------------
+
+* Fits and plots dose-response curves from high-throughput experiments
+* Reads data exported from the Incucyte platform (Essen Bioscience) in the Excel/XML format produced by that instrument. 
+* Calculates standard descriptive values
+    * SF50
+    * Area Under the Curve (AUC)
+    * P value for ANOVA testing difference in curve fits
+* Calculates differential AUC 
+    * for multiple treatment concentrations at a single timepoint
+    * for a single treatment concentration over multiple timepoints
+* Identifies time point at which AUC/SF50 is maximized
+
+HTDoseResponseCurve does not perform image analysis.
+
+A plate map describes the experiment 
+--------------------------------------------------------------------------------
+
+This library can be used to analyze plates of 24, 96 or 384 wells. The plate may be quantified at more than one time point.
+
+The contents of each well and the and treatments applied to those wells are described in a plate map. The minimal elements required to describe the cells in a well are **sample type**, **treatment**, and **concentration**. The sample type indicates what kind of cell is in the well (e.g., *MCF7*, *PC3*, *WT*). The treatment indicates the perturbation on those cells, often a drug (e.g. *Olaparib*, *DMSO*, *si-TP53*, *Vehicle*). The concentration indicates the concentration of the treatment applied to the well. 
+
+Although you may build a plate map manually by combining individual matrixes into a list 
+object, *HTDoseResponseCurve* contains functions to load an externally defined plate map either from an XML file or a Microsoft Excel file.
+
+Data may be from multiple timepoints
+--------------------------------------------------------------------------------
+
+A primary use for HTDoseResponseCurve is analysis of experiments wherein data from the same plate has been captured over multiple time points. For this reason, every observation has an associated time value associated with it; this value is conventionally called "hour" but could be days, minutes, or any other unit of time starting at 0.
+
+Although you may load raw data manually by appending individual plate observations together, *HTDoseResponseCurve* contains functions to load data from 
+external Microsoft Excel files or to make it easy to manage raw data if you already have them in one or more matrixes.
+
+
+********************************************************************************
+
+
+
+Quick Start: Loading plate from within R
+================================================================================
+
+This example will demonstrate an analysis of a single 96 well plate, with 
+cell viabilitity measured at 48 hours after drug treatment.
+
+Create example data
+------------------------
+
+First, use *create_empty_plate_map()* to create an empty plate map object:
+
+```{r loadlibrary}
+library(HTDoseResponseCurve)
+plate_map = create_empty_plate_map( number_of_wells = 96 )
+```
+
+The plate_map object returned by *create_empty_plate_map()* is a list of five 96-element matrixes named *treatment*, *concentration*, *sample_type*, *density*, and *passage*. The  *density* and *passage* matrixes are optional, while the others must be populated 
+with relevant information.
+
+Next, populate the plate map with information about the treatment, drug concentration, and cell lines in each well where there was a measurement. These commands simulate two cell lines tested with a single drug at four concentrations (200, 500, 1000, and 2000 nM), including a negative vehicle control of DMSO. Data will be placed into wells C through G, columns 2 through 7.
+
+```{r loadplatemap}
+plate_map$treatment[3,2:7] =   "DMSO"
+plate_map$treatment[4:7,2:7] = "drug"
+plate_map$concentration[3,2:7] = 0
+plate_map$concentration[4,2:7] = 200
+plate_map$concentration[5,2:7] = 500
+plate_map$concentration[6,2:7] = 1000
+plate_map$concentration[7,2:7] = 2000
+plate_map$sample_type[3:7, 2:4] = "line1"
+plate_map$sample_type[3:7, 5:7] = "line2"
+```
+
+We can extract sample types or treatments from the plate map using *get_sample_types()* and *get_treatments()*
+```{r gets}
+get_sample_types(plate_map)
+get_treatments(plate_map)
+```
+
+Now, use the *create_empty_plate()* function to create an empty data plate object 
+and manually populate that object with simulated measurements collected in triplicate:
+
+```{r create_empty_plate}
+plate = create_empty_plate( number_of_wells=96, 
+                            hour=48, 
+                            plate_id="test" )
+
+plate[3,2:7] = c(100,99,100, 90, 91, 92)
+plate[4,2:7] = c(99, 97, 99, 89, 87, 88)
+plate[5,2:7] = c(86, 89, 88, 56, 59, 58)
+plate[6,2:7] = c(66, 65, 67, 25, 23, 24)
+plate[7,2:7] = c(42, 43, 46,  4,  5,  9)
+```
+
+We can confirm the plate looks the way we expect it to by plotting the raw data on a plate with the *plot_values_by_plate()* function. The darker red the well, the higher the value in that well.
+
+
+```{r pvbp, fig.height=4, fig.width=6}
+plot_values_by_plate(plate = plate, hour = 48 )
+```
+
+Combine the plate map and the raw data
+-----------------------------------------
+
+So far we have separately specified measurement values (in the *plate* variable) and metadata values (in the *plate_map* variable). Further analysis will require us to combine these two variables into a single dataset.
+
+When combining the plate map and raw data, you must specify which wells (if any) correspond to negative controls, also known as vehicle-treated wells. There are four possibilities:
+
+1. No negative control wells exist. 
+2. A set of one or more duplicate wells are the shared negative control for all other treatments with that sample type on the plate. *Use case example*: All drugs on the plate share a common DMSO control plated in triplicate.
+3. For each treatment there is one or more well with a (presumably zero) concentration of that treatment that should be considered a negative control. This case is appropriate if each treatment has its own vehicle-only wells, labeled with the name of that treatment. *Use case example*: The plate carries Olaparib and Rucaparib treatments, and each has a DMSO control plated in triplicate, labeled as "Olaparib concentration 0" or "Rucaparib concentration 0" respectively.
+4. There are two or more *distinct* sets of shared negative control wells, with some treatments mapped to each. *Use case example*: the plate carries three drugs with a shared DMSO control, and one with an ethanol control.
+
+If you specify the existence of negative controls, *HTDoseResponseCurve* will expect to find them for all of the sample types and treatments on the plate.
+
+In this example, there are `r sum(plate_map$treatment=="DMSO")` negative control wells with the treatment label "DMSO", corresponding to case 2.
+
+```{r combine}
+ds = combine_data_and_map( plate, plate_map, negative_control = "DMSO" )
+```
+
+The data frame returned by *combine_data_and_map()* is a dataset combining the well metadata and the measured values. 
+
+Normalize plates
+-----------------------------------------
+
+Many times it is desirable to reduce plate-specific or cell-line-specific effects 
+by *normalization* of data against a control well that contains no perturbation 
+other than the treatment vehicle. 
+
+Normalization transforms each value into a percentage of the negative control. Values greater than 1 are possible.
+
+```{r norm}
+ds = normalize_plates_by_vehicle( ds, summary_method="mean" )
+```
+
+Original measurements are stored as *value*, while normalized measurements are stored as *normalized_value*.
+
+```{r head}
+head(ds)
+```
+
+
+Quick Start: Loading data without plate information
+================================================================================
+
+Datasets can be loaded directly without a plate map if you have the relevant information. We'll use the same experimental data from the previous section, viabilitity of two cell lines tested with a single drug at four concentrations 
+(200, 500, 1000, and 2000 nM), including a negative vehicle control labeled "DMSO". We'll set the hours to be 48 and use a plate_id of "plate_1"; although we're not loading from a plate in this example, it would be convenient to have a tag that lets us identify this set of data if the data are later combined with other measurements.
+
+
+```{r no_plate}
+# 30 measurements in all
+sample_types = rep( c(rep("line1",3), rep("line2",3)), 5)
+treatments = c(rep("DMSO",6), rep("drug",24))
+concentrations = c( rep(0,6),rep(200,6), rep(500,6),rep(1000,6),rep(5000,6))
+values=c(100,99,100,90,91,92,99,97,99,89,87,88,86,89,88,56,59,58,66,65,67,
+         25,23,24,42,43,46,4,5,9)
+hours = rep(48, length(values))
+plate_id = "plate_1"
+
+# Create the dataset data frame
+ds_2 = create_dataset( sample_types, 
+                       treatments, 
+                       concentrations, 
+                       hours,
+                       values, 
+                       plate_id,
+                       negative_control = "DMSO")
+
+# normalize the dataset data frame
+ds_2 = normalize_plates_by_vehicle(ds_2, summary_method = "mean")
+```
+
+
+Fitting and plotting dose response curves
+================================================================================
+
+Once the data have been loaded, it is straightforward to fit one or more dose response curves using the *fit_DRC()* function. Curves are fit using non-linear curve fitting performed the *drm()* function in the *drc* package, and plotted using a wrapper around  by the *drc.plot()* function also 
+from *drc*.
+
+```{r ex_fit1, fig.height=4, fig.width=6, message=FALSE}
+library(drc, quietly = TRUE)
+fit_1 = fit_DRC(ds, 
+                sample_types = c("line1", "line2"), 
+                treatments = "drug",
+                hour = 48, 
+                fct=drc::LL.4() )
+```
+
+The fit_DRC function returns a HT_fit object. As with a linear model, this object can be summarized using the R core function *summary()*:
+
+```{r summary}
+summary( fit_1 )
+```
+
+The **F-statistic** and **P** values reported in the summary of *fit_1* are derived from an ANOVA test comparing a model lacking a parameter for sample type to a model with sample type as a covariate. The summary also reports an estimated **Area Under the Curve (AUC)**, an estimated **EC50** (Effective Concentration, an estimate of the concentration of treatment that reduces the measured value to halfway between the highest and lowest amounts), and the **fitted values at the lowest and highest concentrations** of drug. 
+
+If the data are not at all sigmoidal, the fit might not converge. This will be reported in the summary.
+
+The *fit_DRC()* function will sometimes report warnings or errors generated by the *drc::drm()* function; these can be ignored or suppressed.
+
+Plotting a dose response curve
+--------------------------------------------------------------------------------
+
+HT_fit objects can be plotted with the *plot()* function, which is a wrapper around the core R *plot()* function:
+
+```{r plot_fit1, fig.height=4, fig.width=4}
+plot( fit_1 )
+```
+
+The dotted vertical black line indicates the EC50 concentration, which may be different from the 50% Surviving Fraction concentration (SF50) if the lower asymptote is not zero.
+
+The *plot()* function understands the parameters for R's built-in *plot()* function, so it is straightforward to alter its appearance:
+
+```{r plot_fit13, fig.height=4, fig.width=4}
+plot(fit_1,
+     show_legend = FALSE, 
+     log10_xmax = 4,
+     main="Drug at 48 hours", 
+     xlab="concentration nM",
+     ylab="surviving fraction", 
+     lwd=3, 
+     col=c("black", "cornflowerblue") )
+
+legend( 1, 0.4, c("Line 1", "Line 2"), col=c("black", "cornflowerblue"), pch=19)
+```
+
+Choosing the model used for curve fitting
+--------------------------------------------------------------------------
+
+The *drm()* function in the *drc* package can fit the dose response data to a number of different functions. One way these functions vary is in which parameters are estimated from data, *vs.* setting to a constant value. Christian Ritz, Florent Baty, Jens C. Streibig, and Daniel Gerhard have published a very useful guide that provides a gentle introduction to this topic: **Dose-Response Analysis Using R** [Ritz PLoS ONE 2015](http://www.ncbi.nlm.nih.gov/pmc/articles/PMC4696819). Reading this well-written tutorial is strongly recommended for anyone who will use either the *drc* or the *HTDoseResponseCurve* package.
+
+The choice of model is specified by calling a function in the *drc* package.
+
+By default, *HTDoseResponseCurve* will ask *drm()* to estimate the **dose response slope**, **upper asymptote**, **lower asymptote**, and **EC50** by passing it the *LL.4()* model. To fix the lower asymptote to zero, pass the LL.3() function into fit_DRC:
+
+```{r different_estimators, fig.height=4, fig.width=8}
+fit_1_lower0 = fit_DRC(ds, 
+                       sample_types = c("line1", "line2"), 
+                       treatments = "drug",
+                       hour = 48, 
+                       fct=LL.3())
+layout(matrix(1:2,1,2))
+plot( fit_1, main="Drug DRC with LL.4()", lwd=3 )
+plot( fit_1_lower0, main="Drug DRC with LL.3()", lwd=3 )
+```
+
+Note that the black curves now asymptotically approaches zero. The dotted line indicates the EC50 concentration. Note that in the left plot, the EC50 concentration for line 1 is lower (farther to the left) than the EC50 line on the right plot. This is because the EC50 is measured relative to the upper and lower asymptotes for the curve, and the curves have different lower asymptotes.
+
+You can fit and plot a single sample type if you wish:
+
+```{r plot_fit12, fig.height=4, fig.width=4}
+plot( fit_DRC(ds, 
+              sample_types = "line1", 
+              treatments = "drug", 
+              hour = 48, 
+              fct=drc::LL.3() ) )
+```
+
+You can also plot more than one treatment, if there is more than one treatment in your dataset, by passing them to the treatments parameter as a vector.
+
+********************************************************************************
+
+
+Quick Start: Loading data generated by the Incucyte system
+================================================================================
+
+Load raw data and plate map from Incucyte
+--------------------------------------------------------------------------------
+
+If you are using the Incucyte system to generate data, you can export plate readings to Microsoft Excel and then read them in using the function *read_plates_from_Incucyte_export()*.
+
+If you have exported a plate map from the Incucyte software, it can be read into *HTDoseResponseCurve* using the *read_platemap_from_Incucyte_XML()* function. You can also load a plate map from an Excel file using the *read_platemap_from_excel()* function, or you can construct a plate map manually in R as was done in the first example.
+
+As described above, the steps are
+
+1. Read in plate map
+2. Read in raw data
+3. Combine plate map and raw data using a normalization strategy. 
+
+```{r quick_inc}
+pkg = "HTDoseResponseCurve"
+
+fn_map_XML = system.file("extdata", "sample_data_384_platemap.txt",package=pkg)
+fn_data_Excel = system.file("extdata", "sample_data_384.xlsx", package = pkg)
+
+plate_map = read_platemap_from_Incucyte_XML( fn_map_XML )
+plate_data = read_plates_from_Incucyte_export( fn_data_Excel, "p1", 
+                                               number_of_wells=384)
+plate_data$hours = round(plate_data$hours)
+ds = combine_data_and_map( plate_data, plate_map, negative_control = "DMSO" )
+ds = normalize_plates_by_vehicle( ds, summary_method="mean")
+ds$concentration=ds$concentration*1000
+ds$hours=round(ds$hours)
+```
+
+This experiment tested the effect of `r length(get_treatments(ds[!ds$is_negative_control,]))` different drugs on two cell lines, imaged every 12 hours over five days.
+
+In this example, there are `r sum(plate_map$treatment=="DMSO")` negative control (vehicle) wells on each plate with the treatment label "DMSO".
+
+The expected concentration unit for these plots will be nanomoles of drug; since the experimental data for this example were recorded in micromoles, we will multiply the concentration by 1000 to get nanomoles.
+
+To illustrate how the plate readings changed over time, the *plot_values_by_plate()* function is useful:
+
+```{r pvinc, fig.height=6, fig.width=8}
+layout(matrix(1:4,2,2,byrow=TRUE))
+par(mar=c(3,3,2,1))
+plot_values_by_plate(plate = plate_data, hour = 48, main="48 hours")
+plot_values_by_plate(plate = plate_data, hour = 96, main="96 hours")
+plot_values_by_plate(plate = plate_data, hour = 192, main="192 hours")
+plot_values_by_plate(plate = plate_data, hour = 228, main="228 hours")
+```
+
+
+Summarize growth across many time points
+--------------------------------------------------------------------------------
+
+To show the growth of untreated cells over time, we can look at the raw confluence score at these timepoints. 
+```{r plot_raw, fig.height=4, fig.width=7, warning=FALSE}
+par(mar=c(5,7,3,2))
+x=plot_timecourse_raw( 
+    ds, 
+    sample_types=c("line_1","line_2"),
+    treatments="DMSO", 
+    concentrations=c(0), 
+    main=paste("DMSO (vehicle)"), 
+    ylab="Confluence",
+    ylim=c(0,100) )
+
+legend(0, 100, c("L1 DMSO", "L2 DMSO"), pch=c(19,22) )
+```
+
+Line 1 is drawn with closed points, while line 2 is drawn with open squares. Line 1 (L1) grows faster than L2, and that at 180 hours, the DMSO-treated wells have become confluent. 
+
+To examine unnormalized single drug response across two cell lines, we can look at the raw confluence score at these timepoints.
+
+```{r plot_over, fig.height=4, fig.width=7, warning=FALSE}
+x=plot_timecourse_raw( 
+    ds, 
+    sample_types=c("line_1","line_2"),
+    treatments="drug13", 
+    concentrations=c(200,1000,5000), 
+    main=paste("Drug 13"), 
+    ylab="Confluence",
+    ylim=c(0,100) )
+legend(0, 100, c("L1 200", "L1 1000", "L1 5000", "L2 200", "L2 1000", "L2 5000"),
+       pch=c(19,19,19,22,22,22), 
+       col=c("black", "red", "cornflowerblue","black", "red", "cornflowerblue") )
+```
+
+For the raw (un-normalized) drug treatment data, the low confluence of open blue squares (L2 5000, meaning 5000 nM of drug on line 2) compared to blue dots (5000 nM line 1) reflects the selective efficacy of this drug on line 2 cells at the 5uM dose. 
+
+
+For the rest of the analysis we will cut off after 180 hours:
+
+```{r}
+ds = ds[ds$hours<=180,]
+```
+
+Dose response curves at many timepoints at once
+--------------------------------------------------------------------------------
+
+If we are curious about particular timepoints, we can fit and plot dose response curves individually. Here we plot dose response curves for drug 13 at four different time points:
+
+```{r fig.height=6, fig.width=6, warning=FALSE}
+layout(matrix(1:4,2,2,byrow=TRUE))
+par(mar=c(4,4,3,1))
+hours_to_plot=c(48,96,120, 168)
+for(h in 1:4){
+    plot( fit_DRC( ds, 
+                   sample_types=c("line_1","line_2"), 
+                   treatments = "drug13", 
+                   hour=hours_to_plot[h], fct=drc::LL.3() ), 
+          log10_xmax = 5, 
+          lwd=3, 
+          main=paste("Drug 13:", hours_to_plot[h], "hours"), 
+          ylab="surviving fraction", 
+          xlab="nM")
+}
+```
+
+It would be convenient to calculate fits for all of the treatments at all timepoints. The *fit_statistics()* and *plot_fit_statistic()* functions are useful for this purpose. The *fit_statistics()* function attempts to fit dose response curves at all time points for all treatments and then calculates 
+summary values of the AUC and EC50. These values are returned as a data frame with one row for each unique condition. The *plot_fit_statistic()* function plots either EC50 or AUC across all of the timepoints in the fit statistics. 
+
+First, we'll use *fit_statistics()* calculate fits for four drugs. We could calculate fits for all drugs just as easily but it would take more processing time.
+
+```{r compare, warning=FALSE}
+# select four drugs to test, to save time in curve fitting
+ds_test = ds[ds$treatment %in% c("drug01", "drug13", "drug20", "drug21"),]
+
+# calculate fit statistics at all time points
+fits = fit_statistics(ds_test, fct = drc::LL.4() )
+```
+
+Now plot Area Under the Curve for dose response to drug 13 across all time points. Observations where the ANOVA_P_value exceeds an alpha-level cut-off set by the user are drawn as open circles and not connected by lines. Here the alpha-level cut-off is 0.0025, chosen to correct an alpha = 0.05 for 20 tests by simple Bonferroni adjustment. The choice of whether to set a P value threshold, and the selection of that value, is entirely up to you.
+
+```{r plot_fit_statistic_AUC, fig.height=5, fig.width=8}
+ps = plot_fit_statistic( fits[fits$treatment=="drug13",], 
+                    statistic = "AUC", 
+                    alpha = 0.0025,
+                    ylim=c(0,8000),
+                    main="Area Under the Dose Response Curve, drug 13")
+legend(0, 8000, unique(ps$sample_type), col=unique(ps$color), pch=19 )
+```
+
+This plot shows the AUC for line 1 exceeds that of line 2 at later time points, and that the difference between the dose response curves is significant at the P < 0.008 level at and after 120 hours. In these plots, the open *vs.* closed circles reflects the $P_{ANOVA}$ value for the test for a difference in dose response curves between the two lines. Here a filled-in circle means $P_{ANOVA}$ <= 0.0025.
+
+It is somewhat surprising that drug 13 also apparently shows a $P_{ANOVA}$ <= 0.0025 at 12 hours, so we can take a look at the dose response curve for that time point for more information:
+
+```{r twelve_hours, fig.height=4, fig.width=4}
+plot( fit_DRC( ds, 
+               sample_types=c("line_1","line_2"), 
+               treatments = "drug13", 
+               hour=12, fct=drc::LL.3() ), 
+     log10_xmax = 5, 
+     lwd=3, 
+     main=paste("Drug 13: 12 hours"), 
+     ylab="surviving fraction", 
+     xlab="nM",
+     ylim=c(0, 1.5))
+```
+
+The fit converged here, but it's clear that there is not a sensible dose response effect. Neither drug acheived a SF50. We can screen out these values by passing the *obs_min* parameter value:
+
+```{r plot_fit_with_min_obs, fig.height=5, fig.width=8}
+ps = plot_fit_statistic( 
+            fits[fits$treatment=="drug13",], 
+            statistic = "AUC", 
+            alpha = 0.0025,
+            obs_min = 0.5,
+            ylim=c(0,8000),
+            main="Area Under the Dose Response Curve, drug 13",
+            sub="Requiring SF50 for at least one sample type")
+legend(0, 8000, unique(ps$sample_type), col=unique(ps$color), pch=19 )
+```
+
+Observations that did not meet the *obs_min* threshold are plotted as diamonds. Note that because the drug does not affect line 1, it never achieved a SF50 and was therefore never plotted with filled-in circles.
+
+Now we'll plot the EC50 for the same drug.
+
+```{r plot_fit_statistic_EC50, fig.height=5, fig.width=8}
+ps = plot_fit_statistic( fits[fits$treatment=="drug13",], 
+                    statistic = "EC50", 
+                    alpha = 0.0025,
+                    ylim=c(0,2500),
+                    main="EC50, drug 13")
+legend(0, 2300, unique(ps$sample_type), col=unique(ps$color), pch=19 )
+```
+
+Note that since EC50 cannot be estimated if the drug has no effect on the assay response. In these cases the EC50 is Infinite (**Inf**).
+ 
+Relative AUC grids
+-----------------------
+
+When there are many drugs in a screen, it may be convenient to generate a summary value such as $\large{ log2( frac{ AUC_{line1} }{ AUC_{line2} } ) }$ and plot a heat map view across time points. For this example, I will color in the heat map if *P* < 0.0008 for the ANOVA testing for significantly different dose response curves.
+
+I'll plot the values using *plot_color_grid()*, a general function for plotting any matrix of numbers:
+
+```{r timecourse_relative_grid, fig.height=5, fig.width=6}
+# convert long data frame to individual matrixes
+fit_mat = fit_statistics_matrixes( fits )
+
+# mark as NA values that exceed a P value threshold
+rel_AUC = convert_to_foldchange( fit_mat$line_1$AUC, fit_mat$line_2$AUC )
+
+ALPHA_LEVEL = 0.008
+
+invalid_alpha = is.na( fit_mat$line_1$ANOVA_P_value ) | 
+                fit_mat$line_1$ANOVA_P_value > ALPHA_LEVEL
+
+rel_AUC[ invalid_alpha  ] = NA
+
+M=plot_color_grid( rel_AUC, color_bounds = c(-3,3) )
+```
+
+We can easily change the properties of the plot using parameters of *plot_color_grid()*:
+
+```{r plot_color_grid, fig.height=5, fig.width=6}
+M=plot_color_grid( rel_AUC, 
+                   color_bounds = c(-3,3), 
+                   block.height = 5, 
+                   block.width=4, 
+                   space.X = 2, 
+                   space.Y=2,
+                   cex.y = 1,
+                   cex.x = 0.75,
+                   color_palatte = c("#91cf60","#ffffbf","#fc8d59") )
+```
+
+
+Here we can see that drug 13 and drug 21 both had strong effects, with opposite direction, that became strongest after 96 or 156 hours respectively. 
+
+Reporting the same values as a table is straightforward:
+
+```{r topvals}
+library(knitr)
+kable( t(round( rel_AUC, 2)) )
+```
+
+
+
+Area under the Timecourse
+================================================================================
+
+
+
