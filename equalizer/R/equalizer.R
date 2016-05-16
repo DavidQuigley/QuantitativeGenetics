@@ -69,7 +69,9 @@ equalize_IVT = function(
     check_file( fn_CEL )
     check_file( fn_probeset_csv )   
     check_file( dir_out )
-    
+    fn_equalizer_script = paste(installed.packages()["equalizer","LibPath"], 
+                                "/equalizer/exec/equalizer.py", collapse="", 
+                                sep="")
     args = c(fn_equalizer_script, "-f IVT", collapse=" ")
     args = c(args, paste("-p", package_name,        collapse=" ") )
     args = c(args, paste("-v", paste(fn_vcf_list, collapse=",") , collapse=" ") )
