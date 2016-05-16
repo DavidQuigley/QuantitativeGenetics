@@ -44,6 +44,7 @@ check_file = function( fn ){
 #' @param fn_CEL Path to an Affymetrix CEL file of the type produced by the source chip
 #' @param fn_probeset_csv Path to affymetrix probeset.csv (sourced from Netaffx)
 #' @param dir_out Folder where new package files will be created
+#' @export
 #' @seealso \code{\link{equalize_gene}} for ST-format arrays (e.g. gene ST 1.1) 
 equalize_IVT = function(
         fn_python, dir_bedtools_bin,
@@ -132,7 +133,7 @@ equalize_IVT = function(
 #' @param fn_clf Path to affymetrix CLF file (sourced from Netaffx)
 #' @param dir_out Folder where new package files will be created
 #' 
-#' 
+#' @export
 #' @return none
 equalize_gene = function(
         fn_python, dir_bedtools_bin,
