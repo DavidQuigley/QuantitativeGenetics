@@ -74,7 +74,7 @@ initial.options <- commandArgs(trailingOnly = FALSE)
 file.arg.name <- "--file="
 script.name <- sub(file.arg.name, "", initial.options[grep(file.arg.name, initial.options)])
 ANNOT = paste(dirname(script.name) , "data/annotation", sep='/')
-fn_equalizer_source = paste(dirname(script.name) , "bin/equalizer_0.3.tar.gz", sep='/')
+fn_equalizer_source = paste(dirname(script.name) , "bin/equalizer_0.3.1.tar.gz", sep='/')
 dir_output = paste(dirname(script.name) , "results", sep='/')
 if(!file.exists(ANNOT))
     stop(paste("Cannot find dir_annotation_root at", ANNOT))
