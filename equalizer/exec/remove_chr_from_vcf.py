@@ -1,7 +1,7 @@
 from optparse import OptionParser
 
 parser = OptionParser()
-parser.add_option("-f", "--file_in", dest="fn_in", help="tab-delimited path to file from TCGA firehose", default="")
+parser.add_option("-f", "--file_in", dest="fn_in", help="path to VCF to edit", default="")
 parser.add_option("-o", "--file_out", dest="fn_out", help="Path to write output file", default="")
 (options, args) = parser.parse_args()
 fn_in = options.fn_in
