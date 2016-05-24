@@ -261,7 +261,7 @@ def check_sequence_chr_consistency( fn_vcf, fn_affy_bed ):
     
     bed_has_chr = False
     for line in open(fn_affy_bed):
-        if line[0] != "#":
+        if line[0] != "#" and line[0:5] != "track" and line[0:7] != "browser":
             bed_has_chr = "chr" in line.split('\t')[0]
             break
     
