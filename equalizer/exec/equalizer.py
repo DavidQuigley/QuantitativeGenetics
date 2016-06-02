@@ -298,7 +298,7 @@ def read_probes_with_SNPs(P):
         ps_start_remove[ probeset + ' ' + start ] = 1
 
     f.close()
-    print( "MESSAGE: VCF file analysis identified " + str(len(ps_start_remove.keys())) + " probes containing SNPs." )
+    print( "MESSAGE: VCF file analysis identified " + str(len(ps_start_remove.keys())) + " probesets where at least one probe contains a SNP." )
     return ps_start_remove
 
 
