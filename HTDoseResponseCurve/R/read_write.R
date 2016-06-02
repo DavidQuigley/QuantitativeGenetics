@@ -10,6 +10,10 @@
 #' matrixes are concentration, treatment, sample_type, seeding_density, and 
 #' passage
 #' @import XML
+#' @examples 
+#' pkg = "HTDoseResponseCurve"
+#' fn_map = system.file("extdata", "sample_data_384_platemap.txt",package=pkg)
+#' plate_map = read_platemap_from_Incucyte_XML( fn_map )
 #' @export
 read_platemap_from_Incucyte_XML = function( path_to_file, 
                                             attribute_value="description"){
@@ -104,9 +108,9 @@ read_platemap_from_excel = function( filename, sheet_num=1, number_of_wells,
                     COLS, "columns for a", number_of_wells,"well plate") )
     }
     
-    rownames_conc =  xl[ (idx_conc+1) : (idx_conc+ROWS),1]
-    rownames_treat = xl[ (idx_treat+1) : (idx_treat+ROWS),1]
-    rownames_line = xl[ (idx_line+1) : (idx_line+ROWS),1]
+    rownames_conc =  trimws(xl[ (idx_conc+1) : (idx_conc+ROWS),1])
+    rownames_treat = trimws(xl[ (idx_treat+1) : (idx_treat+ROWS),1])
+    rownames_line = trimws(xl[ (idx_line+1) : (idx_line+ROWS),1])
     # asking for a value out of bounds for what read_excel() thinks of as the 
     # spreadsheet's bounds will return a NA
     if( sum(is.na(rownames_conc))>0 | 
@@ -270,21 +274,30 @@ write_platemap_to_XML = function( fn, plate_map, passage, seeding_density,
 #' plate_mask is TRUE. The matrix must have the same dimensions as the wells 
 #' being read.
 #' @return a data frame where columns are data, plate_id, hour. 
+#' @examples 
+#' pkg = "HTDoseResponseCurve"
+#' fn_data_Excel = system.file("extdata", "sample_data_384.xlsx", package = pkg)
+#' plate_data = read_plates_from_Incucyte_export( fn_data_Excel, "p1", 
+#'                                                number_of_wells=384)
 #' @export
-
 read_plates_from_Incucyte_export = function( path_to_file, plate_id, 
                                              number_of_wells, sheet_num=1, 
                                              plate_mask = NA){
+    
     xl = readxl::read_excel(path_to_file, sheet=sheet_num)
     n_xl_rows = dim(xl)[1]
     n_xl_cols = dim(xl)[2]
     idx_plate_top = which( xl[,1] == "Time Stamp:" )
     idx_last_data = max( which( !is.na( xl[,1] ) ) )
     # blank first line
-    n_plate_data_rows = idx_last_data - 
-        idx_plate_top[ length(idx_plate_top) ] - 1
+    #n_plate_data_rows = idx_last_data - 
+    #    idx_plate_top[ length(idx_plate_top) ] - 1
+    n_plate_data_rows = idx_last_data-(idx_plate_top[length(idx_plate_top)]+2)
     expected_rows = plate_dimensions_from_wells(number_of_wells)$rows
     expected_cols = plate_dimensions_from_wells(number_of_wells)$cols
+    
+    # incucytye can't be trusted to write all rows or all columns
+    
     if( is.na(plate_mask) ){
         plate_mask = matrix(TRUE, nrow= expected_rows, ncol=expected_cols )
     }else{
@@ -297,12 +310,11 @@ read_plates_from_Incucyte_export = function( path_to_file, plate_id,
     for(i in 1:length(idx_plate_top)){
         hour = xl[idx_plate_top[i], 4]
         plate = create_empty_plate( number_of_wells, hour, plate_id)
-        PLATE_ROWS = dim(plate)[1]
-        PLATE_COLS = dim(plate)[2]
         row_a1 = idx_plate_top[i]+2
         col_a1 = 2
-        plate_read = data.matrix(xl[row_a1 : (row_a1+n_plate_data_rows-1), 
-                                    col_a1 : n_xl_cols])
+        row_last = row_a1 + n_plate_data_rows
+        col_last = n_xl_cols
+        plate_read = data.matrix(xl[row_a1 : row_last, col_a1 : col_last])
         plate[1:dim(plate_read)[1], 1:dim(plate_read)[2]] = plate_read
         vals = plate[1:expected_rows, 1:expected_cols]
         vals[!plate_mask]  = NA
@@ -315,4 +327,86 @@ read_plates_from_Incucyte_export = function( path_to_file, plate_id,
         }
     }
     plates
+}
+
+#' Read a dataset from a text file
+#' 
+#' The text file may be separated by commas, tabs, or any other commonly used 
+#' delimiter. The first row must have the following elements: 
+#' \itemize{
+#'  \item{sample_type}
+#'  \item{treatment}
+#'  \item{concentration}
+#'  \item{value}
+#'  \item{hour}
+#' }
+#' 
+#' @param filepath path to file to load. If the full path is not given, R will 
+#' assume the file is in the current working directory.
+#' @param negative_control Controls the behavior of the 
+#' \code{\link{normalize_by_vehicle}} function. This value may be NA, 
+#' a number, a string, or a data frame.
+#' 
+#' \itemize{
+#'  \item{NA: Use when there are no negative control measurements. The contents 
+#'    of the column named 'value_normalized' created by 
+#'    \code{normalize_by_vehicle()} will be copied from the contents of 
+#'    the column named 'value'. }
+#'  \item{Number: Use when each treatment has been labeled with a concentration 
+#'    (typically 0) that indicates the vehicle control. Each treatment must 
+#'    contain one or more observations with this concentration, and these 
+#'    observations will be the negative controls.}
+#'  \item{string: Use when a single set of observations is a universal control. 
+#'    The treatment whose name matches the string is the universal 
+#'    negative control all of the data.}
+#'  \item{data frame: Use when more than one negative control exists, and you 
+#'    have to map different treatments to a particular negative control. The 
+#'    data frame must have names 'drug' and 'vehicle', and the data frame will 
+#'    map match treatments in the 'drug' column to those in the 
+#'    'vehicle' column.}
+#' }
+#' @param plate_id string identifying this set of observations, defaults to 
+#' "plate_1"
+#' @param sep character that separates elements in the text file; defaults to 
+#' tab
+#' @export
+#' @return a data frame for the dataset matching the output of the 
+#' \code{\link{create_dataset}}
+#' @examples 
+#' pkg = "HTDoseResponseCurve"
+#' fn_txt = system.file("extdata", "sample_data_1.txt", package = pkg)
+#' ds = read_dataset( fn_txt, negative_control="DMSO" )
+#' @seealso \code{\link{create_dataset}} 
+#' @seealso \code{\link{normalize_by_vehicle}}
+read_dataset = function(filepath, negative_control=NA, plate_id="plate_1", 
+                        sep="\t"){
+    
+    ds = read.table( filepath, sep=sep, header=TRUE, stringsAsFactors=FALSE )
+    if( ! "sample_type" %in% names(ds) ){
+        stop( "dataset file must contain a column labeled 'sample_type'")
+    }
+    if( ! "treatment" %in% names(ds) ){
+        stop( "dataset file must contain a column labeled 'treatment'")
+    }
+    if( ! "concentration" %in% names(ds) ){
+        stop( "dataset file must contain a column labeled 'concentration'")
+    }
+    if( ! "value" %in% names(ds) ){
+        stop( "dataset file must contain a column labeled 'value'")
+    }
+    hours=0
+    if( "hour" %in% names(ds) ){
+        hours = ds$hour
+    }
+    if( sum(! is.numeric(ds$hour))>0 ){
+        stop("'hour' column must be numeric")
+    }
+    
+    create_dataset(sample_types=ds$sample_type, 
+                   treatments = ds$treatment,
+                   concentrations = ds$concentration, 
+                   hours = hours,
+                   values = ds$value,
+                   plate_id= plate_id,
+                   negative_control = negative_control)
 }

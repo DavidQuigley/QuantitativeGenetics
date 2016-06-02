@@ -80,20 +80,21 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
 #' 
 #' @param x HTfit object
 #' @param ... standard parameters for \code{plot} function
-#' @param log10_xmin x minimum for plot on log10 scale, default 0
-#' @param log10_xmax x maximum for plot on log10 scale, default 5
+#' @param xlim vector of minimum, maximum value for X axis. default c(0, 1e5)
 #' @param bar_multiple multiplier for standard error bars, default 2
 #' @param summary_method summary method for points to plot in timecourse, one 
 #' of ("mean", "median"), defaults "mean"
 #' @param show_EC50 show dotted vertical lines at EC50 values if they are fit,
-#' default TRUE
-#' @param show_legend show a legend, default TRUE
+#' default FALSE
+#' @param show_legend show a legend, default FALSE
 #' @param show_x_log_tics if axes==TRUE and this parameter is TRUE, draw tics 
 #' between each power of 10 scaled appropriately. If axes==TRUE and this 
 #' parameter is FALSE, omit ticks between powers of 10. Default TRUE.
 #' @param show_x_exponent If axes==TRUE and this parameter is TRUE, show labels 
 #' on X axis as 10^2, 10^3, ... . If axes==TRUE and this parameter is FALSE, 
 #' show labels on X axis as an exponent (2, 3, ... ). Default TRUE.
+#' @param log_axis_x logical. If TRUE, X axis is to be logarithmic; if FALSE, 
+#' X axis is original scale. Default is TRUE. 
 #' @return none
 #' @examples 
 #' sample_types = rep( c(rep("line1",3), rep("line2",3)), 5)
@@ -105,21 +106,21 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
 #' plate_id = "plate_1"
 #' ds = create_dataset( sample_types, treatments, concentrations, 
 #'                       hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_plates_by_vehicle(ds, summary_method = "mean")
+#' ds = normalize_by_vehicle(ds, summary_method = "mean")
 #' library(drc)
 #' # Fit model using three-parameter log-logistic function
 #' fit_1=fit_DRC(ds, sample_types=c("line1", "line2"), treatments=c("drug"), 
 #'         hour = 48, fct=drc::LL.3() )
 #' plot(fit_1)
 #' plot(fit_1, show_EC50=FALSE, show_legend=FALSE, lwd=3,col=c("black", "gold"),
-#'      log10_xmin=0, log10_xmax=4, xlab="concentration nM", 
+#'      xlim=c(0, 1e4), xlab="concentration nM", 
 #'      ylab="surviving fraction")
 #' legend(1.5, 0.3, c("Line 1", "Line 2"), col=c("black", "gold"), pch=15)
 #' @export
-plot.HT_fit = function( x, ..., log10_xmin=1, log10_xmax=5, bar_multiple=2, 
-                        summary_method="mean", show_EC50=TRUE, 
-                        show_legend=TRUE, show_x_log_tics=TRUE, 
-                        show_x_exponent=TRUE){
+plot.HT_fit = function( x, ..., bar_multiple=2, 
+                        summary_method="mean", show_EC50=FALSE, 
+                        show_legend=FALSE, show_x_log_tics=TRUE, 
+                        show_x_exponent=TRUE, log_axis_x=TRUE){
     if( summary_method!="mean" & summary_method !="median"){
         stop("parameter summary_method must be one of {mean, median}")   
     }
@@ -145,12 +146,16 @@ plot.HT_fit = function( x, ..., log10_xmin=1, log10_xmax=5, bar_multiple=2,
     if( length( which( names(plot_parameters)== "cex"  ) )==0 )
         plot_parameters[["cex"]] = 1
     if( length( which( names(plot_parameters) == "cex.axis"))==0 )
-        plot_parameters[["cex.axis"]] = 2
+        plot_parameters[["cex.axis"]] = 1
     if( length( which( names(plot_parameters) == "cex.lab"))==0 )
         plot_parameters[["cex.lab"]] = 1.5
-    plot_parameters[["xlim"]] = c(10^log10_xmin, 10^log10_xmax)
+    if( length( which( names(plot_parameters) == "xlim"))==0 )
+        plot_parameters[["xlim"]] = c(0, 1e4)
     plot_parameters[["yaxs"]] = "i"
     plot_parameters[["xaxs"]] = "i"
+    if( !log_axis_x ){
+        plot_parameters[["log"]] = ""   
+    }
     uc = as.character(unique(x$input$conditions_to_fit))
     
     cond2color = hsh_from_vectors( uc, plot_parameters[["col"]][1:length(uc)] )
@@ -213,17 +218,33 @@ plot.HT_fit = function( x, ..., log10_xmin=1, log10_xmax=5, bar_multiple=2,
         x_legend=0.2
     }
     if( draw_axes ){
-        axis( 2, at=c(0, 0.5, 1), labels=c("0", "0.5", "1"), las=1, 
+        axis( 2, at=c(0, 0.5, 1), 
+              labels=c("0", "0.5", "1"), las=1, 
               cex.axis=plot_parameters[["cex.axis"]],
               font=plot_parameters[["font"]])
-        tics = logtics( log10_xmin, log10_xmax, show_x_log_tics,show_x_exponent)
-        axis(1, at=tics$values, labels=tics$labels, las=1, 
-             font=plot_parameters[["font"]],
-             cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=1)   
-        axis(1, at=tics$values[tics$lwd==2],
-             labels=rep("", sum(tics$lwd==2)), las=1, 
-             font=plot_parameters[["font"]],
-             cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=2)    
+        if( log_axis_x ){
+            log10_low = log10( plot_parameters[["xlim"]][1] )
+            log10_high = log10( plot_parameters[["xlim"]][2] )
+            if( plot_parameters[["xlim"]][1]==0 )
+                log10_low=0
+            tics = logtics( log10_low, log10_high,
+                            show_x_log_tics, show_x_exponent)
+            axis(1, at=tics$values, labels=tics$labels, las=1, 
+                 font=plot_parameters[["font"]],
+                 cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=1)   
+            axis(1, at=tics$values[tics$lwd==2],
+                 labels=rep("", sum(tics$lwd==2)), las=1, 
+                 font=plot_parameters[["font"]],
+                 cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=2)    
+        }else{
+            xlow = plot_parameters[["xlim"]][1]
+            xhigh = plot_parameters[["xlim"]][2]
+            values = seq(from=xlow, to=xhigh, by=(xhigh-xlow)/5)
+            axis(1, at=values, labels=round(values,2), las=1, 
+                 font=plot_parameters[["font"]],
+                 cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=2) 
+        }
+        
     }
         
     Mstat$concentration[Mstat$concentration==0] = 1
@@ -247,11 +268,108 @@ plot.HT_fit = function( x, ..., log10_xmin=1, log10_xmax=5, bar_multiple=2,
     }
 }
 
+set_list_default = function(L, name, val){
+    if( length( which( names(L)== name  ) )==0 )
+        L[[name]] = val
+    L
+}
+#' Plot interaction index with confidence intervals for observed effects 
+#' at combination doses having observed effects.
+#' 
+#' Calls code published by Lee and Kong in Statistics in Biopharmaceutical 
+#' Research 2012; please cite their work if you use this function.
+#' 
+#' @param ds dataset
+#' @param sample_type sample type in ds
+#' @param treatment_1 treatment in ds
+#' @param treatment_2 treatment in ds
+#' @param treatment_12 treatment in ds
+#' @param proportion_1 value between 0 and 1, indicating the fixed proportional
+#' relationship between concentrations of treatment_1 and treatment_2 in the 
+#' combined observations. If 50/50, pass 0.5.
+#' @param hour hour in ds. Default 0. 
+#' @param log which scale should be logged; default is "y"
+#' @param ... additional parameters to pass to plot function
+#' @param alpha 1-alpha is the size of the confidence intervals, default 0.05
+#' @return list ii: estimated interaction indices corresponding to the 
+#' observations (c.d1, c.d2, E); ii.low, ii.up: estimated lower and upper CI
+#' @references Lee & Kong Statistics in Biopharmaceutical Research 2012
+#' @export
+plot_synergy_interaction_index = function(ds, sample_type, 
+                                          treatment_1, treatment_2, 
+                                          treatment_12, 
+                                          proportion_1, hour, ..., log="y", alpha=0.05){
+    
+    # effects seen with combined treatment
+    if( sum( ds$sample_type==sample_type )==0 ){
+        stop( "passed value for sample type parameter not found in D")
+    }
+    if( sum( ds$treatment==treatment_1 )==0 ){
+        stop( "passed value for sample type parameter not found in D")
+    }
+    if( sum( ds$treatment==treatment_2 )==0 ){
+        stop( "passed value for sample type parameter not found in D")
+    }
+    if( sum( ds$treatment==treatment_12 )==0 ){
+        stop( "passed value for sample type parameter not found in D")
+    }
+    if( !is.numeric(proportion_1)){
+        stop("proportion_1 parameter must be a number")   
+    }
+    if( proportion_1<0 | proportion_1>1 ){
+        stop("proportion_1 parameter must be between 0 and 1")   
+    }
+    
+    pp = list(...)
+    pp = set_list_default(pp, "xlim", c(0,1))
+    pp = set_list_default(pp, "ylim", c(0.01, 10))
+    pp = set_list_default(pp, "main", paste(sample_type, hour))
+    pp = set_list_default(pp, "xlab", "Effect (Surviving fraction)")
+    pp = set_list_default(pp, "ylab", "Interaction Index")
+    pp = set_list_default(pp, "las", 1)
+    pp = set_list_default(pp, "log", log)
+    pp = set_list_default(pp, "pch", 19)
+    
+    idx = ds$treatment==treatment_12 & ds$hours==hour & ds$sample_type==sample_type
+    E_ci = seq(from=0.01, to=1, by=0.01)
+    E_combined = plyr::ddply( ds[idx,], c("concentration"), 
+                              function(po){ data.frame( 
+                                  mu=mean(po$value_normalized, na.rm=TRUE)) 
+                              } )$mu
+    if( sum(E_combined>1)>0 ){
+        warning("One or more effects were greater than 1, setting to 0.999")   
+    }
+    E_combined[ E_combined>=1 ] = 0.999
+    obs_plus_ci = data.frame( is_obs = c( rep( TRUE, length(E_combined)), 
+                                          rep( FALSE, length(E_ci)) ),
+                              effect = c(E_combined, E_ci ) )
+    obs_plus_ci=obs_plus_ci[order(obs_plus_ci$effect),]
+    CI.d=synergy_interaction_CI(ds, sample_type=sample_type, 
+                                treatment_1=treatment_1, 
+                                treatment_2=treatment_2,
+                                treatment_12=treatment_12,
+                                proportion_1=proportion_1, 
+                                obs_plus_ci$effect, 
+                                hour=hour, alpha=alpha)
+    y=CI.d$interaction_index
+    x=obs_plus_ci$effect
+    pp[["x"]] =  x[ obs_plus_ci$is_obs ]
+    pp[["y"]] = y[ obs_plus_ci$is_obs ]
+    do.call( plot, pp)
+    lines( x, CI.d$cl_lower, lty=2, col="cornflowerblue" )
+    lines( x, CI.d$cl_upper, lty=2, col="cornflowerblue" )
+    lines( x, y, lty=1, col="black" )
+    CI.d
+}
+
+
 #' Plot an image of the raw intensities for a plate
 #' 
 #' @param plate data frame in format matching that produced by 
 #' \code{read_incucyte_from_excel}.
-#' @param hour hour of the experiment to plot
+#' @param hour hour of the experiment to plot. Defaults to NA, plotting all 
+#' values. If more than one time point has been stored for the data in plate, 
+#' passing NA will result in an error. 
 #' @param color_bounds values at which to draw coldest and hottest colors, 
 #' defaults to c(0, 100)
 #' @param color_palatte colors to use for cold-middle-hot, defaults to 
@@ -272,9 +390,16 @@ plot.HT_fit = function( x, ..., log10_xmin=1, log10_xmax=5, bar_multiple=2,
 #'                                                number_of_wells=384)
 #' plot_values_by_plate(plate_data, hour=96)
 #' @export
-plot_values_by_plate = function( plate, hour, color_bounds=c(0,100), 
+plot_values_by_plate = function( plate, hour=NA, color_bounds=c(0,100), 
                                  color_palatte=c("white", "#fdbb84","#e34a33"),
                                  main="", cex=1.5 ){
+    if( is.na(hour) ){
+        hour = unique(plate$hours)
+        if( length(hour)>1 ){
+            stop(paste("plate contains more than one time point; must specify",
+                 "time point with the hour parameter") )
+        }
+    }
     if( sum( plate$hours==hour )==0 ){
         stop(paste("hour parameter", hour, "not present in plate"))
     }
@@ -325,7 +450,7 @@ plot_values_by_plate = function( plate, hour, color_bounds=c(0,100),
 #'                                                number_of_wells=384)
 #' plate_data$hours = round(plate_data$hours)
 #' ds = combine_data_and_map( plate_data, plate_map, negative_control = "DMSO" )
-#' ds = normalize_plates_by_vehicle( ds, summary_method="mean")
+#' ds = normalize_by_vehicle( ds, summary_method="mean")
 #' ds = ds[ds$treatment=="drug13" | ds$treatment=="DMSO",]
 #' plot_timecourse_raw( ds, sample_types=c("line_1", "line_2"), 
 #'                      treatments="DMSO", concentrations=0)
@@ -441,7 +566,7 @@ plot_timecourse_raw = function( D, sample_types, treatments,
 #'                                                number_of_wells=384)
 #' plate_data$hours = round(plate_data$hours)
 #' ds = combine_data_and_map( plate_data, plate_map, negative_control = "DMSO" )
-#' ds = normalize_plates_by_vehicle( ds, summary_method="mean")
+#' ds = normalize_by_vehicle( ds, summary_method="mean")
 #' ds = ds[ds$treatment=="drug13",]
 #' fits = fit_statistics(ds, fct = drc::LL.3() )
 #' res=plot_fit_statistic( fits, "AUC", ylim=c(0, 6) ) 
@@ -575,10 +700,14 @@ plot_fit_statistic = function( fit_stats, statistic, ..., alpha = 1,
 boxplot_label_outliers = function( M, ... ){
     plot_parameters = list(...)
     if( length( which( names(plot_parameters)== "ylim"  ) )==0 )
-        plot_parameters[["ylim"]] = c(0, ceiling(max(M) ) )
+        plot_parameters[["ylim"]] = c(0, ceiling(max(M, na.rm=TRUE) ) )
     if( length( which( names(plot_parameters)== "xlim" ) )== 0 )
         plot_parameters[["xlim"]] = c(0.25, 1.25)
     y_max = plot_parameters[["ylim"]][2]
+    y_min = plot_parameters[["ylim"]][1]
+    if( length( which( names(plot_parameters)== "cex"))==0 )
+        plot_parameters[["cex"]] = 1
+    
     plot_parameters[["x"]] = M 
     b=do.call( boxplot, plot_parameters )
     if( length(b$out)>0 ){
@@ -588,10 +717,112 @@ boxplot_label_outliers = function( M, ... ){
         not_out = which( !( round(M,3) %in% round(outs,3)) )
         xs[not_out] = jitter( xs[not_out], 2 )
         points( xs, M, pch=19, cex=0.5 )
+        interval = (y_max-y_min) / (length(b$out)+1)
+        y_cur = y_max-interval
         for( i in 1:length(b$out)){
-            text( 0.7, (y_max*0.75) - (i*0.1), names(outs)[i], adj=1 )
-            lines( c(0.7,1), c((y_max*0.75) - (i*0.1), outs[i]), col="#00000033" ) 
+            text( 0.7, y_cur, names(outs)[i], adj=1, 
+                  cex=plot_parameters[["cex"]] )
+            lines( c(0.7,1), c(y_cur, outs[i]), col="#00000033" ) 
+            y_cur = y_cur-interval
         }
     }
     b
 }
+
+
+
+#' plot FA vs. CI Chou synergy median effect plot
+#' @param CS chou statistics
+#' @param ... standard parameters for \code{plot} function
+#' @return list of linear models fit
+#' @export
+plot_synergy_median_effect=function( CS, ... ){   
+    cs1 = CS$treatment_1
+    cs2 = CS$treatment_2
+    csc = CS$treatment_12
+    cs1$x_m[cs1$D==0] = NA
+    cs1$y_m[cs1$D==0] = NA
+    cs2$x_m[cs2$D==0] = NA
+    cs2$y_m[cs2$D==0] = NA
+    csc$x_m[csc$D==0] = NA
+    csc$y_m[csc$D==0] = NA
+    ymax = ceiling( max( c( abs(cs1$y_m),abs(cs2$y_m),abs(csc$y_m)),na.rm=TRUE))
+    xmax = ceiling( max( c( abs(cs1$x_m),abs(cs2$x_m),abs(csc$x_m)),na.rm=TRUE))
+
+    plot_parameters = list(...)
+    if( length( which( names(plot_parameters) == "ylim"))==0 )
+        plot_parameters[["ylim"]] = c(-1*ymax, ymax)
+    if( length( which( names(plot_parameters) == "xlim"))==0 )
+        plot_parameters[["xlim"]] = c(-1*xmax, xmax)
+    if( length( which( names(plot_parameters) == "ylab"))==0 )
+        plot_parameters[["ylab"]] = "Log(Fa/Fu)"
+    if( length( which( names(plot_parameters) == "xlab"))==0 )
+        plot_parameters[["xlab"]] = "Log(dose)"
+    if( length( which( names(plot_parameters) == "las"))==0 )
+        plot_parameters[["las"]] = 1
+    if( length( which( names(plot_parameters) == "col"))==0 )
+        plot_parameters[["col"]] = c("black", "red", "cornflowerblue")
+    if( length( which( names(plot_parameters) == "lwd"))==0 )
+        plot_parameters[["lwd"]] = 1
+    if( length( which( names(plot_parameters) == "pch"))==0 )
+        plot_parameters[["pch"]] = 19
+    if(length(plot_parameters[["col"]]) != 3 ){
+        stop("must pass three colors in col argument")
+    }
+    colors = plot_parameters[["col"]]
+    pches = plot_parameters[["pch"]]
+    if( length(pches)==1 )
+        pches = rep( pches[1], 3)
+    plot_parameters[["x"]] = cs1$x_m
+    plot_parameters[["y"]] = cs1$y_m
+    plot_parameters[["col"]] = colors[1]
+    plot_parameters[["pch"]] = pches[1]
+    do.call(plot, plot_parameters)
+    lines(c(0,0), c(-100,100))
+    abline(0,0)
+    points( cs2$x_m, cs2$y_m, pch=pches[2], col=colors[2])
+    points( csc$x_m, csc$y_m, pch=pches[3], col=colors[3])
+    LM_1=lm(cs1$y_m~cs1$x_m)
+    LM_2=lm(cs2$y_m~cs2$x_m)
+    LM_12=lm(csc$y_m~csc$x_m)
+    abline( LM_1, col=colors[1], lwd=plot_parameters[["lwd"]] )
+    abline( LM_2, col=colors[2], lwd=plot_parameters[["lwd"]]  )    
+    abline( LM_12, col=colors[3], lwd=plot_parameters[["lwd"]]  )
+    list( LM_1=LM_1, LM_2=LM_2, LM_12=LM_12)
+}
+
+#' plot FA vs. CI Chou synergy plot
+#' @param CS chou statistics
+#' @param ... standard parameters for \code{plot} function
+#' @param show_horizontal show horizontal stripes
+#' @export
+plot_chou_synergy_Fa_CI = function( CS, ..., show_horizontal=TRUE  ){
+    plot_parameters = list(...)
+    if( length( which( names(plot_parameters) == "ylab"))==0 )
+        plot_parameters[["ylab"]] = "CI"
+    if( length( which( names(plot_parameters) == "xlab"))==0 )
+        plot_parameters[["xlab"]] = "Fa"
+    if( length( which( names(plot_parameters) == "col"))==0 )
+        plot_parameters[["col"]] = "red"
+    if( length( which( names(plot_parameters) == "ylab"))==0 )
+        plot_parameters[["ylab"]] = "CI"
+    if( length( which( names(plot_parameters) == "ylim"))==0 )
+        plot_parameters[["ylim"]] = c(0,2)
+    if( length( which( names(plot_parameters) == "xlim"))==0 )
+        plot_parameters[["xlim"]] = c(0,1)
+    if( length( which( names(plot_parameters) == "pch"))==0 )
+        plot_parameters[["pch"]] = 19
+    plot_parameters[["x"]] = CS$CI$Fa
+    plot_parameters[["y"]] = CS$CI$CI
+    do.call( plot, plot_parameters )
+    if(show_horizontal){
+        for(i in seq(0, 2, 0.1)){
+            abline(i,0, col="lightgray")
+        }
+        abline(1,0, lwd=2)
+    }
+    points( CS$CI$Fa, CS$CI$CI, pch=plot_parameters[["pch"]], 
+            col=plot_parameters[["col"]] )
+    
+}
+
