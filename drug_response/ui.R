@@ -24,7 +24,7 @@ shinyUI(fluidPage(
     # Sidebar with a slider input for the number of bins
     sidebarLayout(
         sidebarPanel(
-        fileInput("file", label = "File",width="200px" ),
+        fileInput("file", label = "File",width="300px" ),
         h4("Labels"),
         textInput("xlab", label = "X axis", value = "Log drug concentration", width="200px"),
         textInput("ylab", label = "Y axis", value = "viability", width="200px"),
@@ -32,13 +32,13 @@ shinyUI(fluidPage(
         h4("X axis"),
         fluidRow(
             column( width=4, selectInput("min_x", label = "From", 
-                    choices = list("0"=0, "1e1" = 1, "1e2" = 2,"1e3" = 3, 
-                                   "1e4" = 4, "1e5" = 5, "1e6" = 6, "1e7" = 7), 
+                    choices = list("0"=0, "10" = 10, "1e2" = 100,"1e3" = 1e3, 
+                                   "1e4" = 1e4, "1e5" = 1e5, "1e6" = 1e6, "1e7" = 1e7), 
                     selected = 0, width="75px") ),
             column( width=4, selectInput("max_x", label = "To", 
-                    choices = list("1e1" = 1, "1e2" = 2,"1e3" = 3, "1e4" = 4, 
-                                   "1e5" = 5, "1e6" = 6, "1e7" = 7), 
-                    selected = 5, width="75px") )
+                    choices = list("1e1" = 1e1, "1e2" = 1e2,"1e3" = 1e3, "1e4" = 1e4, 
+                                   "1e5" = 1e5, "1e6" = 1e6, "1e7" = 1e7), 
+                    selected = 1e5, width="75px") )
         ),
         
         fluidRow(
@@ -50,10 +50,14 @@ shinyUI(fluidPage(
                         selected = TRUE, width="150px") )   
         ),
         fluidRow( 
-            column( width=8, 
+            column( width=4, 
                     selectInput("axis_pointsize", label = "Axis Point size", 
                                 choices = list("1" = 1, "1.5" = 1.5,"2" = 2), 
-                                selected = 1, width="100px") )
+                                selected = 1, width="100px") ),
+            column( width=4, 
+                    selectInput("axis_labelsize", label = "Label size", 
+                                choices = list("1" = 1, "1.5" = 1.5, "2" = 2, "2.5"=2.5), 
+                                selected = 1.5, width="100px") )
         ),
         hr(),
         h4("Y axis"),
@@ -71,7 +75,7 @@ shinyUI(fluidPage(
         h4("Legend location"),
         fluidRow(
             column( width=4,
-                textInput("legend_x", label = "X", value = "1", width="150px")),
+                textInput("legend_x", label = "X", value = "10", width="150px")),
             column( width=4,
                 textInput("legend_y", label = "Y", value = "0.2", width="150px") )
         ),

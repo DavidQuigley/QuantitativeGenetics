@@ -50,12 +50,12 @@ shinyServer(function(input, output, session) {
                 st = c(st, rep(names(dd)[i], dim(dd)[1] ) )    
             }
             D=create_dataset( sample_types=st, 
-                              treatments, 
-                              concentrations, 
-                              hours,
-                              values, 
-                              plate_id, 
-                              negative_control)
+                              treatments = treatments, 
+                              concentrations = concentrations, 
+                              hours = hours,
+                              values = values, 
+                              plate_id=plate_id, 
+                              negative_control = negative_control)
             unique_samples = unique(names(dd))
             bar_multiple = as.numeric(input$barmultiple)
             fitted = fit_DRC(D, sample_types = unique_samples, 
@@ -75,8 +75,8 @@ shinyServer(function(input, output, session) {
                 show_x_exponent=as.logical(input$show_x_exponent),
                 show_EC50 = as.logical(input$sf50),
                 bar_multiple=bar_multiple, 
-                log10_xmin=as.numeric(input$min_x),
-                log10_xmax=as.numeric(input$max_x),
+                xlim=c(as.numeric(input$min_x), as.numeric(input$max_x) ),
+                cex.lab=as.numeric(input$axis_labelsize), 
                 ylim=c(0, as.numeric(input$max_y) ),
                 show_legend=FALSE)
             
@@ -106,12 +106,12 @@ shinyServer(function(input, output, session) {
                 st = c(st, rep(names(dd)[i], dim(dd)[1] ) )    
             }
             D=create_dataset( sample_types=st, 
-                              treatments, 
-                              concentrations, 
-                              hours,
-                              values, 
-                              plate_id, 
-                              negative_control)
+                              treatments = treatments, 
+                              concentrations = concentrations, 
+                              hours = hours,
+                              values = values, 
+                              plate_id=plate_id, 
+                              negative_control = negative_control)
             unique_samples = unique(names(dd))
             bar_multiple = as.numeric(input$barmultiple)
             fitted = fit_DRC(D, sample_types = unique_samples, 
@@ -173,8 +173,8 @@ shinyServer(function(input, output, session) {
                   cex.axis=as.numeric(input$axis_pointsize),
                   bar_multiple=bar_multiple, 
                   show_EC50 = as.logical(input$sf50),
-                  log10_xmin=as.numeric(input$min_x),
-                  log10_xmax=as.numeric(input$max_x),
+                  xlim=c(as.numeric(input$min_x), as.numeric(input$max_x) ),
+                  cex.lab=as.numeric(input$axis_labelsize), 
                   ylim=c(0, as.numeric(input$max_y) ),
                   show_legend = FALSE)
             legend( as.numeric(input$legend_x), 
