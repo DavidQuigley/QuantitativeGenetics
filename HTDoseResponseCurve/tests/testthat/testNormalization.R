@@ -11,7 +11,7 @@ test_that("normalization works", {
                               package=pkg)
     plate_map=read_platemap_from_Incucyte_XML( path_to_file )
     ds_n = combine_data_and_map( raw_plate, plate_map, "Vehicle" ) 
-    ds = normalize_plates_by_vehicle(ds_n, summary_method="mean")
+    ds = normalize_by_vehicle(ds_n, summary_method="mean")
 
     # CHECK NORMALIZATION CALCULATIONS
     
@@ -45,26 +45,20 @@ test_that("normalization works", {
     concentrations = c( rep(0,6),rep(200,6), rep(500,6),rep(1000,6),rep(5000,6))
     values=c(100,99,100,90,91,92,99,97,99,89,87,88,86,89,88,56,59,58,66,65,67,
             25,23,24,42,43,46,4,5,9)
-    hours = rep(0, length(values))
-    plate_id = "plate_1"
-    D=create_dataset( sample_types, 
-                      treatments, 
-                      concentrations, 
-                      hours,
-                      values, 
-                      plate_id)
+    D=create_dataset( sample_types=sample_types, 
+                      treatments=treatments, 
+                      concentrations=concentrations, 
+                      values=values)
     expect_equal( dim(D)[1], 30 )
-    D = normalize_plates_by_vehicle(D, summary_method = "mean")
+    D = normalize_by_vehicle(D, summary_method = "mean")
     expect_equal( sum( D$value != D$value_normalized), 0 )
     
     D=create_dataset( sample_types, 
                       treatments, 
                       concentrations, 
-                      hours,
                       values, 
-                      plate_id,
                       negative_control="DMSO")
     expect_equal( dim(D)[1], 30 )
-    D = normalize_plates_by_vehicle(D, summary_method = "mean")
+    D = normalize_by_vehicle(D, summary_method = "mean")
     expect_equal( round( D$value_normalized[29],2 ), 0.05)
 } )

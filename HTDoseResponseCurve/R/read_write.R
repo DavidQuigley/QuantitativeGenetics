@@ -92,7 +92,7 @@ read_platemap_from_excel = function( filename, sheet_num=1, number_of_wells,
     idx_treat = which( tolower( xl[,1] ) == treatment_identifier )
     idx_line = which(  tolower( xl[,1] ) == sample_identifier )
     if(length(idx_conc)==0){
-        stop(paste("parameter concentration_identifier",concentration_identifier,
+       stop(paste("parameter concentration_identifier",concentration_identifier,
                    "not present in first column of Excel file",filename))
     }
     if(length(idx_treat)==0){
@@ -117,7 +117,7 @@ read_platemap_from_excel = function( filename, sheet_num=1, number_of_wells,
         length(rownames_conc) != ROWS | 
         sum(rownames_conc != abc[1:ROWS] ) != 0){
         stop(paste("Expecting but did not see",ROWS,"row identifiers with",
-                   "values A through", abc[ROWS], "for concentration plate map"))
+                  "values A through", abc[ROWS], "for concentration plate map"))
     }
     
     if( sum( is.na(rownames_treat))>0 | 

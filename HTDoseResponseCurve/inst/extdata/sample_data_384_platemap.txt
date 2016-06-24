@@ -58,7 +58,7 @@
       <well row="1" col="0" />
       <well row="1" col="1" >
         <items>
-          <wellItem type="Compound" concentration="0" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="0" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -68,7 +68,7 @@
       </well>
       <well row="1" col="2" >
         <items>
-          <wellItem type="Compound" concentration="0" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="0" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -78,7 +78,7 @@
       </well>
       <well row="1" col="3" >
         <items>
-          <wellItem type="Compound" concentration="0" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="0" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -88,7 +88,7 @@
       </well>
       <well row="1" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="0" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -118,7 +118,7 @@
       <well row="2" col="0" />
       <well row="2" col="1" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -128,7 +128,7 @@
       </well>
       <well row="2" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -138,7 +138,7 @@
       </well>
       <well row="2" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -148,7 +148,7 @@
       </well>
       <well row="2" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -158,7 +158,7 @@
       </well>
       <well row="2" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -168,7 +168,7 @@
       </well>
       <well row="2" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -178,7 +178,7 @@
       </well>
       <well row="2" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -188,7 +188,7 @@
       </well>
       <well row="2" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -198,7 +198,7 @@
       </well>
       <well row="2" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -208,7 +208,7 @@
       </well>
       <well row="2" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -218,7 +218,7 @@
       </well>
       <well row="2" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -228,7 +228,7 @@
       </well>
       <well row="2" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -238,7 +238,7 @@
       </well>
       <well row="2" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -248,7 +248,7 @@
       </well>
       <well row="2" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -258,7 +258,7 @@
       </well>
       <well row="2" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -268,7 +268,7 @@
       </well>
       <well row="2" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -278,7 +278,7 @@
       </well>
       <well row="2" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -288,7 +288,7 @@
       </well>
       <well row="2" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -298,7 +298,7 @@
       </well>
       <well row="2" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -308,7 +308,7 @@
       </well>
       <well row="2" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -318,7 +318,7 @@
       </well>
       <well row="2" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -328,7 +328,7 @@
       </well>
       <well row="2" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -340,7 +340,7 @@
       <well row="3" col="0" />
       <well row="3" col="1" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -350,7 +350,7 @@
       </well>
       <well row="3" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -360,7 +360,7 @@
       </well>
       <well row="3" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -370,7 +370,7 @@
       </well>
       <well row="3" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -380,7 +380,7 @@
       </well>
       <well row="3" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -390,7 +390,7 @@
       </well>
       <well row="3" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -400,7 +400,7 @@
       </well>
       <well row="3" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -410,7 +410,7 @@
       </well>
       <well row="3" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -420,7 +420,7 @@
       </well>
       <well row="3" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -430,7 +430,7 @@
       </well>
       <well row="3" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -440,7 +440,7 @@
       </well>
       <well row="3" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -450,7 +450,7 @@
       </well>
       <well row="3" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -460,7 +460,7 @@
       </well>
       <well row="3" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -470,7 +470,7 @@
       </well>
       <well row="3" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -480,7 +480,7 @@
       </well>
       <well row="3" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -490,7 +490,7 @@
       </well>
       <well row="3" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -500,7 +500,7 @@
       </well>
       <well row="3" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -510,7 +510,7 @@
       </well>
       <well row="3" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -520,7 +520,7 @@
       </well>
       <well row="3" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -530,7 +530,7 @@
       </well>
       <well row="3" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -540,7 +540,7 @@
       </well>
       <well row="3" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -550,7 +550,7 @@
       </well>
       <well row="3" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -562,7 +562,7 @@
       <well row="4" col="0" />
       <well row="4" col="1" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -572,7 +572,7 @@
       </well>
       <well row="4" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -582,7 +582,7 @@
       </well>
       <well row="4" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -592,7 +592,7 @@
       </well>
       <well row="4" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -602,7 +602,7 @@
       </well>
       <well row="4" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -612,7 +612,7 @@
       </well>
       <well row="4" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -622,7 +622,7 @@
       </well>
       <well row="4" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -632,7 +632,7 @@
       </well>
       <well row="4" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -642,7 +642,7 @@
       </well>
       <well row="4" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -652,7 +652,7 @@
       </well>
       <well row="4" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -662,7 +662,7 @@
       </well>
       <well row="4" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -672,7 +672,7 @@
       </well>
       <well row="4" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -682,7 +682,7 @@
       </well>
       <well row="4" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -692,7 +692,7 @@
       </well>
       <well row="4" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -702,7 +702,7 @@
       </well>
       <well row="4" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -712,7 +712,7 @@
       </well>
       <well row="4" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -722,7 +722,7 @@
       </well>
       <well row="4" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -732,7 +732,7 @@
       </well>
       <well row="4" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -742,7 +742,7 @@
       </well>
       <well row="4" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -752,7 +752,7 @@
       </well>
       <well row="4" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -762,7 +762,7 @@
       </well>
       <well row="4" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -772,7 +772,7 @@
       </well>
       <well row="4" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -784,7 +784,7 @@
       <well row="5" col="0" />
       <well row="5" col="1" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -794,7 +794,7 @@
       </well>
       <well row="5" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -804,7 +804,7 @@
       </well>
       <well row="5" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -814,7 +814,7 @@
       </well>
       <well row="5" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -824,7 +824,7 @@
       </well>
       <well row="5" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -834,7 +834,7 @@
       </well>
       <well row="5" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -844,7 +844,7 @@
       </well>
       <well row="5" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -854,7 +854,7 @@
       </well>
       <well row="5" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -864,7 +864,7 @@
       </well>
       <well row="5" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -874,7 +874,7 @@
       </well>
       <well row="5" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -884,7 +884,7 @@
       </well>
       <well row="5" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -894,7 +894,7 @@
       </well>
       <well row="5" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -904,7 +904,7 @@
       </well>
       <well row="5" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -914,7 +914,7 @@
       </well>
       <well row="5" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -924,7 +924,7 @@
       </well>
       <well row="5" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -934,7 +934,7 @@
       </well>
       <well row="5" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -944,7 +944,7 @@
       </well>
       <well row="5" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -954,7 +954,7 @@
       </well>
       <well row="5" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -964,7 +964,7 @@
       </well>
       <well row="5" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -974,7 +974,7 @@
       </well>
       <well row="5" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -984,7 +984,7 @@
       </well>
       <well row="5" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -994,7 +994,7 @@
       </well>
       <well row="5" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1006,7 +1006,7 @@
       <well row="6" col="0" />
       <well row="6" col="1" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1016,7 +1016,7 @@
       </well>
       <well row="6" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1026,7 +1026,7 @@
       </well>
       <well row="6" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1036,7 +1036,7 @@
       </well>
       <well row="6" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1046,7 +1046,7 @@
       </well>
       <well row="6" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1056,7 +1056,7 @@
       </well>
       <well row="6" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1066,7 +1066,7 @@
       </well>
       <well row="6" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1076,7 +1076,7 @@
       </well>
       <well row="6" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1086,7 +1086,7 @@
       </well>
       <well row="6" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1096,7 +1096,7 @@
       </well>
       <well row="6" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1106,7 +1106,7 @@
       </well>
       <well row="6" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1116,7 +1116,7 @@
       </well>
       <well row="6" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1126,7 +1126,7 @@
       </well>
       <well row="6" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1136,7 +1136,7 @@
       </well>
       <well row="6" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1146,7 +1146,7 @@
       </well>
       <well row="6" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1156,7 +1156,7 @@
       </well>
       <well row="6" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1166,7 +1166,7 @@
       </well>
       <well row="6" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1176,7 +1176,7 @@
       </well>
       <well row="6" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1186,7 +1186,7 @@
       </well>
       <well row="6" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1196,7 +1196,7 @@
       </well>
       <well row="6" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1206,7 +1206,7 @@
       </well>
       <well row="6" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1216,7 +1216,7 @@
       </well>
       <well row="6" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1228,7 +1228,7 @@
       <well row="7" col="0" />
       <well row="7" col="1" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1238,7 +1238,7 @@
       </well>
       <well row="7" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1248,7 +1248,7 @@
       </well>
       <well row="7" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1258,7 +1258,7 @@
       </well>
       <well row="7" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1268,7 +1268,7 @@
       </well>
       <well row="7" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1278,7 +1278,7 @@
       </well>
       <well row="7" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1288,7 +1288,7 @@
       </well>
       <well row="7" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1298,7 +1298,7 @@
       </well>
       <well row="7" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1308,7 +1308,7 @@
       </well>
       <well row="7" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1318,7 +1318,7 @@
       </well>
       <well row="7" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1328,7 +1328,7 @@
       </well>
       <well row="7" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1338,7 +1338,7 @@
       </well>
       <well row="7" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1348,7 +1348,7 @@
       </well>
       <well row="7" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1358,7 +1358,7 @@
       </well>
       <well row="7" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1368,7 +1368,7 @@
       </well>
       <well row="7" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1378,7 +1378,7 @@
       </well>
       <well row="7" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1388,7 +1388,7 @@
       </well>
       <well row="7" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1398,7 +1398,7 @@
       </well>
       <well row="7" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1408,7 +1408,7 @@
       </well>
       <well row="7" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1418,7 +1418,7 @@
       </well>
       <well row="7" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1428,7 +1428,7 @@
       </well>
       <well row="7" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1438,7 +1438,7 @@
       </well>
       <well row="7" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1450,7 +1450,7 @@
       <well row="8" col="0" />
       <well row="8" col="1" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1460,7 +1460,7 @@
       </well>
       <well row="8" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1470,7 +1470,7 @@
       </well>
       <well row="8" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1480,7 +1480,7 @@
       </well>
       <well row="8" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1490,7 +1490,7 @@
       </well>
       <well row="8" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1500,7 +1500,7 @@
       </well>
       <well row="8" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1510,7 +1510,7 @@
       </well>
       <well row="8" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1520,7 +1520,7 @@
       </well>
       <well row="8" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1530,7 +1530,7 @@
       </well>
       <well row="8" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1540,7 +1540,7 @@
       </well>
       <well row="8" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1550,7 +1550,7 @@
       </well>
       <well row="8" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1560,7 +1560,7 @@
       </well>
       <well row="8" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1570,7 +1570,7 @@
       </well>
       <well row="8" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1580,7 +1580,7 @@
       </well>
       <well row="8" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1590,7 +1590,7 @@
       </well>
       <well row="8" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1600,7 +1600,7 @@
       </well>
       <well row="8" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1610,7 +1610,7 @@
       </well>
       <well row="8" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1620,7 +1620,7 @@
       </well>
       <well row="8" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1630,7 +1630,7 @@
       </well>
       <well row="8" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1640,7 +1640,7 @@
       </well>
       <well row="8" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1650,7 +1650,7 @@
       </well>
       <well row="8" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1660,7 +1660,7 @@
       </well>
       <well row="8" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1672,7 +1672,7 @@
       <well row="9" col="0" />
       <well row="9" col="1" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1682,7 +1682,7 @@
       </well>
       <well row="9" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1692,7 +1692,7 @@
       </well>
       <well row="9" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1702,7 +1702,7 @@
       </well>
       <well row="9" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug05" displayName="drug05" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1712,7 +1712,7 @@
       </well>
       <well row="9" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1722,7 +1722,7 @@
       </well>
       <well row="9" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1732,7 +1732,7 @@
       </well>
       <well row="9" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug20" displayName="drug20" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1742,7 +1742,7 @@
       </well>
       <well row="9" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1752,7 +1752,7 @@
       </well>
       <well row="9" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1762,7 +1762,7 @@
       </well>
       <well row="9" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug12" displayName="drug12" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1772,7 +1772,7 @@
       </well>
       <well row="9" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1782,7 +1782,7 @@
       </well>
       <well row="9" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1792,7 +1792,7 @@
       </well>
       <well row="9" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug19" displayName="drug19" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1802,7 +1802,7 @@
       </well>
       <well row="9" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1812,7 +1812,7 @@
       </well>
       <well row="9" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1822,7 +1822,7 @@
       </well>
       <well row="9" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug21" displayName="drug21" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1832,7 +1832,7 @@
       </well>
       <well row="9" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1842,7 +1842,7 @@
       </well>
       <well row="9" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1852,7 +1852,7 @@
       </well>
       <well row="9" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug06" displayName="drug06" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1862,7 +1862,7 @@
       </well>
       <well row="9" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1872,7 +1872,7 @@
       </well>
       <well row="9" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1882,7 +1882,7 @@
       </well>
       <well row="9" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug10" displayName="drug10" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1894,7 +1894,7 @@
       <well row="10" col="0" />
       <well row="10" col="1" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1904,7 +1904,7 @@
       </well>
       <well row="10" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1914,7 +1914,7 @@
       </well>
       <well row="10" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1924,7 +1924,7 @@
       </well>
       <well row="10" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1934,7 +1934,7 @@
       </well>
       <well row="10" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1944,7 +1944,7 @@
       </well>
       <well row="10" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1954,7 +1954,7 @@
       </well>
       <well row="10" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1964,7 +1964,7 @@
       </well>
       <well row="10" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1974,7 +1974,7 @@
       </well>
       <well row="10" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1984,7 +1984,7 @@
       </well>
       <well row="10" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -1994,7 +1994,7 @@
       </well>
       <well row="10" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2004,7 +2004,7 @@
       </well>
       <well row="10" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2014,7 +2014,7 @@
       </well>
       <well row="10" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2024,7 +2024,7 @@
       </well>
       <well row="10" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2034,7 +2034,7 @@
       </well>
       <well row="10" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2044,7 +2044,7 @@
       </well>
       <well row="10" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2054,7 +2054,7 @@
       </well>
       <well row="10" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2064,7 +2064,7 @@
       </well>
       <well row="10" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2074,7 +2074,7 @@
       </well>
       <well row="10" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2084,7 +2084,7 @@
       </well>
       <well row="10" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2094,7 +2094,7 @@
       </well>
       <well row="10" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2104,7 +2104,7 @@
       </well>
       <well row="10" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2116,7 +2116,7 @@
       <well row="11" col="0" />
       <well row="11" col="1" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2126,7 +2126,7 @@
       </well>
       <well row="11" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2136,7 +2136,7 @@
       </well>
       <well row="11" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2146,7 +2146,7 @@
       </well>
       <well row="11" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug04" displayName="drug04" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2156,7 +2156,7 @@
       </well>
       <well row="11" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2166,7 +2166,7 @@
       </well>
       <well row="11" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2176,7 +2176,7 @@
       </well>
       <well row="11" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug01" displayName="drug01" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2186,7 +2186,7 @@
       </well>
       <well row="11" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2196,7 +2196,7 @@
       </well>
       <well row="11" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2206,7 +2206,7 @@
       </well>
       <well row="11" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug17" displayName="drug17" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2216,7 +2216,7 @@
       </well>
       <well row="11" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2226,7 +2226,7 @@
       </well>
       <well row="11" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2236,7 +2236,7 @@
       </well>
       <well row="11" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug08" displayName="drug08" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2246,7 +2246,7 @@
       </well>
       <well row="11" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2256,7 +2256,7 @@
       </well>
       <well row="11" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2266,7 +2266,7 @@
       </well>
       <well row="11" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug18" displayName="drug18" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2276,7 +2276,7 @@
       </well>
       <well row="11" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2286,7 +2286,7 @@
       </well>
       <well row="11" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2296,7 +2296,7 @@
       </well>
       <well row="11" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug13" displayName="drug13" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2306,7 +2306,7 @@
       </well>
       <well row="11" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2316,7 +2316,7 @@
       </well>
       <well row="11" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2326,7 +2326,7 @@
       </well>
       <well row="11" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug22" displayName="drug22" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2338,7 +2338,7 @@
       <well row="12" col="0" />
       <well row="12" col="1" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2348,7 +2348,7 @@
       </well>
       <well row="12" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2358,7 +2358,7 @@
       </well>
       <well row="12" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2368,7 +2368,7 @@
       </well>
       <well row="12" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2378,7 +2378,7 @@
       </well>
       <well row="12" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2388,7 +2388,7 @@
       </well>
       <well row="12" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2398,7 +2398,7 @@
       </well>
       <well row="12" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2408,7 +2408,7 @@
       </well>
       <well row="12" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2418,7 +2418,7 @@
       </well>
       <well row="12" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2428,7 +2428,7 @@
       </well>
       <well row="12" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2438,7 +2438,7 @@
       </well>
       <well row="12" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2448,7 +2448,7 @@
       </well>
       <well row="12" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2458,7 +2458,7 @@
       </well>
       <well row="12" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2468,7 +2468,7 @@
       </well>
       <well row="12" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2478,7 +2478,7 @@
       </well>
       <well row="12" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2488,7 +2488,7 @@
       </well>
       <well row="12" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2498,7 +2498,7 @@
       </well>
       <well row="12" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2508,7 +2508,7 @@
       </well>
       <well row="12" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2518,7 +2518,7 @@
       </well>
       <well row="12" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2528,7 +2528,7 @@
       </well>
       <well row="12" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2538,7 +2538,7 @@
       </well>
       <well row="12" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2548,7 +2548,7 @@
       </well>
       <well row="12" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2560,7 +2560,7 @@
       <well row="13" col="0" />
       <well row="13" col="1" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug16" displayName="drug16" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2570,7 +2570,7 @@
       </well>
       <well row="13" col="2" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2580,7 +2580,7 @@
       </well>
       <well row="13" col="3" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2590,7 +2590,7 @@
       </well>
       <well row="13" col="4" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug09" displayName="drug09" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2600,7 +2600,7 @@
       </well>
       <well row="13" col="5" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2610,7 +2610,7 @@
       </well>
       <well row="13" col="6" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2620,7 +2620,7 @@
       </well>
       <well row="13" col="7" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug07" displayName="drug07" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2630,7 +2630,7 @@
       </well>
       <well row="13" col="8" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2640,7 +2640,7 @@
       </well>
       <well row="13" col="9" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2650,7 +2650,7 @@
       </well>
       <well row="13" col="10" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug11" displayName="drug11" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2660,7 +2660,7 @@
       </well>
       <well row="13" col="11" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2670,7 +2670,7 @@
       </well>
       <well row="13" col="12" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2680,7 +2680,7 @@
       </well>
       <well row="13" col="13" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug14" displayName="drug14" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2690,7 +2690,7 @@
       </well>
       <well row="13" col="14" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2700,7 +2700,7 @@
       </well>
       <well row="13" col="15" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2710,7 +2710,7 @@
       </well>
       <well row="13" col="16" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug03" displayName="drug03" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2720,7 +2720,7 @@
       </well>
       <well row="13" col="17" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2730,7 +2730,7 @@
       </well>
       <well row="13" col="18" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2740,7 +2740,7 @@
       </well>
       <well row="13" col="19" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug02" displayName="drug02" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2750,7 +2750,7 @@
       </well>
       <well row="13" col="20" >
         <items>
-          <wellItem type="Compound" concentration="5" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="5000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2760,7 +2760,7 @@
       </well>
       <well row="13" col="21" >
         <items>
-          <wellItem type="Compound" concentration="1" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="1000" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
@@ -2770,7 +2770,7 @@
       </well>
       <well row="13" col="22" >
         <items>
-          <wellItem type="Compound" concentration="0.2" concentrationUnits="ug/ul">
+          <wellItem type="Compound" concentration="200" concentrationUnits="ng/ul">
             <referenceItem type="Compound" description="drug15" displayName="drug15" colorArgb="-12523200" />
           </wellItem>
           <wellItem type="CellType" passage="1" seedingDensity="1000" seedingDensityUnits="cells / well">
