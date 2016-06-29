@@ -3362,7 +3362,7 @@ plot.color.grid=function(M, block.height=20, block.width=10, space.X=3, space.Y=
         cur.y = cur.y - block.height - space.Y
     }
     axis(1, at=xlab_locs, labels=dimnames(M)[[2]], las=2, cex.axis=cex.x, tick=FALSE, padj=1, line=-1.5 )
-    axis(2, at=ylab_locs, labels=rownames(M), las=2, cex.axis=cex.y, tick=FALSE, hadj=1, line=-2)
+    axis(2, at=ylab_locs, labels=rownames(M), las=2, cex.axis=cex.y, tick=FALSE, hadj=1, line=-1.5)
 }
 
 
