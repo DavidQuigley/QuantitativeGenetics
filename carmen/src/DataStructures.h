@@ -1156,8 +1156,8 @@ template <typename T> void Matrix<T>::write_with_names(std::string file_name_out
 	f_out << "IDENTIFIER";
     for(int i=0; i<this->c; i++)
         f_out << spacer << col_names.at(i);
+    
     f_out << "\n";
-
     int row, col;
 	for(row=0;row<this->r;row++){
 		f_out << row_names.at(row) << spacer;

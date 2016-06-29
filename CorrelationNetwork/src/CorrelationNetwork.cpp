@@ -136,6 +136,9 @@ int main(int argc, char *argv[]){
 	if(options->at(r++)->value.compare("F")==0)
 		allow_uncorrelated_loci_with_eQTL=false;
 	std::string sample_limits = options->at(r++)->value;
+    if( sample_limits.size()==0 ){
+        sample_limits = std::string( "IDENTIFIER!NULL");
+    }
 	std::string seed_str = options->at(r++)->value;
 	bool include_seed_neighbors=false;
 	if(options->at(r++)->value.compare("T")==0)

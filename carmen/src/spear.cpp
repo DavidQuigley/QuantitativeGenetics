@@ -3318,7 +3318,7 @@ void Spearman::write_to_cytoscape_v3(double min_abs, std::string fn_base, Attrib
     }
     std::string val_extra_attribute;
     // write out node types {gene,locus} and possible extra attribute
-    f_noa << "source\tNodeType\tNodeAttribute\tBiological_process\tMolecular_function\tCellular_component\n";
+    f_noa << "source\tNodeType\tNodeAttribute"; //\tBiological_process\tMolecular_function\tCellular_component\n";
 	std::vector<int> nodes;
 	G->nodes(nodes);
 	n_genes_written = int(nodes.size());
@@ -3339,7 +3339,7 @@ void Spearman::write_to_cytoscape_v3(double min_abs, std::string fn_base, Attrib
         for(int j=0; j<int(bp_list.size()); j++){ ss_bp << bp_list.at(j); if( j<( int(bp_list.size()) - 1)) { ss_bp << "::";} }
         for(int j=0; j<int(mf_list.size()); j++){ ss_mf << mf_list.at(j); if( j<( int(mf_list.size()) - 1)) { ss_mf << "::";} }
         for(int j=0; j<int(cc_list.size()); j++){ ss_cc << cc_list.at(j); if( j<( int(cc_list.size()) - 1)) { ss_cc << "::";} }
-        f_noa << g1 << "\tgene\t" << val_extra_attribute << "\t" << ss_bp.str() << "\t" << ss_mf.str() << "\t" << ss_cc.str() << "\n";
+        f_noa << g1 << "\tgene\t" << val_extra_attribute << "\n"; //<< "\t" << ss_bp.str() << "\t" << ss_mf.str() << "\t" << ss_cc.str() << "\n";
         gene_seen[g1]=1;
 	}
 	G_QTL->nodes(nodes);
@@ -3362,7 +3362,7 @@ void Spearman::write_to_cytoscape_v3(double min_abs, std::string fn_base, Attrib
                 for(int j=0; j<int(bp_list.size()); j++){ ss_bp << bp_list.at(j); if( j<( int(bp_list.size()) - 1)) { ss_bp << "::";} }
                 for(int j=0; j<int(mf_list.size()); j++){ ss_mf << mf_list.at(j); if( j<( int(mf_list.size()) - 1)) { ss_mf << "::";} }
                 for(int j=0; j<int(cc_list.size()); j++){ ss_cc << cc_list.at(j); if( j<( int(cc_list.size()) - 1)) { ss_cc << "::";} }
-                f_noa << g1 << "\tgene\t" << val_extra_attribute << "\t" << ss_bp.str() << "\t" << ss_mf.str() << "\t" << ss_cc.str() << "\n";
+                f_noa << g1 << "\tgene\t" << val_extra_attribute << "\n"; // "\t" << ss_bp.str() << "\t" << ss_mf.str() << "\t" << ss_cc.str() << "\n";
                 gene_seen[g1]=1;
             }
         }
@@ -3383,6 +3383,29 @@ void Spearman::write_to_cytoscape_v3(double min_abs, std::string fn_base, Attrib
     f_cmd << "vizmap load file file=\"" << fn_cytoscape_props << "\"\n";
     f_cmd << "vizmap apply styles=\"Correlation\"\n";
     f_cmd.close();
+    
+    std::string fn_bat(fn_base + "." + this->batch_extension);
+	std::ofstream f_bat(fn_bat.c_str());
+	if( !f_bat.is_open() )
+		throw new std::string( "Unable to open file for writing: " + fn_bat);
+    
+	std::string result_header;
+	generate_result_header(result_header);
+	f_bat << result_header;
+    
+	if(this->limit_network_to_seeds)
+		f_bat << "# Limit_to_seeds True\n";
+	else
+		f_bat << "# Limit_to_seeds False\n";
+	f_bat << "# Seeds";
+	for(int i=0; i<(int)this->seeds.size(); i++)
+		f_bat << " " << seeds.at(i);
+	f_bat << "\n";
+	if(this->fn_cytoscape.at(0)=='\"')
+		f_bat << this->fn_cytoscape;
+	else
+		f_bat << "\"" << this->fn_cytoscape << "\"  -S " << fn_base << "_cytoscape_commands.txt\n";
+	f_bat.close();
     
     delete G_QTL;
 	delete G;
