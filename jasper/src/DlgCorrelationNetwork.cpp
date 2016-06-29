@@ -103,7 +103,7 @@ void CorrelationNetworkDialog::CreateControls(){
 	this->txt_seeds = new wxTextCtrl( this, ID_CORR_NET_TXT_SEEDS, wxT(""), wxDefaultPosition, wxSize(200, 70), wxTE_MULTILINE );
 	this->btn_GO = new wxButton( this, ID_CORR_NET_BTN_GO, wxT("&Add by Ontology"), wxDefaultPosition, wxSize(130,22));
 	this->txt_gene = new wxTextCtrl( this, ID_CORR_NET_TXT_GENE, wxT(""), wxDefaultPosition, wxSize(200, 22));
-	this->btn_add_gene = new wxButton( this, ID_CORR_NET_BTN_ADD_GENE, wxT("&Add Gene"), wxDefaultPosition, wxSize(100,22));
+	this->btn_add_gene = new wxButton( this, ID_CORR_NET_BTN_ADD_GENE, wxT("&Add Seed"), wxDefaultPosition, wxSize(100,22));
 	wxStaticText* lbl_limit_seeds = new wxStaticText( this, wxID_ANY, wxT("Limit network to seeds"));
 	this->chk_limit_seeds = new wxCheckBox(this, ID_CORR_NET_CHK_LIMIT_SEEDS, wxString::FromAscii(""));
 
@@ -471,7 +471,7 @@ void CorrelationNetworkDialog::OnClickOk(wxCommandEvent& event){
 	cmd.push_back("-t" + fn_cytoscape);
 	cmd.push_back("-b" + fn_props);
 	cmd.push_back("-h" + fn_go);
-	cmd.push_back( "-i" + this->fn_annotations.at( this->cho_annotation->GetSelection() ));
+	cmd.push_back("-i" + this->fn_annotations.at( this->cho_annotation->GetSelection() ));
 	cmd.push_back("-o" + base_location );
 
 	ProgressDialog dialog(this, cmd, this->investigation, true);

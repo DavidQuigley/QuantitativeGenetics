@@ -9,6 +9,7 @@
 #include <wx/txtstrm.h>
 #include <wx/wfstream.h>
 #include <wx/sizer.h>
+#include <wx/filename.h>
 #include <wx/stattext.h>
 #include <wx/button.h>
 #include <wx/textctrl.h>
@@ -39,6 +40,7 @@ long ProgressDialog::popen2(std::string cmd, int &fd){
 	// This code is only called from the macintosh; the PC side uses wxExecute
 	// This is because wxExecute seems only to know how to call .app packages
 	// on the OS X side.
+    
 #ifdef WIN32
 	return -1;  // This code would never be called from windows
 #else
@@ -64,7 +66,7 @@ long ProgressDialog::popen2(std::string cmd, int &fd){
 	    close(CHILD_READ);
 	    dup2(CHILD_WRITE, 1);
 	    close(CHILD_WRITE);
-	    execl("/bin/sh", "sh", "-c", cmd.c_str(), NULL);
+        execl("/bin/sh", "sh", "-c", cmd.c_str(), NULL);
 	    // should not get to this point, as execl only returns on fatal error
 	    std::stringstream ss;
 	    ss << "Fatal error in command: " << cmd.c_str();
@@ -132,10 +134,29 @@ ProgressDialog::ProgressDialog( wxWindow* parent, std::vector<std::string>& cmd,
 		else
 			ss << this->investigation->cp->get("Internal", "homedir") << "\\";
 		ss << cmd.at(0);
-		if( !this->investigation->is_mac )
-			ss << ".exe"; 
+		if( this->investigation->is_mac ){
+            // check that the file we're about to run is executable
+            std::stringstream ss_fn; // ss itself has a quote prepended to it, that hoses us.
+            ss_fn << this->investigation->cp->get("Internal", "homedir") << "/Carmen.app/Contents/MacOS/" << cmd.at(0);
+            wxString fn = wxString::wxString( ss_fn.str().c_str() );
+            if( ! wxFileName(fn).FileExists() ){
+                std::stringstream ss_err;
+                ss_err << "ERROR running command. Could not execute:\n" << fn.ToStdString() << "\n";
+                ss_err << "File does not exist: " << ss.str().c_str();
+                wxMessageBox(wxString::FromAscii( ss_err.str().c_str() ), wxString::FromAscii("Error executing command"), wxOK|wxICON_EXCLAMATION, this);
+                this->EndModal(wxID_CANCEL);
+            }
+            if( !( wxFileName( fn ).IsFileExecutable() )){
+                wxFileName( fn ).SetPermissions(wxPOSIX_USER_READ | wxPOSIX_USER_WRITE | wxPOSIX_USER_EXECUTE | wxPOSIX_GROUP_READ | wxPOSIX_GROUP_EXECUTE);
+            }
+        }
+        else{
+			ss << ".exe";
+        }
 		ss << "\" "; // trailing space is intentional
 	}
+
+    
 	for(int i=1; i<(int)cmd.size();i++){
 		if( this->investigation->is_mac )
 			boost::algorithm::replace_all(cmd.at(i), "\\", "/");

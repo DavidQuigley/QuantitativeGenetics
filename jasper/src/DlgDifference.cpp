@@ -38,7 +38,7 @@ IMPLEMENT_CLASS( DifferenceDialog, wxDialog )
  * seemed too complex.
  */
 DifferenceDialog::DifferenceDialog( Investigation* investigation, std::string filename ){
-	this->investigation = investigation;
+    this->investigation = investigation;
 	SetExtraStyle(wxWS_EX_BLOCK_EVENTS|wxDIALOG_EX_CONTEXTHELP);
 	wxDialog::Create( NULL, wxID_ANY, wxT("Calculate Differential Expression"), wxDefaultPosition, wxDefaultSize, wxCAPTION|wxRESIZE_BORDER|wxSYSTEM_MENU );
 	CreateControls(filename);

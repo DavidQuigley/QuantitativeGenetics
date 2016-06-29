@@ -291,11 +291,11 @@ wxTreeItemId JasperTree::add_label(wxTreeItemId item_q, std::string filename, st
 wxTreeItemId JasperTree::create_query(std::string label_to_show, std::string original_label){
 	
 	wxTreeItemId new_q = append_child_with_icons( this->root, label_to_show, new TreeData("", original_label, LEAF_QUERY));
-	append_child_with_icons(new_q, "Rulesets", new TreeData("", "Rulesets", LEAF_SUBHEAD));
-	append_child_with_icons(new_q, "Classifiers", new TreeData("", "Classifiers", LEAF_SUBHEAD));
+	//append_child_with_icons(new_q, "Rulesets", new TreeData("", "Rulesets", LEAF_SUBHEAD));
+	//append_child_with_icons(new_q, "Classifiers", new TreeData("", "Classifiers", LEAF_SUBHEAD));
 	append_child_with_icons(new_q, "Differences", new TreeData("", "Differences", LEAF_SUBHEAD));
 	append_child_with_icons(new_q, "Correlations", new TreeData("", "Correlations", LEAF_SUBHEAD));
-	append_child_with_icons(new_q, "Classified Datasets", new TreeData("", "Classified Datasets", LEAF_SUBHEAD));
+	//append_child_with_icons(new_q, "Classified Datasets", new TreeData("", "Classified Datasets", LEAF_SUBHEAD));
     return new_q;
 }
 

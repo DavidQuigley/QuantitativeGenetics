@@ -108,6 +108,8 @@ void JasperFrame::fork_shell_command(std::string cmd){
 	    close(CHILD_READ);
 	    dup2(CHILD_WRITE, 1);
 	    close(CHILD_WRITE);
+        std::cout << cmd.c_str() << "\n";
+        std::cout.flush();
 	    execl("/bin/sh", "sh", "-c", cmd.c_str(), NULL);
 	    // should not get to this point, as execl only returns on fatal error
 	    std::stringstream ss;
@@ -489,8 +491,8 @@ JasperFrame::JasperFrame(const wxString& title): wxFrame(NULL, wxID_ANY, title){
 		std::stringstream ss;
 		std::string fn_carmen;
 		this->loaded_properties = false;
-		ss << "Error attempting to load property file at\n" << prop_path << "\nGenerate new property file?";
-		int yn = wxMessageBox(wxString::FromAscii(ss.str().c_str()), wxString::FromAscii("Error attempting to load property file"), wxYES|wxNO, this);
+		ss << "Could not find an existing property file at \n" << prop_path << "\nGenerate new property file?";
+		int yn = wxMessageBox(wxString::FromAscii(ss.str().c_str()), wxString::FromAscii("Generate new property file?"), wxYES|wxNO, this);
 		if( yn==wxYES){
 			try{
 				this->initialize_properties(prop_path, carmen_base_dir, is_mac);
@@ -520,7 +522,7 @@ JasperFrame::JasperFrame(const wxString& title): wxFrame(NULL, wxID_ANY, title){
 	//}
 	this->SetUpMenu();
     CreateStatusBar(2);
-	SetStatusText(_T("CARMEN 1.3"));
+	SetStatusText(_T("CARMEN 1.4"));
 	wxFlexGridSizer *sizer_top = new wxFlexGridSizer(2,1,0,0);
 	sizer_top->AddGrowableRow(1,1);
 	sizer_top->AddGrowableCol(0,1);
@@ -556,14 +558,14 @@ void JasperFrame::SetUpMenu(){
 	fileMenu->AppendSeparator();
 	fileMenu->Append(wxID_EXIT, _T("E&xit\tAlt-X"), _T("Quit this program"));
 	
-	wxMenu* miningMenu = new wxMenu;
-	menubar->Append(miningMenu, _T("&Mining"));
-	miningMenu->Append(Menu_Mining_Ruleset_New, _T("&New Ruleset"), _T("Create a new ruleset"));
-	miningMenu->Append(Menu_Mining_Core_New, _T("New C&ore Ruleset"), _T("Create a new ruleset"));
-	miningMenu->Append(Menu_Mining_Merge_Rules, _T("Merge Redundant Rules"), _T("Merge redundant rules"));
-	miningMenu->AppendSeparator();
-	miningMenu->Append(Menu_Mining_Set_Nickname, _T("&Set Nickname\tF2"), _T("Set Nickname for query"));
-	miningMenu->Append(Menu_Mining_Clear_Nickname, _T("&Clear Nickname"), _T("Clear Nickname for query"));
+	//wxMenu* miningMenu = new wxMenu;
+	//menubar->Append(miningMenu, _T("&Mining"));
+	//miningMenu->Append(Menu_Mining_Ruleset_New, _T("&New Ruleset"), _T("Create a new ruleset"));
+	//miningMenu->Append(Menu_Mining_Core_New, _T("New C&ore Ruleset"), _T("Create a new ruleset"));
+	//miningMenu->Append(Menu_Mining_Merge_Rules, _T("Merge Redundant Rules"), _T("Merge redundant rules"));
+	//miningMenu->AppendSeparator();
+	//miningMenu->Append(Menu_Mining_Set_Nickname, _T("&Set Nickname\tF2"), _T("Set Nickname for query"));
+	//miningMenu->Append(Menu_Mining_Clear_Nickname, _T("&Clear Nickname"), _T("Clear Nickname for query"));
 
 	//wxMenu* classificationMenu = new wxMenu;
 	//menubar->Append(classificationMenu, _T("&Classification"));
@@ -596,7 +598,7 @@ void JasperFrame::SetUpMenu(){
     exportMenu->Append(Menu_Export_Tmev, _T("To &Datasheet"), _T("Export genes, samples, and data in one file"));
     exportMenu->Append(Menu_File_Show_raw_disc, _T("Raw &Data Discretized"), _T("Export Raw Data Discretized"));
     exportMenu->AppendSeparator();
-	exportMenu->Append(Menu_Export_Cytoscape, _T("To &Cytoscape"), _T("Export file to Cytoscape"));
+	//exportMenu->Append(Menu_Export_Cytoscape, _T("To &Cytoscape"), _T("Export file to Cytoscape"));
 	exportMenu->Append(Menu_Export_Crosstab, _T("C&rosstab of rules"), _T("Export crosstab of rules by samples"));
 	exportMenu->Append(Menu_Export_Frequency, _T("Gene &Frequency List"), _T("Export ranked list of gene frequencies"));
 	exportMenu->Append(Menu_Export_Rules_by_Samples, _T("R&ules by Samples"), _T("Export matrix of {rules x samples}"));
@@ -621,11 +623,11 @@ void JasperFrame::SetUpMenu(){
 
 	Connect(Menu_Mining_Delete, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningDelete));
 
-    Connect(Menu_Mining_Merge_Rules, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningMergeRules));
-	Connect(Menu_Mining_Set_Nickname, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningSetNickname));
-	Connect(Menu_Mining_Clear_Nickname, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningClearNickname));
-	Connect(Menu_Mining_Ruleset_New, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningRulesetNew));
-	Connect(Menu_Mining_Core_New, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningCoreNew));
+    //Connect(Menu_Mining_Merge_Rules, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningMergeRules));
+	//Connect(Menu_Mining_Set_Nickname, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningSetNickname));
+	//Connect(Menu_Mining_Clear_Nickname, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningClearNickname));
+	//Connect(Menu_Mining_Ruleset_New, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningRulesetNew));
+	//Connect(Menu_Mining_Core_New, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningCoreNew));
 	Connect(Menu_Mining_Difference_New, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningDifferenceNew));
 
     Connect(Menu_Correlation_New, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnMiningCorrelationNew));
@@ -645,7 +647,7 @@ void JasperFrame::SetUpMenu(){
 	Connect(Menu_Export_Excel, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportExcel));
 	Connect(Menu_File_Show_raw_disc, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnFileShowRawDisc));
 	Connect(Menu_Export_Tmev, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportTmev));
-    Connect(Menu_Export_Cytoscape, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportCytoscape));
+    //Connect(Menu_Export_Cytoscape, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportCytoscape));
 	Connect(Menu_Export_Crosstab, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportCrosstab));
 	Connect(Menu_Export_Frequency, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportFrequency));
 	Connect(Menu_Export_Rules_by_Samples, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(JasperFrame::OnExportRulesBySamples));
@@ -660,7 +662,7 @@ void JasperFrame::OnQuit(wxCommandEvent& WXUNUSED(event)){
 }
 
 void JasperFrame::OnAbout(wxCommandEvent& WXUNUSED(event)){
-	wxMessageBox(wxString::FromAscii("CARMEN 1.3\nDavid Quigley\nBalmain Lab, UCSF\nBuild date July 20 2015"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
+	wxMessageBox(wxString::FromAscii("CARMEN 1.4\nDavid Quigley\nBalmain Lab, UCSF\nBuild date June 28 2016"), _T("About Carmen"), wxOK | wxICON_INFORMATION, this);
 }
 
 
@@ -972,10 +974,6 @@ void JasperFrame::OnDocumentation(wxCommandEvent& WXUNUSED(event)){
 	std::string helpfile = this->investigation->cp->get(std::string("Internal"), std::string("helpfile"));
 	if( helpfile.size()==0 )
 		helpfile = std::string("CARMEN_documentation.pdf");
-    if ( this->investigation->is_mac )
-        std::cout << "I'm running on a mac\n";
-    else
-        std::cout << "I'm on a PC\n";
 	if( this->investigation->is_mac ){
 		ss << "open \"" << homedir << "/Carmen.app/Contents/MacOS/" << helpfile << "\"";
         std::cout << ss.str();
@@ -1159,8 +1157,8 @@ void JasperFrame::OnExportCytoscape(wxCommandEvent& WXUNUSED(event)){
     // is cytoscape present?
 	std::string forward("/");
 	std::string back("\\");
-	std::string slash;
     std::string loc_cytoscape = this->investigation->cp->get(std::string("External"), std::string("cytoscape"));
+	// if not present, let user tell us where it is
     if( loc_cytoscape.size()==0 ){
 		wxMessageBox(wxString::FromAscii("Cytoscape location not set; please select Cytoscape application."), wxString::FromAscii("Cytoscape location not set"), wxOK|wxICON_EXCLAMATION );
 		wxString cloc = wxFileSelector(wxString::FromAscii("Select file"), wxString::FromAscii(""), wxString::FromAscii(""), wxString::FromAscii(""), wxString::FromAscii(""), wxFD_OPEN, this);
@@ -1173,20 +1171,37 @@ void JasperFrame::OnExportCytoscape(wxCommandEvent& WXUNUSED(event)){
 			return;
 		}
 	}
-    if( this->investigation->is_mac )
-    	alg::replace_all(loc_cytoscape, std::string("Cytoscape.app"), std::string("Cytoscape.sh") );
-    if( this->investigation->cp->get(std::string("Internal"), std::string("debug")).compare(std::string("true"))==0 )
-    	std::cout << loc_cytoscape << "\n";
-	if(this->investigation->is_mac){
-		slash = forward;
-		alg::replace_all(loc_cytoscape, back, forward);
-	}
-	else{
-		slash = back;
-		alg::replace_all(loc_cytoscape, forward, back);
-	}
+    
+    // use cytoscape.sh
+    if( this->investigation->is_mac ){
+        alg::replace_all(loc_cytoscape, std::string("Cytoscape.app"), std::string("Cytoscape.sh") );
+    	this->investigation->cp->set(std::string("External"), std::string("cytoscape"), loc_cytoscape);
+    	this->investigation->cp->write();
+    }
+    std::string loc_properties = this->investigation->cp->get(std::string("Internal"), std::string("cytoscape_vizmap"));
+    if( loc_properties.size()==0 ){
+    	std::stringstream ss;
+    	if( this->investigation->is_mac )
+    		ss << this->investigation->cp->get(std::string("Internal"), std::string("homedir")) << "/Carmen.app/Contents/MacOS/ClassAnalysis.props";
+    	else
+    		ss << this->investigation->cp->get(std::string("Internal"), std::string("homedir")) << "\\ClassAnalysis.props";
+    	this->investigation->cp->set(std::string("Internal"), std::string("cytoscape_vizmap"), ss.str());
+    	this->investigation->cp->write();
+    }
+    
 	if( loc_cytoscape.at(0) == '"' && loc_cytoscape.at( loc_cytoscape.size()-1 )=='"')
-        loc_cytoscape = loc_cytoscape.substr(1, loc_cytoscape.size()-2 );
+		loc_cytoscape = loc_cytoscape.substr(1, loc_cytoscape.size()-2 );
+	if(!this->investigation->is_mac)
+		alg::replace_all(loc_cytoscape, forward, back);
+    
+	bool exists_as_file = wxFileExists( wxString::FromAscii( loc_cytoscape.c_str() ) );
+	bool exists_as_dir = wxDirExists( wxString::FromAscii( loc_cytoscape.c_str() ) );
+	if( loc_cytoscape.size()==0 || (!exists_as_file && !exists_as_dir )  ){
+		std::stringstream ss;
+		ss << "ERROR: Cytoscape not found at location: " << loc_cytoscape;
+		wxMessageBox(wxString::FromAscii(ss.str().c_str()), wxString::FromAscii("Cannot find Cytoscape"), wxOK|wxICON_EXCLAMATION, this);
+		return;
+	}
 
     // where will we write the files?
     std::string fn;
@@ -1221,44 +1236,52 @@ void JasperFrame::OnExportCytoscape(wxCommandEvent& WXUNUSED(event)){
     			sp.set_batch_extension(std::string("bat"));
     			cmd.push_back(location + ".bat");
     		}
-    		sp.write_to_cytoscape(0, location, this->investigation->ga);
-    		std::stringstream batch;
-			if(this->investigation->is_mac){
-				batch << "sh " << location << ".sh";
-				fork_shell_command( batch.str() );
-			}
-			else{
-    			batch << location << ".bat";
-				wxExecute(wxString::FromAscii(batch.str().c_str()));
-			}
-        }
-        else{
-            // from rules file
-        	try{
+            std::string fn_eQTL;
+            bool require_eQTL=false;
+            typedef std::pair<std::string, std::string> prop_pair;
+            std::vector< prop_pair* >* annotations = new std::vector<prop_pair*>();
+            this->investigation->cp->get_section(std::string("Annotations"), annotations);
 
-				RuleSet ruleset(filepath);
-				ruleset.write_network(location);
-				std::stringstream batch;
-				batch << loc_cytoscape;
-				batch << " -N \"" << location << ".sif\"";
-				batch << " -n \"" << location << ".noa\"";
-				batch << " -n \"" << location << "_names.noa\"";
-				batch << " -V \"" << cyto_viz << "\"";
-				batch << " -e \"" << location << "_class.eda\"";
-				batch << " -e \"" << location << "_conf.eda\"";
-				batch << " -e \"" << location << "_sup.eda\"";
-				batch << " -e \"" << location << "_pval.eda\"";
-				if(this->investigation->is_mac)
-					fork_shell_command( batch.str() );
-				else
-					wxExecute(wxString::FromAscii(batch.str().c_str()));
-			}
-        	catch(std::string err){
-        		wxMessageBox(wxString::FromAscii(err.c_str()));
-        	}
-        	catch(std::string* err){
-        		wxMessageBox(wxString::FromAscii(err->c_str()));
-        	}
+            std::stringstream ss_annot;
+            for(int i=0; i<(int)annotations->size(); i++){
+                if( annotations->at(i)->first.compare("go") != 0 ){
+                    ss_annot << annotations->at(i);
+                    break;
+                }
+            }
+            std::string fn_annotation( ss_annot.str() );
+            GOAnnotationParser GO_parser;
+            GeneAnnotationParser gene_parser;
+            GO_parser.load(this->investigation->cp->get(std::string("Annotations"), std::string("go")));
+            typedef std::pair<std::string, std::string> prop_pair;
+            gene_parser.load( fn_annotation , GO_parser );
+            
+            sp.write_to_cytoscape_v3(0, location, this->investigation->ga, &GO_parser, &gene_parser, fn_eQTL, 0, require_eQTL);
+    		
+            
+            std::stringstream ss_full_command, ss_shellfile;
+            
+            if(this->investigation->is_mac){
+                ss_shellfile << location << ".sh";
+                ss_full_command << "sh " << location << ".sh";
+            }
+            else{
+                ss_shellfile << location << ".bat";
+                ss_full_command << location << ".bat";
+            
+            }
+            boost::filesystem::path sh_file( ss_shellfile.str().c_str() );
+            if( !boost::filesystem::exists( sh_file ) ){
+                std::stringstream ss;
+                ss << "ERROR: File not created: " << ss_shellfile.str().c_str();
+                wxMessageBox(wxString::FromAscii(ss.str().c_str()), wxString::FromAscii("File not created correctly"), wxOK|wxICON_EXCLAMATION, this);
+            }
+            if( this->investigation->is_mac)
+                fork_shell_command( ss_full_command.str() );
+            else{
+                wxExecute(wxString::FromAscii( ss_full_command.str().c_str() ));
+            }
+            
         }
 	}
 }
@@ -1339,10 +1362,9 @@ void JasperFrame::OnExportCorrelationNetwork(wxCommandEvent& WXUNUSED(event)){
 		}
 	}
 
-    // Used to use cytoscape.sh; this is wrong. If found, replace with .app
+    // use cytoscape.sh
     if( this->investigation->is_mac ){
-    	alg::replace_all(loc_cytoscape, std::string("Cytoscape.app"), std::string("Cytoscape.sh") );
-    	std::cout << "replacing with " << loc_cytoscape << "\n";
+        alg::replace_all(loc_cytoscape, std::string("Cytoscape.app"), std::string("Cytoscape.sh") );
     	this->investigation->cp->set(std::string("External"), std::string("cytoscape"), loc_cytoscape);
     	this->investigation->cp->write();
     }
@@ -1532,11 +1554,11 @@ void JasperFrame::EnableInvestigationMenuItems(){
 	this->menubar->Enable(Menu_File_Show_SA, true);
 	this->menubar->Enable(Menu_File_Show_raw, true);
     this->menubar->Enable(Menu_File_Show_raw_disc, true);
-    this->menubar->Enable(Menu_Mining_Ruleset_New, true);
+    //this->menubar->Enable(Menu_Mining_Ruleset_New, true);
 	this->menubar->Enable(Menu_Correlation_New, true);
     this->menubar->Enable(Menu_Correlation_New_One_Probe, true);
 	this->menubar->Enable(Menu_Export_Correlation_Network, true);
-	this->menubar->Enable(Menu_Mining_Difference_New, true);
+	//this->menubar->Enable(Menu_Mining_Difference_New, true);
     this->menubar->Enable(Menu_Export_Tmev, true);
     this->menubar->Enable(Menu_Export_Plot, true);
     this->menubar->Enable(Menu_Correlation_GWER, true);
@@ -1549,18 +1571,18 @@ void JasperFrame::react_to_tree_selection(int leaf_type){
 	this->menubar->Enable(Menu_File_Show_Properties, this->loaded_properties);
 	this->menubar->Enable(Menu_File_Remove, false);
 	this->menubar->Enable(Menu_File_Edit_Investigation, false);
-	this->menubar->Enable(Menu_Mining_Ruleset_New, false);
+	//this->menubar->Enable(Menu_Mining_Ruleset_New, false);
 	this->menubar->Enable(Menu_File_Show_GA, false);
 	this->menubar->Enable(Menu_File_Show_SA, false);
 	this->menubar->Enable(Menu_File_Show_raw, false);
     this->menubar->Enable(Menu_File_Show_raw_disc, false);
     this->menubar->Enable(Menu_Mining_Delete, false);
-	this->menubar->Enable(Menu_Mining_Core_New, false);
-	this->menubar->Enable(Menu_Mining_Difference_New, false);
+	//this->menubar->Enable(Menu_Mining_Core_New, false);
+	//this->menubar->Enable(Menu_Mining_Difference_New, false);
 
-	this->menubar->Enable(Menu_Mining_Merge_Rules, false);
-	this->menubar->Enable(Menu_Mining_Set_Nickname, false);
-	this->menubar->Enable(Menu_Mining_Clear_Nickname, false);
+	//this->menubar->Enable(Menu_Mining_Merge_Rules, false);
+	//this->menubar->Enable(Menu_Mining_Set_Nickname, false);
+	//this->menubar->Enable(Menu_Mining_Clear_Nickname, false);
 
     this->menubar->Enable(Menu_Correlation_New, false);
     this->menubar->Enable(Menu_Correlation_New_One_Probe, false);
@@ -1570,11 +1592,10 @@ void JasperFrame::react_to_tree_selection(int leaf_type){
 	this->menubar->Enable(Menu_Export_Notepad, false);
 	this->menubar->Enable(Menu_Export_Excel, false);
     this->menubar->Enable(Menu_Export_Tmev, false);
-	this->menubar->Enable(Menu_Export_Cytoscape, false);
+	//this->menubar->Enable(Menu_Export_Cytoscape, false);
 	this->menubar->Enable(Menu_Export_Frequency, false);
 	this->menubar->Enable(Menu_Export_Crosstab, false);
 	this->menubar->Enable(Menu_Export_Rules_by_Samples, false);
-	this->menubar->Enable(Menu_Export_Cytoscape, false);
     this->menubar->Enable(Menu_Export_Plot, false);
     this->menubar->Enable(Menu_Export_Correlation_Network, false);
 
@@ -1607,8 +1628,8 @@ void JasperFrame::react_to_tree_selection(int leaf_type){
 	}
 
 	if( leaf_type == LEAF_QUERY ){
-		this->menubar->Enable(Menu_Mining_Set_Nickname, true);
-		this->menubar->Enable(Menu_Mining_Clear_Nickname, true);
+//		this->menubar->Enable(Menu_Mining_Set_Nickname, true);
+//		this->menubar->Enable(Menu_Mining_Clear_Nickname, true);
 	}
 	else if( leaf_type == LEAF_FILE ){
 		this->menubar->Enable(Menu_Mining_Delete, true);
@@ -1616,18 +1637,10 @@ void JasperFrame::react_to_tree_selection(int leaf_type){
 		this->menubar->Enable(Menu_Export_Excel, true);
 		std::string filename;
 		this->m_treepanel->tree->get_selected_filename(filename);
-		if( alg::find_first( filename, ".ruleset" ) ){
-			this->menubar->Enable(Menu_Mining_Core_New, true);
-			this->menubar->Enable(Menu_Export_Cytoscape, true);
-			this->menubar->Enable(Menu_Export_Crosstab, true);
-			this->menubar->Enable(Menu_Export_Frequency, true);
-			this->menubar->Enable(Menu_Mining_Merge_Rules, true);
-			this->menubar->Enable(Menu_Export_Rules_by_Samples, true);
-		}
-		else if( alg::find_first(filename, ".spear" )){
+		if( alg::find_first(filename, ".spear" )){
             this->menubar->Enable(Menu_Correlation_Viewer, true);
             this->menubar->Enable(Menu_Export_Frequency, true);
-            this->menubar->Enable(Menu_Export_Cytoscape, true);
+            //this->menubar->Enable(Menu_Export_Cytoscape, true);
 		}
         //else if( alg::find_first(filename, ".classifier" ) || alg::find_first(filename, ".labels" )){
         //    this->menubar->Enable(Menu_Classification_Viewer, true);

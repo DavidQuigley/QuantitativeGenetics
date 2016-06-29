@@ -32,10 +32,9 @@ GridCorrelation::GridCorrelation(wxWindow* parent, Investigation* investigation,
 	this->investigation = investigation;
 	//this->read_file_into_graph(filename);
 	this->G.read(filename);
-	std::string gn("Gene Name");
 	for(HASH_S_I::iterator itr=investigation->ga->identifier2idx.begin(); itr != investigation->ga->identifier2idx.end(); itr++){
 		this->id2p[(*itr).second] = (*itr).first;
-		this->p2g[ (*itr).first ] = investigation->ga->prop_for_identifier( (*itr).first, gn );
+		this->p2g[ (*itr).first ] = investigation->ga->prop_for_identifier( (*itr).first, this->investigation->gene_name_column );
 	}
 	this->CreateGrid( 0, 0 );
 	this->SetRowLabelSize(0);
@@ -118,10 +117,9 @@ void GridCorrelation::Update(std::string gene_name, double min_abs_corr){
 		// not a probe id; look in genes
 		Attributes* ga = this->investigation->ga;
 		std::vector<std::string> probes;
-		std::string gn("Gene Name");
 		alg::to_lower(gene_name);
 		for(int i=0; i<(int)ga->identifiers.size(); i++){
-			std::string g = ga->prop_for_identifier(ga->identifiers.at(i), gn);
+			std::string g = ga->prop_for_identifier(ga->identifiers.at(i), this->investigation->gene_name_column );
 			alg::to_lower(g);
 			if( g.compare(gene_name)==0 ){
 				probes.push_back(ga->identifiers.at(i));

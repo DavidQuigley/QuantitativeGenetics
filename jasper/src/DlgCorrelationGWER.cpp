@@ -121,6 +121,7 @@ void CorrelationGWERDialog::OnClickOk(wxCommandEvent& event){
 	cmd.push_back("-f" + this->investigation->fn_sa );
 	cmd.push_back("-g" + this->investigation->fn_ga );
 	cmd.push_back("-a" + this->limit_A->get_limits() );
+    cmd.push_back("-y" + this->investigation->gene_name_column );
 	cmd.push_back("-z" + z);
 	cmd.push_back("-vT");
 	cmd.push_back("-o" + new_file.str() );
