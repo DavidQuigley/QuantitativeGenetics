@@ -32,9 +32,10 @@ mv symbol2name_MM_clean symbol2name_MM
 
 wget http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.goa_human.gz?rev=HEAD
 wget http://viewvc.geneontology.org/viewvc/GO-SVN/trunk/gene-associations/gene_association.mgi.gz?rev=HEAD
+mv gene_association.goa_human.gz?rev=HEAD gene_association.goa_human.gz
+mv gene_association.mgi.gz?rev=HEAD gene_association.mgi.gz
 gunzip gene_association.goa_human.gz
 gunzip gene_association.mgi.gz
-
 cut -f3,5 gene_association.goa_human | sort > symbol2GO_HS
 cut -f3,5 gene_association.mgi | sort > symbol2GO_MM
 
@@ -49,7 +50,7 @@ cut -f1,3,5 refFlat_HS.txt | sort > symbol2loc_HS
 
 # JOIN THE FILES IN R
 R
-source('http://www.davidquigley.com/software/quantitative_genetics.R')
+source('https://raw.githubusercontent.com/DavidQuigley/QuantitativeGenetics/master/R/quantitative_genetics.R')
 s2go.MM = read.table('symbol2GO_MM', sep='\t', stringsAsFactors=F, comment.char="!")
 names(s2go.MM) = c("symbol", "GO")
 s2go.HS = read.table('symbol2GO_HS', sep='\t', stringsAsFactors=F, comment.char="!")
