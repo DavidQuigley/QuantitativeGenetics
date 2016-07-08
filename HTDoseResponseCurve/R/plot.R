@@ -283,10 +283,6 @@ set_list_default = function(L, name, val){
 #' @param sample_type sample type in ds
 #' @param treatment_1 treatment in ds
 #' @param treatment_2 treatment in ds
-#' @param treatment_12 treatment in ds
-#' @param proportion_1 value between 0 and 1, indicating the fixed proportional
-#' relationship between concentrations of treatment_1 and treatment_2 in the 
-#' combined observations. If 50/50, pass 0.5.
 #' @param hour hour in ds. Default 0. 
 #' @param log which scale should be logged; default is "y"
 #' @param ... additional parameters to pass to plot function
@@ -297,29 +293,79 @@ set_list_default = function(L, name, val){
 #' @export
 plot_synergy_interaction_index = function(ds, sample_type, 
                                           treatment_1, treatment_2, 
-                                          treatment_12, 
-                                          proportion_1, hour, ..., log="y", alpha=0.05){
+                                          proportion_1,
+                                          hour, ..., log="y", alpha=0.05){
     
     # effects seen with combined treatment
     if( sum( ds$sample_type==sample_type )==0 ){
-        stop( "passed value for sample type parameter not found in D")
+        stop( "passed value for sample_type parameter not found in D")
     }
     if( sum( ds$treatment==treatment_1 )==0 ){
-        stop( "passed value for sample type parameter not found in D")
+        stop( "passed value for treatment_1 parameter not found in D")
+    }
+    if( sum( ds$treatment_2==treatment_2 )==0 ){
+        stop( "passed value for treatment_2 parameter not found in D")
+    }
+    pp = list(...)
+    pp = set_list_default(pp, "xlim", c(0,1))
+    pp = set_list_default(pp, "ylim", c(0.01, 10))
+    pp = set_list_default(pp, "main", paste(sample_type, hour))
+    pp = set_list_default(pp, "xlab", "Effect (Surviving fraction)")
+    pp = set_list_default(pp, "ylab", "Interaction Index")
+    pp = set_list_default(pp, "las", 1)
+    pp = set_list_default(pp, "log", log)
+    pp = set_list_default(pp, "pch", 19)
+    
+    idx = ds$treatment==treatment_1 & ds$treatment_2==treatment_2 & 
+        ds$concentration != 0 & ds$concentration_2 != 0 & 
+        !ds$is_negative_control &
+        ds$hours==hour & ds$sample_type==sample_type
+    E_ci = seq(from=0.01, to=1, by=0.01)
+    ds_c = ds[idx,]
+    ds_c$conc_final =  ds_c$concentration + ds_c$concentration_2
+    E_combined = plyr::ddply( ds_c, c("conc_final"), 
+                              function(po){ data.frame( 
+                                  mu=mean(po$value_normalized, na.rm=TRUE)) 
+                              } )$mu
+    if( sum(E_combined>1)>0 ){
+        warning("One or more effects were greater than 1, setting to 0.999")   
+    }
+    E_combined[ E_combined >= 1 ] = 0.999
+    obs_plus_ci = data.frame( is_obs = c( rep( TRUE, length(E_combined)), 
+                                          rep( FALSE, length(E_ci)) ),
+                              effect = c(E_combined, E_ci ) )
+    obs_plus_ci=obs_plus_ci[order(obs_plus_ci$effect),]
+    CI.d=synergy_interaction_CI(ds, sample_type=sample_type, 
+                                treatment_1=treatment_1, 
+                                treatment_2=treatment_2,
+                                E=obs_plus_ci$effect, proportion_1=proportion_1,
+                                hour=hour, alpha=alpha)
+    y=CI.d$interaction_index
+    x=obs_plus_ci$effect
+    pp[["x"]] =  x[ obs_plus_ci$is_obs ]
+    pp[["y"]] = y[ obs_plus_ci$is_obs ]
+    do.call( plot, pp)
+    lines( x, CI.d$cl_lower, lty=2, col="cornflowerblue" )
+    lines( x, CI.d$cl_upper, lty=2, col="cornflowerblue" )
+    lines( x, y, lty=1, col="black" )
+    CI.d
+}
+
+
+plot_synergy_interaction_index_old = function(ds, sample_type, 
+                                          treatment_1, treatment_2, 
+                                          hour, ..., log="y", alpha=0.05){
+    
+    # effects seen with combined treatment
+    if( sum( ds$sample_type==sample_type )==0 ){
+        stop( "passed value for sample_type parameter not found in D")
+    }
+    if( sum( ds$treatment==treatment_1 )==0 ){
+        stop( "passed value for treatment_1 parameter not found in D")
     }
     if( sum( ds$treatment==treatment_2 )==0 ){
-        stop( "passed value for sample type parameter not found in D")
+        stop( "passed value for treatment_2 parameter not found in D")
     }
-    if( sum( ds$treatment==treatment_12 )==0 ){
-        stop( "passed value for sample type parameter not found in D")
-    }
-    if( !is.numeric(proportion_1)){
-        stop("proportion_1 parameter must be a number")   
-    }
-    if( proportion_1<0 | proportion_1>1 ){
-        stop("proportion_1 parameter must be between 0 and 1")   
-    }
-    
     pp = list(...)
     pp = set_list_default(pp, "xlim", c(0,1))
     pp = set_list_default(pp, "ylim", c(0.01, 10))
@@ -361,7 +407,6 @@ plot_synergy_interaction_index = function(ds, sample_type,
     lines( x, y, lty=1, col="black" )
     CI.d
 }
-
 
 #' Plot an image of the raw intensities for a plate
 #' 

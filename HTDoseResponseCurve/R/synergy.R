@@ -45,9 +45,8 @@ chou_synergy_helper = function( D, fu, fct ){
 #' @param fct Non-linear function to fit, e.g. drc::LL.3(). See summary.
 #' @param summary_method mean or median
 #' @export
-chou_synergy = function( ds, sample_type, treatment_1, treatment_2, 
-                         treatment_12, hour, proportion_1, fct, 
-                         summary_method ){
+chou_synergy = function( ds, sample_type, treatment_1, treatment_2, hour, 
+                         proportion_1, fct, summary_method ){
     # m is the slope of the median effect plot
     # measures the sigmoidicity of the dose effect curve; m=1 is hyperbolic
     
@@ -60,31 +59,38 @@ chou_synergy = function( ds, sample_type, treatment_1, treatment_2,
     if( sum(ds$treatment==treatment_1)==0 ){
         stop("treatment_1 not found in ds")   
     }
-    if( sum(ds$treatment==treatment_2)==0 ){
+    if( sum(ds$treatment_2==treatment_2)==0 ){
         stop("treatment_2 not found in ds")   
     }
-    if( sum(ds$treatment==treatment_12)==0 ){
-        stop("treatment_12 not found in ds")   
+    if( sum( names(ds)=="treatment_2" )==0 ){
+        stop(paste("dataset ds must be a synergy dataset with columns called",
+            "treatment_2 and concentration_2"))   
     }
-        
     ds_1 = ds[ds$sample_type==sample_type & ds$hours==hour & 
-                  ds$treatment==treatment_1,]
+                  ds$treatment==treatment_1 &
+                  ds$concentration_2==0 & !ds$is_negative_control,]
     ds_2 = ds[ds$sample_type==sample_type & ds$hours==hour & 
-                  ds$treatment==treatment_2,]
+                  ds$treatment_2==treatment_2 &
+                  ds$concentration==0 & !ds$is_negative_control,]
     ds_c = ds[ds$sample_type==sample_type & ds$hours==hour & 
-                  ds$treatment==treatment_12,]
-    
+                  ds$treatment==treatment_1 & ds$treatment_2==treatment_2 &
+                  ds$concentration != 0 & ds$concentration_2 != 0 & 
+                  !ds$is_negative_control,]
+    ds_1$conc_final = ds_1$concentration
+    ds_2$conc_final = ds_2$concentration_2
+    ds_c$conc_final = ds_c$concentration + ds_c$concentration_2
+
     get_mu = function(x){ Fa=mean(x$value_normalized, na.rm=TRUE) }
     get_median = function(x){ Fa=median(x$value_normalized, na.rm=TRUE) }
     
     if( summary_method=="mean" ){
-        Dsum1 = plyr::ddply(ds_1, c("concentration"), get_mu )
-        Dsum2 = plyr::ddply(ds_2, c("concentration"), get_mu )
-        Dsumc = plyr::ddply(ds_c, c("concentration"), get_mu )
+        Dsum1 = plyr::ddply(ds_1, c("conc_final"), get_mu )
+        Dsum2 = plyr::ddply(ds_2, c("conc_final"), get_mu )
+        Dsumc = plyr::ddply(ds_c, c("conc_final"), get_mu )
     }else{
-        Dsum1 = plyr::ddply(ds_1, c("concentration"), get_median )
-        Dsum2 = plyr::ddply(ds_2, c("concentration"), get_median )
-        Dsumc = plyr::ddply(ds_c, c("concentration"), get_median )
+        Dsum1 = plyr::ddply(ds_1, c("conc_final"), get_median )
+        Dsum2 = plyr::ddply(ds_2, c("conc_final"), get_median )
+        Dsumc = plyr::ddply(ds_c, c("conc_final"), get_median )
     }
     names(Dsum1) = c("D", "Fu")
     names(Dsum2) = c("D", "Fu")
@@ -105,6 +111,7 @@ chou_synergy = function( ds, sample_type, treatment_1, treatment_2,
             CI=CI)
 }
 
+
 #' Plot single-value Chou Combination Index at IC50
 #' 
 #' @param CS chou statistics calculated by \code{\link{chou_synergy_helper}}
@@ -119,8 +126,6 @@ chou_synergy_CI_median = function( CS, proportion_1 ){
     (D1/Dm1) + (D2/Dm2)
 }
 
-
-
 #' Construct confidence intervals for observed effects at combination doses 
 #' having observed effects.
 #' 
@@ -131,7 +136,6 @@ chou_synergy_CI_median = function( CS, proportion_1 ){
 #' @param sample_type sample type in ds
 #' @param treatment_1 treatment in ds
 #' @param treatment_2 treatment in ds
-#' @param treatment_12 treatment in ds
 #' @param proportion_1 value between 0 and 1, indicating the fixed proportional
 #' relationship between concentrations of treatment_1 and treatment_2 in the 
 #' combined observations. If 50/50, pass 0.5.
@@ -144,8 +148,8 @@ chou_synergy_CI_median = function( CS, proportion_1 ){
 #' @references Lee & Kong Statistics in Biopharmaceutical Research 2012
 #' @export
 synergy_interaction_CI = function(ds, sample_type, 
-                                   treatment_1, treatment_2, treatment_12, 
-                                   proportion_1, E, hour=0, alpha=0.05,
+                                   treatment_1, treatment_2, proportion_1,
+                                  E, hour=0, alpha=0.05,
                                   summary_method="mean"){
     
     if(! (summary_method=="mean" | summary_method=="median" ) ){
@@ -157,30 +161,25 @@ synergy_interaction_CI = function(ds, sample_type,
     if( sum(ds$treatment==treatment_1)==0 ){
         stop("parameter treatment_1 with passed value not found in ds")   
     }
-    if( sum(ds$treatment==treatment_2)==0 ){
+    if( sum(ds$treatment_2==treatment_2)==0 ){
         stop("parameter treatment_2 with passed value not found in ds")   
-    }
-    if( sum(ds$treatment==treatment_12)==0 ){
-        stop("parameter treatment_12 with passed value not found in ds")   
     }
     if( sum(ds$hours==hour)==0 ){
         stop("parameter hour with passed value not found in ds")   
     }
-    if( proportion_1 < 0 | proportion_1 > 1 ){
-        stop("parameter proportion_1 must be between 0 and 1")
-    }
     idx_1=ds$sample_type==sample_type & ds$treatment==treatment_1 & 
-          ds$concentration>0 & ds$hours==hour
-    idx_2=ds$sample_type==sample_type & ds$treatment==treatment_2 & 
-          ds$concentration>0 & ds$hours==hour
-    idx_12 = ds$sample_type==sample_type & ds$treatment==treatment_12 & 
-             ds$concentration>0 & ds$hours==hour
+          ds$concentration>0 & ds$concentration_2==0 & ds$hours==hour
+    idx_2=ds$sample_type==sample_type & ds$treatment_2==treatment_2 & 
+          ds$concentration==0 & ds$concentration_2 > 0 & ds$hours==hour
+    idx_12=ds$sample_type==sample_type & 
+        ds$treatment == treatment_1 & ds$treatment_2==treatment_2 & 
+        ds$concentration>0 & ds$concentration_2 > 0 & ds$hours==hour
     if( sum(idx_1)==0 )
         stop("No samples meet the criteria for treatment_1")
     if( sum(idx_2)==0 )
         stop("No samples meet the criteria for treatment_2")
     if( sum(idx_12)==0 )
-        stop("No samples meet the criteria for treatment_12")
+        stop("No samples meet the criteria for combined treatments")
     if( summary_method=="mean" ){
         sumfunc = function(po){ data.frame( 
             value=mean(po$value_normalized, na.rm=TRUE)) }
@@ -189,20 +188,20 @@ synergy_interaction_CI = function(ds, sample_type,
         sumfunc = function(po){ data.frame( 
             value=median(po$value_normalized, na.rm=TRUE)) }
     }
-    
     E[ E > 1 ] = 0.999
     
-    E1 = plyr::ddply( ds[idx_1,], c("concentration"), sumfunc )
+    ds$conc_final = ds$concentration + ds$concentration_2
+    E1 = plyr::ddply( ds[idx_1,], c("conc_final"), sumfunc )
     e1 = E1$value
-    d1 = E1$concentration
+    d1 = E1$conc_final
     
-    E2 = plyr::ddply( ds[idx_2,], c("concentration"), sumfunc)
+    E2 = plyr::ddply( ds[idx_2,], c("conc_final"), sumfunc)
     e2 = E2$value
-    d2 = E2$concentration
+    d2 = E2$conc_final
     
-    E12 = plyr::ddply( ds[idx_12,], c("concentration"), sumfunc)
+    E12 = plyr::ddply( ds[idx_12,], c("conc_final"), sumfunc)
     e12 = E12$value
-    d12 = E12$concentration
+    d12 = E12$conc_final
     
     e1[e1>1] = 0.999
     e2[e2>1] = 0.999

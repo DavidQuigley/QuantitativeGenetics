@@ -258,25 +258,42 @@ create_empty_plate = function( number_of_wells, hour=0, plate_id="plate_1" ){
 #' Create an empty plate map 
 #' 
 #' The plate map object is a list of identically sized matrixes named 
-#' treatment, concentration, sample_type, density, and passage. 
+#' treatment, concentration, sample_type, density, and passage. By default, only 
+#' a single concentration and treatment is expected each individual well. If 
+#' this is a synergy experiment and each well can contain two or more different 
+#' treatments at varying concentrations, pass the maximum number of conditions 
+#' per well to conditions_per_well. This will create additional matrixes, 
+#' e.g. treatment_2 and concentration_2.
 #' 
 #' @param number_of_wells plate size, one of {6, 24, 96, 384}
+#' @param conditions_per_well number of treatment conditions per each well, 
+#' defaults to 1.
 #' @return a plate_map list with matrixes for treatment, concentration, 
 #' sample_types, density, and passage
 #' @seealso \code{\link{create_empty_plate}} 
 #' @examples 
 #' create_empty_plate_map( 96 )
 #' @export
-create_empty_plate_map = function( number_of_wells ){
+create_empty_plate_map = function( number_of_wells, conditions_per_well=1 ){
     PLATE_ROWS = plate_dimensions_from_wells(number_of_wells)$rows
     PLATE_COLS = plate_dimensions_from_wells(number_of_wells)$cols 
-    list(
-        treatment = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
-        concentration = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS),
+    L = list(
+        conditions_per_well = conditions_per_well,
+        treatment_1 = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+        concentration_1 = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS),
         sample_type = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
         density = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
         passage = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS)
     )
+    if( conditions_per_well > 1 ){
+        for(i in 1:conditions_per_well){
+            L = c(L, newmatrix = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS))
+            names(L)[ length(L) ] = paste( "treatment_", i, sep="")
+            L = c(L, newmatrix = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS))
+            names(L)[ length(L) ] = paste( "concentration_", i, sep="")
+        }
+    }
+    L
 }
 
 
@@ -392,6 +409,94 @@ get_hours = function( D ){
     sort(unique(D$hours))
 }
 
+prepare_for_normalization_synergy = function(D, negative_control){
+    # is_neg_ctl is required for the case where a drug at concentration 0 is 
+    # its own negative control; we need a way to remember which of the wells 
+    # to summarize for the negative control
+    #
+    # This version differs from prepare_for_normalization in the case that 
+    # negative_control is a number, or that it is a data frame
+    is_neg_ctl = rep( FALSE, dim(D)[1] )
+    neg_ctl = rep(NA, dim(D)[1] )
+    if( is.numeric(negative_control) ){
+        
+        # enumerate all *pairs* of treatments
+        # set is_neg_ctl on the measurements where both are equal to the 
+        # value for negative_control
+        neg_ctl = paste( D$treatment, D$treatment_2, sep="<<<>>>")
+        treatment_pairs = unique(neg_ctl)
+        # Check treatments have a well with concentration==negative_control
+        for(i in 1:length(treatment_pairs)){
+            tp = strsplit(treatment_pairs[i], split="<<<>>>", fixed = TRUE)[[1]]
+            idx = which( D$concentration[ D$treatment==tp[1] & 
+                                       D$treatment_2==tp[2] ]==negative_control)
+            if( length( idx ) == 0 ){
+                stop(paste("negative_control parameter passed with value",
+                           negative_control,"so we assume each",
+                           "treatment has one or more wells with concentration",
+                           "=",negative_control, "which is not the case for", 
+                           "treatment pair", tp[1], "and", tp[2]) )
+            }
+            is_neg_ctl[ D$concentration==negative_control & 
+                            D$treatment==tp[1] & D$treatment_2==tp[2] ] = TRUE
+            neg_ctl[ D$treatment==tp[1] & D$treatment_2==tp[2] ] = treatments[i]
+        }
+    }else if( is.character(negative_control) ){
+        
+        # all wells on the plate have the same negative control, assume that 
+        # the treatment is placed in D$treatment
+        if( length( intersect( negative_control, D$treatment) ) != 1 ){
+            stop(paste("negative_control", negative_control,
+                       "is not among the treatments on this plate"))
+        }
+        neg_ctl = rep( negative_control, dim(D)[1])
+        is_neg_ctl = D$treatment==negative_control
+    }else if( is.data.frame( negative_control ) ){
+        
+        VD = negative_control
+        if( sum(names(VD)=="treatment_1" ) == 0 | 
+            sum(names(VD)=="treatment_2" ) == 0 | 
+            sum(names(VD)=="vehicle") == 0 ){
+            stop(paste("if passed as a data frame, parameter negative_control",
+                       "must have columns named 'treatment_1', 'treatment_2',",
+                       "and 'vehicle'"))
+        }
+        treatment_pairs = paste( VD$treatment_1, VD$treatment_2, sep="<<<>>>")
+        vehicles = unique( VD$vehicle )
+        # hash the vehicle to assign to each treatment pair
+        # assign vehicles to be their own vehicles
+        d2v = hsh_from_vectors( treatment_pairs, VD$vehicle )
+        for(i in 1:length(vehicles)){
+            hsh_set( d2v, VD$vehicle[i], VD$vehicle[i] ) 
+        }
+        
+        # for each vehicle or treatment pair, assign the value of neg_ctl to 
+        # the corresponding vehicle by looking it up in d2v
+        treatments = c(treatment_pairs, vehicles)
+        for( i in 1:length(treatments)){
+            tp = strsplit(treatment_pairs[i], split="<<<>>>", fixed = TRUE)[[1]]
+            neg_ctl[ which(D$treatment==tp[1] & D$treatment_2==tp[2] ) ]=
+                hsh_get(d2v,treatments[i])
+        }
+        
+        for( i in 1:length(vehicles)){
+            is_neg_ctl[ which(D$treatment==vehicles[i]) ] = TRUE
+        }
+        if( sum(is.na(neg_ctl))>0 ){
+            stop(paste( "Not all drugs have been assigned a",
+                        "negative control, check negative_control parameter"))
+        }
+        if( length( setdiff(neg_ctl, treatment_pairs)>0 )  ){
+            stop( paste( "parameter negative_control contain an element in",
+                         "the vehicle column that is not found in the",
+                         "treatments for this plate") )
+        }
+    }
+    D$is_negative_control = is_neg_ctl
+    D$negative_control = neg_ctl
+    D
+    
+}
 
 # helper function to normalize data in D relative to vehicle
 prepare_for_normalization = function( D, negative_control ){
@@ -549,8 +654,8 @@ normalize_by_vehicle = function( D, summary_method ){
 #' @param summary_method summarize replicate measures by either mean or median; 
 #' must be one of "mean", "median". Defaults to "mean"
 #' @return a data frame where columns indicate the sample type, treatment, 
-#' concentration, observed raw value, normalized value (raw until normalization 
-#' is run), name of the negative_control treatment, whether a particular row 
+#' concentration, observed raw value, normalized value,
+#' name of the negative_control treatment, whether a particular row 
 #' is a negative control for at least one other row, hours since the start time,
 #' and plate of origin 
 #' @examples 
@@ -633,6 +738,91 @@ create_dataset = function( sample_types, treatments, concentrations, values,
     normalize_by_vehicle(df, summary_method=summary_method )
 }
 
+#' Create a synergy dataset from raw data without plate  
+#' 
+#' A synergy dataset differs from a standard dataset in that each value is the 
+#' result of combining two distinct treatments in two distinct concentrations. 
+#' If there are measurements where only one treatment was present, the other 
+#' treatment should be specified to have a concentration equal to zero. 
+#' 
+#' @param sample_types vector of sample types
+#' @param treatments_1 vector of treatment one
+#' @param treatments_2 vector of treatment two
+#' @param concentrations_1 vector of concentrations of treatment one
+#' @param concentrations_2 vector of concentrations of treatment two
+#' @param values vector of measured response to treatments one and two
+#' @param hours time points for each observation. If a number, the same time 
+#' point is assigned to all observations. If a vector, there should be one 
+#' number for each observation. Defaults to 0.
+#' @param negative_control Controls the normalization. This value may be NA, 
+#' a number, a string, or a data frame.  
+#' 
+#' \itemize{
+#'  \item{NA: Use when there are no negative control measurements. The contents 
+#'    of the column named 'value_normalized' created by 
+#'    \code{normalize_by_vehicle()} will be copied from the contents of 
+#'    the column named 'value'. }
+#'  \item{Number: Use when each treatment has been labeled with a concentration 
+#'    (typically 0) that indicates the vehicle control. Each treatment must 
+#'    contain one or more observations with this concentration, and these 
+#'    observations will be the negative controls.}
+#'  \item{string: Use when a single set of observations is a universal control. 
+#'    The treatment whose name matches the string is the universal 
+#'    negative control all of the data.}
+#'  \item{data frame: Use when more than one negative control exists, and you 
+#'    have to map different treatments to a particular negative control. The 
+#'    data frame must have names 'drug' and 'vehicle', and the data frame will 
+#'    map match treatments in the 'drug' column to those in the 
+#'    'vehicle' column.}
+#' }
+#' @param plate_id experiment identification string, useful if multiple datasets 
+#' are later combined. Defaults to "plate_1"
+#' @param summary_method summarize replicate measures by either mean or median; 
+#' must be one of "mean", "median". Defaults to "mean"
+#' @return a data frame where columns indicate the sample type, treatment 1, 
+#' treatment 2, concentration of treatment 1, concentration of treatment 2, 
+#' observed raw value, normalized value, name of the negative_control treatment, 
+#' whether a particular row is a negative control for at least one other row, 
+#' hours since the start time, and plate of origin.
+#' @export
+create_synergy_dataset = function( sample_types, treatments_1, treatments_2, 
+                                   concentrations_1, concentrations_2, values, 
+                                   hours=0, plate_id="plate_1", 
+                                   negative_control = NA,
+                                   summary_method="mean" ){
+    if( length(plate_id) != 1 ){
+        stop("parameter plate_id should be a single string")   
+    }
+    if( sum( !is.numeric(hours))>0 ){
+        stop( "Hours must be number or a vector of numbers")
+    }
+    if( length(hours)==1 ){
+        hours = rep(hours, length(sample_types))   
+    }
+    if( length(sample_types) != length(treatments_1) |
+        length(treatments_1) != length(treatments_2) | 
+        length(treatments_1) != length(concentrations_1) | 
+        length(concentrations_1) != length(concentrations_2) | 
+        length(concentrations_1) != length(hours) | 
+        length(hours) != length(values) ){
+        stop( paste("parameters sample_types, treatments, concentrations,",
+                    "values, and hours must have the same length"))
+    }
+    df = data.frame( sample_type=sample_types, 
+                     treatment=treatments_1, 
+                     concentration=concentrations_1, 
+                     treatment_2=treatments_2, 
+                     concentration_2=concentrations_2, 
+                     hours, 
+                     value=values, 
+                     value_normalized=values,
+                     plate_id = rep(plate_id, length(treatments_1)),
+                     negative_control = rep(NA, length(values) ),
+                     is_negative_control = rep(NA, length(values) ),
+                     stringsAsFactors=FALSE )
+    df = prepare_for_normalization_synergy( df, negative_control ) 
+    normalize_by_vehicle(df, summary_method=summary_method )
+}
 
 #' Combine raw data and plate map to produce a single tall data frame
 #'
@@ -691,8 +881,8 @@ create_dataset = function( sample_types, treatments, concentrations, values,
 #' @param summary_method summarize replicate measures by either mean or median; 
 #' must be one of "mean", "median". Defaults to "mean"
 #' @return a data frame where columns indicate the sample type, treatment, 
-#' concentration, observed raw value, normalized value (raw until normalization 
-#' is run), name of the negative_control treatment, whether a particular row 
+#' concentration, observed raw value, normalized value, name of the 
+#' negative_control treatment, whether a particular row 
 #' is a negative control for at least one other row, hours since the start time,
 #' and plate of origin 
 #' @examples 
@@ -801,10 +991,6 @@ combine_data_and_map = function( raw_plate,
     D = prepare_for_normalization( D, negative_control )
     normalize_by_vehicle(D, summary_method=summary_method )
 }
-
-
-
-
 
     
 #' reshape a set of values to a matrix with axes defined by X any Y vectors
