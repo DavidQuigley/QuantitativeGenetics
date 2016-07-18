@@ -1,0 +1,820 @@
+<?xml version="1.0" encoding="utf-8"?>
+<plateMap>
+  <referenceItemManager>
+    <referenceItems>
+      <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+      <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+      <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+      <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+      <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+    </referenceItems>
+  </referenceItemManager>
+  <wellStore>
+    <wells>
+      <well row="0" col="0" />
+      <well row="0" col="1" />
+      <well row="0" col="2" />
+      <well row="0" col="3" />
+      <well row="0" col="4" />
+      <well row="0" col="5" />
+      <well row="0" col="6" />
+      <well row="0" col="7" />
+      <well row="0" col="8" />
+      <well row="0" col="9" />
+      <well row="0" col="10" />
+      <well row="0" col="11" />
+      <well row="1" col="0" />
+      <well row="1" col="1">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="2">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="3">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="4">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="5">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="6">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="7">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="8">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="9">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="10">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="1" col="11" />
+      <well row="2" col="0" />
+      <well row="2" col="1">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="2">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="3">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="4">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="5">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="6">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="7">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="8">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="9">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="10">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="2" col="11" />
+      <well row="3" col="0" />
+      <well row="3" col="1">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="2">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="3">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="4">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="5">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="6">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="7">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="8">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="9">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="10">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_1" displayName="line_1" colorArgb="-1490880" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="3" col="11" />
+      <well row="4" col="0" />
+      <well row="4" col="1">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="2">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="3">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="4">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="5">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="6">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="7">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="8">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="9">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="10">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="4" col="11" />
+      <well row="5" col="0" />
+      <well row="5" col="1">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="2">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="3">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="4">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="5">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="6">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="7">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="8">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="9">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="10">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="500" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="5" col="11" />
+      <well row="6" col="0" />
+      <well row="6" col="1">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="2">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="0.01" concentrationUnits="%">
+            <referenceItem type="Compound" description="DMSO" displayName="DMSO" colorArgb="-12523200" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="3">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="4">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="50" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="5">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="6">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="100" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="7">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="8">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="200" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="9">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="10">
+        <items>
+          <wellItem type="CellType" passage="1" seedingDensity="1500" seedingDensityUnits="cells / well">
+            <referenceItem type="CellType" description="line_2" displayName="line_2" colorArgb="-1447616" />
+          </wellItem>
+          <wellItem type="Compound" concentration="1000" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_2" displayName="drug_2" colorArgb="-12566295" />
+          </wellItem>
+          <wellItem type="Compound" concentration="400" concentrationUnits="nM">
+            <referenceItem type="Compound" description="drug_1" displayName="drug_1" colorArgb="-12523031" />
+          </wellItem>
+        </items>
+      </well>
+      <well row="6" col="11" />
+      <well row="7" col="0" />
+      <well row="7" col="1" />
+      <well row="7" col="2" />
+      <well row="7" col="3" />
+      <well row="7" col="4" />
+      <well row="7" col="5" />
+      <well row="7" col="6" />
+      <well row="7" col="7" />
+      <well row="7" col="8" />
+      <well row="7" col="9" />
+      <well row="7" col="10" />
+      <well row="7" col="11" />
+    </wells>
+  </wellStore>
+</plateMap>
