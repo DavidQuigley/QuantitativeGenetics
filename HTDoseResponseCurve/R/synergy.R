@@ -129,7 +129,7 @@ chou_synergy_CI_median = function( CS, proportion_1 ){
 #' Construct confidence intervals for observed effects at combination doses 
 #' having observed effects.
 #' 
-#' Copied directly from code published in 
+#' Adapted directly from code published in 
 #' Lee and Kong Statistics in Biopharmaceutical Research 2012
 #' 
 #' @param ds dataset
@@ -224,27 +224,27 @@ synergy_interaction_CI = function(ds, sample_type,
     lm1.s = summary(lm1)
     lm2.s = summary(lm2)
     lm12.s = summary(lm12)
-    c1 = 1.0/lm1.s$coef[2,1]^2*lm1.s$coef[1,2]^2
-    temp = - mean(log(d1))*lm1.s$coef[2,2]^2
-    c1 = c1+2.0*(log(E/(1-E))-lm1.s$coef[1,1]) / lm1.s$coef[2,1]^3*temp
+    c1 = 1.0 / lm1.s$coef[2,1]^2 * lm1.s$coef[1,2]^2
+    temp = - mean(log(d1)) * lm1.s$coef[2,2]^2
+    c1 = c1 + 2.0*(log(E/(1-E)) - lm1.s$coef[1,1]) / lm1.s$coef[2,1]^3 * temp
     c1 = c1+(log(E/(1-E))-lm1.s$coef[1,1])^2/lm1.s$coef[2,1]^4*lm1.s$coef[2,2]^2
     
-    c2 = 1.0/lm2.s$coef[2,1]^2*lm2.s$coef[1,2]^2
-    temp = - mean(log(d2))*lm2.s$coef[2,2]^2
-    c2 = c2+2.0*(log(E/(1-E))-lm2.s$coef[1,1])/lm2.s$coef[2,1]^3*temp
+    c2 = 1.0 / lm2.s$coef[2,1]^2 * lm2.s$coef[1,2]^2
+    temp = - mean(log(d2)) * lm2.s$coef[2,2]^2
+    c2 = c2 + 2.0 * (log(E/(1-E)) - lm2.s$coef[1,1]) / lm2.s$coef[2,1]^3 * temp
     c2 = c2+(log(E/(1-E))-lm2.s$coef[1,1])^2/lm2.s$coef[2,1]^4*lm2.s$coef[2,2]^2
     
-    c12 = 1.0/lm12.s$coef[2,1]^2*lm12.s$coef[1,2]^2
-    temp = - mean(log(d12))*lm12.s$coef[2,2]^2
-    c12 = c12+2.0*(log(E/(1-E))-lm12.s$coef[1,1])/lm12.s$coef[2,1]^3*temp
+    c12 = 1.0 / lm12.s$coef[2,1]^2 * lm12.s$coef[1,2]^2
+    temp = - mean( log(d12) ) * lm12.s$coef[2,2]^2
+    c12 = c12 + 2.0 * (log(E/(1-E)) - lm12.s$coef[1,1]) /lm12.s$coef[2,1]^3*temp
     c12 = c12+(log(E/(1-E))-lm12.s$coef[1,1])^2 / 
               lm12.s$coef[2,1]^4*lm12.s$coef[2,2]^2
     
-    var.ii =( (dx12/Dx1)^2 * c1 + (dx12*d2.d1/Dx2)^2 * 
+    var.ii =( (dx12 / Dx1)^2 * c1 + ( dx12 * d2.d1 / Dx2 )^2 * 
                   c2+( 1.0 / Dx1 + d2.d1 / Dx2 )^2 * dx12^2 * c12) / (1+d2.d1)^2 
-    t975 = stats::qt( 1-alpha/2, length(d1)+length(d2)+length(d12)-6 )
-    iix.lo1 = iix * exp( -t975*var.ii^0.5 / iix )
-    iix.up1 = iix * exp(  t975*var.ii^0.5 / iix )
+    t975 = stats::qt( 1-alpha/2, length(d1) + length(d2) + length(d12) - 6 )
+    iix.lo1 = iix * exp( -t975 * var.ii^0.5 / iix )
+    iix.up1 = iix * exp(  t975 * var.ii^0.5 / iix )
     
     iix.lo1[ is.nan(iix.lo1) ] = NA
     iix.up1[ is.nan(iix.up1) ] = NA
