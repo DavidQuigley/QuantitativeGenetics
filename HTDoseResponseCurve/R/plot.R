@@ -1,6 +1,5 @@
-#' convert a matrix to colors and plot a heatmap grid
+#' Convert a matrix to colors and plot as a grid of those colors
 #' 
-#' If color_bounds
 #' @param M matrix of values to plot
 #' @param block.height element height, default 20
 #' @param block.width element width, default 10
@@ -27,7 +26,7 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
                          color_palatte=c("blue","white","red"), 
                          color_bounds=NA, num_colors=50 ) {
     
-    cmap = colorRampPalette( colors=color_palatte )( num_colors )
+    cmap = grDevices::colorRampPalette( colors=color_palatte )( num_colors )
     if( is.na(color_bounds)[1] ){
         color_bounds = c( min(M, na.rm=TRUE), max(M, na.rm=TRUE) )
     }
@@ -45,8 +44,9 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
     n.cols = dim(MC)[2]
     total.width =  ( block.width*n.cols) + ( (n.cols-1) * space.X)
     total.height = ( block.height * n.rows ) + ( (n.rows-1) * space.Y)
-    plot(0,0,col="white", xlim=c(0,total.width), ylim=c(0,total.height), 
-         axes=FALSE, xlab="", ylab="", bg="azure2")
+    graphics::plot(0,0,col="white", xlim=c(0,total.width), 
+                   ylim=c(0,total.height), axes=FALSE, xlab="", ylab="", 
+                   bg="azure2")
     xlab_locs = rep(0, n.cols)
     ylab_locs = rep(0, n.rows)
     cur.y = total.height
@@ -56,23 +56,23 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
             this.x.right = this.x.left+block.width
             xlab_locs[cc] = this.x.right - (block.width)
             if( border )
-                rect( this.x.left , cur.y - block.height, this.x.right, cur.y, 
-                      col=MC[rr,cc], border="azure2")
+                graphics::rect( this.x.left , cur.y - block.height, 
+                            this.x.right, cur.y, col=MC[rr,cc], border="azure2")
             else
-                rect( this.x.left , cur.y - block.height, this.x.right, cur.y, 
-                      col=MC[rr,cc], border=NA)
+                graphics::rect( this.x.left , cur.y - block.height,this.x.right, 
+                                cur.y, col=MC[rr,cc], border=NA)
         }
         ylab_locs[rr] = cur.y - (0.5*block.height)
         cur.y = cur.y - block.height - space.Y
     }
-    axis(1, at=xlab_locs, labels=dimnames(MC)[[2]], las=2, cex.axis=cex.x, 
+    graphics::axis(1, at=xlab_locs, labels=dimnames(MC)[[2]], las=2, cex.axis=cex.x, 
          tick=FALSE, padj=1, line=-1.5 )
-    axis(2, at=ylab_locs, labels=dimnames(MC)[[1]], las=2, cex.axis=cex.y, 
+    graphics::axis(2, at=ylab_locs, labels=dimnames(MC)[[1]], las=2, cex.axis=cex.y, 
          tick=FALSE, hadj=1, line=-1.5)
     M
 }
 
-#' Plot a dose response curve
+#' Plot a dose response curve from a HTfit object
 #' 
 #' If the curve cannot be fit (meaning that the optimization method used by 
 #' the drm() method from the drc package failes to converge) then the summarized 
@@ -80,7 +80,6 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
 #' 
 #' @param x HTfit object
 #' @param ... standard parameters for \code{plot} function
-#' @param xlim vector of minimum, maximum value for X axis. default c(0, 1e5)
 #' @param bar_multiple multiplier for standard error bars, default 2
 #' @param summary_method summary method for points to plot in timecourse, one 
 #' of ("mean", "median"), defaults "mean"
@@ -104,9 +103,10 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
 #'          25,23,24,42,43,46,4,5,9)
 #' hours = rep(48, length(values))
 #' plate_id = "plate_1"
-#' ds = create_dataset( sample_types, treatments, concentrations, 
-#'                       hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_by_vehicle(ds, summary_method = "mean")
+#' ds = create_dataset( sample_types=sample_types, treatments=treatments, 
+#'                      concentrations=concentrations, hours=hours, 
+#'                      values=values, plate_id=plate_id, 
+#'                      negative_control = "DMSO")
 #' library(drc)
 #' # Fit model using three-parameter log-logistic function
 #' fit_1=fit_DRC(ds, sample_types=c("line1", "line2"), treatments=c("drug"), 
@@ -116,6 +116,7 @@ plot_color_grid=function(M, block.height=20, block.width=10, space.X=3,
 #'      xlim=c(0, 1e4), xlab="concentration nM", 
 #'      ylab="surviving fraction")
 #' legend(1.5, 0.3, c("Line 1", "Line 2"), col=c("black", "gold"), pch=15)
+#' @seealso \code{\link{fit_DRC}}
 #' @export
 plot.HT_fit = function( x, ..., bar_multiple=2, 
                         summary_method="mean", show_EC50=FALSE, 
@@ -162,7 +163,7 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
     Mstat = plyr::ddply( x$input, c("conditions_to_fit", "concentration"), 
                          function(po){ data.frame( 
                              mu=mean(po$value, na.rm=TRUE), 
-                             med=median(po$value, na.rm=TRUE),
+                             med=stats::median(po$value, na.rm=TRUE),
                              sterr = se(po$value), 
                              bar_width=(po$concentration/10), 
                              stringsAsFactors=FALSE ) }
@@ -193,13 +194,13 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
         plot_parameters[["bp"]] = 1 # for plot.drc()
         
         plot_parameters = c( list(x$model), plot_parameters)
-        do.call( plot, plot_parameters )
-        box(col="white", lwd=4)
+        do.call( graphics::plot, plot_parameters )
+        graphics::box(col="white", lwd=4)
         if( show_EC50 ){
             EC50 = x$fit_stats$coef_EC50 
             for( i in 1:length(EC50) ){
                 if( !is.na(EC50[i]) & !is.infinite(EC50[i]) ){
-                    lines( c( EC50[i], EC50[i] ), c(0, 0.5), 
+                    graphics::lines( c( EC50[i], EC50[i] ), c(0, 0.5), 
                            col=hsh_get( cond2color,
                                         rownames(x$fit_stats)[i] ),
                            lwd=plot_parameters[["lwd"]], lty=3 )
@@ -212,13 +213,13 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
         Mstat$concentration=log10(Mstat$concentration)
         Mstat$concentration[is.infinite( Mstat$concentration)] = 0
         plot_parameters[["x"]] = -1
-        do.call( plot, plot_parameters)
+        do.call( graphics::plot, plot_parameters)
         Mstat$bar_width = 0.2
         bandwidth_factor=50
         x_legend=0.2
     }
     if( draw_axes ){
-        axis( 2, at=c(0, 0.5, 1), 
+        graphics::axis( 2, at=c(0, 0.5, 1), 
               labels=c("0", "0.5", "1"), las=1, 
               cex.axis=plot_parameters[["cex.axis"]],
               font=plot_parameters[["font"]])
@@ -229,10 +230,10 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
                 log10_low=0
             tics = logtics( log10_low, log10_high,
                             show_x_log_tics, show_x_exponent)
-            axis(1, at=tics$values, labels=tics$labels, las=1, 
+            graphics::axis(1, at=tics$values, labels=tics$labels, las=1, 
                  font=plot_parameters[["font"]],
                  cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=1)   
-            axis(1, at=tics$values[tics$lwd==2],
+            graphics::axis(1, at=tics$values[tics$lwd==2],
                  labels=rep("", sum(tics$lwd==2)), las=1, 
                  font=plot_parameters[["font"]],
                  cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=2)    
@@ -240,7 +241,7 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
             xlow = plot_parameters[["xlim"]][1]
             xhigh = plot_parameters[["xlim"]][2]
             values = seq(from=xlow, to=xhigh, by=(xhigh-xlow)/5)
-            axis(1, at=values, labels=round(values,2), las=1, 
+            graphics::axis(1, at=values, labels=round(values,2), las=1, 
                  font=plot_parameters[["font"]],
                  cex.axis=plot_parameters[["cex.axis"]], lwd.ticks=2) 
         }
@@ -248,11 +249,11 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
     }
         
     Mstat$concentration[Mstat$concentration==0] = 1
-    points( Mstat$concentration, Mstat$value, pch = 19, 
+    graphics::points( Mstat$concentration, Mstat$value, pch = 19, 
             col=hsh_get( cond2color, as.character(Mstat$conditions_to_fit)), 
             cex=plot_parameters[["cex"]])
     if(show_legend){
-        legend( x_legend, 0.45, x$unique_conditions, pch=19,
+        graphics::legend( x_legend, 0.45, x$unique_conditions, pch=19,
                 col=hsh_get( cond2color, uc), bty="n", cex=0.75 )    
     }
     
@@ -262,9 +263,11 @@ plot.HT_fit = function( x, ..., bar_multiple=2,
         pse = Mstat$sterr[i] * bar_multiple
         pcol = hsh_get( cond2color, as.character(Mstat$conditions_to_fit[i]) )
         bwdth = px/bandwidth_factor # varies if fit or not
-        lines(c( px, px ), c( py-pse, py+pse ), lwd=1, col=pcol )
-        lines(c( px-bwdth, px+bwdth ), c( py-pse, py-pse ), lwd=1, col=pcol )
-        lines(c( px-bwdth, px+bwdth ), c( py+pse, py+pse ), lwd=1, col=pcol )        
+        graphics::lines(c( px, px ), c( py-pse, py+pse ), lwd=1, col=pcol )
+        graphics::lines(c( px-bwdth, px+bwdth ), c( py-pse, py-pse ), 
+                        lwd=1, col=pcol )
+        graphics::lines(c( px-bwdth, px+bwdth ), c( py+pse, py+pse ), 
+                        lwd=1, col=pcol )        
     }
 }
 
@@ -283,6 +286,8 @@ set_list_default = function(L, name, val){
 #' @param sample_type sample type in ds
 #' @param treatment_1 treatment in ds
 #' @param treatment_2 treatment in ds
+#' @param proportion_1 proportion of treatment 1 in total concentration of 
+#' synergy experiment
 #' @param hour hour in ds. Default 0. 
 #' @param log which scale should be logged; default is "y"
 #' @param ... additional parameters to pass to plot function
@@ -344,69 +349,14 @@ plot_synergy_interaction_index = function(ds, sample_type,
     x=obs_plus_ci$effect
     pp[["x"]] =  x[ obs_plus_ci$is_obs ]
     pp[["y"]] = y[ obs_plus_ci$is_obs ]
-    do.call( plot, pp)
-    lines( x, CI.d$cl_lower, lty=2, col="cornflowerblue" )
-    lines( x, CI.d$cl_upper, lty=2, col="cornflowerblue" )
-    lines( x, y, lty=1, col="black" )
+    do.call( graphics::plot, pp)
+    graphics::lines( x, CI.d$cl_lower, lty=2, col="cornflowerblue" )
+    graphics::lines( x, CI.d$cl_upper, lty=2, col="cornflowerblue" )
+    graphics::lines( x, y, lty=1, col="black" )
     CI.d
 }
 
 
-plot_synergy_interaction_index_old = function(ds, sample_type, 
-                                          treatment_1, treatment_2, 
-                                          hour, ..., log="y", alpha=0.05){
-    
-    # effects seen with combined treatment
-    if( sum( ds$sample_type==sample_type )==0 ){
-        stop( "passed value for sample_type parameter not found in D")
-    }
-    if( sum( ds$treatment==treatment_1 )==0 ){
-        stop( "passed value for treatment_1 parameter not found in D")
-    }
-    if( sum( ds$treatment==treatment_2 )==0 ){
-        stop( "passed value for treatment_2 parameter not found in D")
-    }
-    pp = list(...)
-    pp = set_list_default(pp, "xlim", c(0,1))
-    pp = set_list_default(pp, "ylim", c(0.01, 10))
-    pp = set_list_default(pp, "main", paste(sample_type, hour))
-    pp = set_list_default(pp, "xlab", "Effect (Surviving fraction)")
-    pp = set_list_default(pp, "ylab", "Interaction Index")
-    pp = set_list_default(pp, "las", 1)
-    pp = set_list_default(pp, "log", log)
-    pp = set_list_default(pp, "pch", 19)
-    
-    idx = ds$treatment==treatment_12 & ds$hours==hour & ds$sample_type==sample_type
-    E_ci = seq(from=0.01, to=1, by=0.01)
-    E_combined = plyr::ddply( ds[idx,], c("concentration"), 
-                              function(po){ data.frame( 
-                                  mu=mean(po$value_normalized, na.rm=TRUE)) 
-                              } )$mu
-    if( sum(E_combined>1)>0 ){
-        warning("One or more effects were greater than 1, setting to 0.999")   
-    }
-    E_combined[ E_combined>=1 ] = 0.999
-    obs_plus_ci = data.frame( is_obs = c( rep( TRUE, length(E_combined)), 
-                                          rep( FALSE, length(E_ci)) ),
-                              effect = c(E_combined, E_ci ) )
-    obs_plus_ci=obs_plus_ci[order(obs_plus_ci$effect),]
-    CI.d=synergy_interaction_CI(ds, sample_type=sample_type, 
-                                treatment_1=treatment_1, 
-                                treatment_2=treatment_2,
-                                treatment_12=treatment_12,
-                                proportion_1=proportion_1, 
-                                obs_plus_ci$effect, 
-                                hour=hour, alpha=alpha)
-    y=CI.d$interaction_index
-    x=obs_plus_ci$effect
-    pp[["x"]] =  x[ obs_plus_ci$is_obs ]
-    pp[["y"]] = y[ obs_plus_ci$is_obs ]
-    do.call( plot, pp)
-    lines( x, CI.d$cl_lower, lty=2, col="cornflowerblue" )
-    lines( x, CI.d$cl_upper, lty=2, col="cornflowerblue" )
-    lines( x, y, lty=1, col="black" )
-    CI.d
-}
 
 #' Plot an image of the raw intensities for a plate
 #' 
@@ -452,13 +402,13 @@ plot_values_by_plate = function( plate, hour=NA, color_bounds=c(0,100),
     n_row = sum(plate$hours==hour)
     idx_max = dim(plate)[2] - 2
     n_col = idx_max
-    plot( -1, -1, xlim=c(0, n_col+1), ylim=c(0, n_row+1), 
+    graphics::plot( -1, -1, xlim=c(0, n_col+1), ylim=c(0, n_row+1), 
           axes=FALSE, xlab="", ylab="",yaxs="i", xaxs="i", main=main )
     abc = abc[1:n_row]
     abc_rev = abc[ length(abc):1]
-    axis(1, 1:n_col, cex=0.5, las=2)
-    axis(2, at=1:n_row, labels=abc_rev, las=1, cex=0.5)
-    cmap = colorRampPalette( colors=color_palatte )(color_bounds[2]-
+    graphics::axis(1, 1:n_col, cex=0.5, las=2)
+    graphics::axis(2, at=1:n_row, labels=abc_rev, las=1, cex=0.5)
+    cmap = grDevices::colorRampPalette( colors=color_palatte )(color_bounds[2]-
                                                         color_bounds[1])
     vals = ceiling( data.matrix(plate[plate$hours==hour,1:idx_max] ) )
     colors = color_scale( vals, cmap, color_bounds = color_bounds )
@@ -468,9 +418,9 @@ plot_values_by_plate = function( plate, hour=NA, color_bounds=c(0,100),
     xs = matrix( rep( 1:n_col, n_row ), ncol=n_col, nrow=n_row, byrow=TRUE)
     ys = matrix( rep( 1:n_row, n_col ), ncol=n_col, nrow=n_row)
     ys = n_row-ys+1
-    points( as.numeric(xs), as.numeric(ys), col=colors, 
+    graphics::points( as.numeric(xs), as.numeric(ys), col=colors, 
             pch=as.numeric(pches), cex=cex )
-    box()
+    graphics::box()
 }
 
 #' Plot an time course of the raw intensities 
@@ -495,7 +445,6 @@ plot_values_by_plate = function( plate, hour=NA, color_bounds=c(0,100),
 #'                                                number_of_wells=384)
 #' plate_data$hours = round(plate_data$hours)
 #' ds = combine_data_and_map( plate_data, plate_map, negative_control = "DMSO" )
-#' ds = normalize_by_vehicle( ds, summary_method="mean")
 #' ds = ds[ds$treatment=="drug13" | ds$treatment=="DMSO",]
 #' plot_timecourse_raw( ds, sample_types=c("line_1", "line_2"), 
 #'                      treatments="DMSO", concentrations=0)
@@ -543,7 +492,7 @@ plot_timecourse_raw = function( D, sample_types, treatments,
     Mstat = plyr::ddply( ds_cur, c("sample_type", "hours", "concentration"), 
                          function(x){ 
         data.frame(
-            mu=mean(x$value, na.rm=TRUE), med=median(x$value, na.rm=TRUE), 
+            mu=mean(x$value, na.rm=TRUE),med=stats::median(x$value, na.rm=TRUE), 
             color=hsh_get( conc2color, as.character(x$concentration) ), 
             pch = hsh_get( line2pch, x$sample_type),
             sample_type=x$sample_type,
@@ -571,11 +520,11 @@ plot_timecourse_raw = function( D, sample_types, treatments,
         plot_parameters[["xlab"]] = ""
     }
     ylim = plot_parameters[["ylim"]]
-    do.call( plot, plot_parameters )
-    axis(2, c(ylim[1], (ylim[2])/2, ylim[2]), las=1, cex.axis=cex.yaxis,
+    do.call( graphics::plot, plot_parameters )
+    graphics::axis(2, c(ylim[1], (ylim[2])/2, ylim[2]), las=1, cex.axis=cex.yaxis,
          font= axis.font )
-    axis(1, round(hours,1), las=2, cex.axis=1, font=axis.font )
-    box()
+    graphics::axis(1, round(hours,1), las=2, cex.axis=1, font=axis.font )
+    graphics::box()
     unique(Mstat)
 }
 
@@ -611,7 +560,6 @@ plot_timecourse_raw = function( D, sample_types, treatments,
 #'                                                number_of_wells=384)
 #' plate_data$hours = round(plate_data$hours)
 #' ds = combine_data_and_map( plate_data, plate_map, negative_control = "DMSO" )
-#' ds = normalize_by_vehicle( ds, summary_method="mean")
 #' ds = ds[ds$treatment=="drug13",]
 #' fits = fit_statistics(ds, fct = drc::LL.3() )
 #' res=plot_fit_statistic( fits, "AUC", ylim=c(0, 6) ) 
@@ -657,19 +605,19 @@ plot_fit_statistic = function( fit_stats, statistic, ..., alpha = 1,
         plot_par[["xlim"]] = c(0, max(fit_stats$hour, na.rm=TRUE) )
     }
     
-    do.call( plot, plot_par )
+    do.call( graphics::plot, plot_par )
     ylims = 1:ylim[2]
     line_y = seq(from=ylim[1], to=ylim[2], by=(ylim[2]-ylim[1])/5 )
     for(i in 1:length(line_y)){
-        abline( line_y[i], 0, col="lightgray")   
+        graphics::abline( line_y[i], 0, col="lightgray")   
     }
     
     if( length( which( names(plot_par)== "las"  ) )==0 ){
         plot_par[["las"]] = 1
     }
     
-    axis(2, line_y, las=plot_par[["las"]])
-    axis(1, sort(unique(fit_stats$hour)), las=plot_par[["las"]])
+    graphics::axis(2, line_y, las=plot_par[["las"]])
+    graphics::axis(1, sort(unique(fit_stats$hour)), las=plot_par[["las"]])
     ctr=1
     sample_types = sort(unique(fit_stats$sample_type))
     treatments = sort(unique(fit_stats$treatment))
@@ -693,7 +641,7 @@ plot_fit_statistic = function( fit_stats, statistic, ..., alpha = 1,
                 for(k in 2:length(y)){
                     if( !is.na( pvals[k-1] ) & !is.na( pvals[k] ) & 
                                 pvals[k-1] <= alpha & pvals[k] <= alpha ){
-                        lines( c(xs[k], xs[k-1] ), 
+                        graphics::lines( c(xs[k], xs[k-1] ), 
                                c( y[k],  y[k-1] ), col=colors[ctr] )
                     }
                 }
@@ -703,11 +651,12 @@ plot_fit_statistic = function( fit_stats, statistic, ..., alpha = 1,
             pches[ pvals > alpha ] = 13    
             pches[ pvals <= alpha & min_observations > obs_min ] = 18 
             
-            points( xs, y, col=colors[ctr] , pch=pches, 
+            graphics::points( xs, y, col=colors[ctr] , pch=pches, 
                     cex=plot_par[["cex"]])
             for(i in 1:length(y)){
                 if( is.infinite( y[i] ) ){
-                    text( xs[i], ylim[2], "Inf", cex=1, font=2, col=colors[ctr])
+                    graphics::text( xs[i], ylim[2], "Inf", cex=1, font=2, 
+                                    col=colors[ctr])
                 }
             }
             cur_res = data.frame( sample_type=rep(cur_samp, length(y)),
@@ -754,20 +703,20 @@ boxplot_label_outliers = function( M, ... ){
         plot_parameters[["cex"]] = 1
     
     plot_parameters[["x"]] = M 
-    b=do.call( boxplot, plot_parameters )
+    b=do.call( graphics::boxplot, plot_parameters )
     if( length(b$out)>0 ){
         outs = b$out
         outs = sort(outs, decreasing=TRUE)
         xs = rep(1, length(M))
         not_out = which( !( round(M,3) %in% round(outs,3)) )
         xs[not_out] = jitter( xs[not_out], 2 )
-        points( xs, M, pch=19, cex=0.5 )
+        graphics::points( xs, M, pch=19, cex=0.5 )
         interval = (y_max-y_min) / (length(b$out)+1)
         y_cur = y_max-interval
         for( i in 1:length(b$out)){
-            text( 0.7, y_cur, names(outs)[i], adj=1, 
+            graphics::text( 0.7, y_cur, names(outs)[i], adj=1, 
                   cex=plot_parameters[["cex"]] )
-            lines( c(0.7,1), c(y_cur, outs[i]), col="#00000033" ) 
+            graphics::lines( c(0.7,1), c(y_cur, outs[i]), col="#00000033" ) 
             y_cur = y_cur-interval
         }
     }
@@ -822,17 +771,17 @@ plot_synergy_median_effect=function( CS, ... ){
     plot_parameters[["y"]] = cs1$y_m
     plot_parameters[["col"]] = colors[1]
     plot_parameters[["pch"]] = pches[1]
-    do.call(plot, plot_parameters)
-    lines(c(0,0), c(-100,100))
-    abline(0,0)
-    points( cs2$x_m, cs2$y_m, pch=pches[2], col=colors[2])
-    points( csc$x_m, csc$y_m, pch=pches[3], col=colors[3])
-    LM_1=lm(cs1$y_m~cs1$x_m)
-    LM_2=lm(cs2$y_m~cs2$x_m)
-    LM_12=lm(csc$y_m~csc$x_m)
-    abline( LM_1, col=colors[1], lwd=plot_parameters[["lwd"]] )
-    abline( LM_2, col=colors[2], lwd=plot_parameters[["lwd"]]  )    
-    abline( LM_12, col=colors[3], lwd=plot_parameters[["lwd"]]  )
+    do.call( graphics::plot, plot_parameters)
+    graphics::lines(c(0,0), c(-100,100))
+    graphics::abline(0,0)
+    graphics::points( cs2$x_m, cs2$y_m, pch=pches[2], col=colors[2])
+    graphics::points( csc$x_m, csc$y_m, pch=pches[3], col=colors[3])
+    LM_1 = stats::lm(cs1$y_m~cs1$x_m)
+    LM_2 = stats::lm(cs2$y_m~cs2$x_m)
+    LM_12 = stats::lm(csc$y_m~csc$x_m)
+    graphics::abline( LM_1, col=colors[1], lwd=plot_parameters[["lwd"]] )
+    graphics::abline( LM_2, col=colors[2], lwd=plot_parameters[["lwd"]]  )    
+    graphics::abline( LM_12, col=colors[3], lwd=plot_parameters[["lwd"]]  )
     list( LM_1=LM_1, LM_2=LM_2, LM_12=LM_12)
 }
 
@@ -859,14 +808,14 @@ plot_chou_synergy_Fa_CI = function( CS, ..., show_horizontal=TRUE  ){
         plot_parameters[["pch"]] = 19
     plot_parameters[["x"]] = CS$CI$Fa
     plot_parameters[["y"]] = CS$CI$CI
-    do.call( plot, plot_parameters )
+    do.call( graphics::plot, plot_parameters )
     if(show_horizontal){
         for(i in seq(0, 2, 0.1)){
-            abline(i,0, col="lightgray")
+            graphics::abline(i,0, col="lightgray")
         }
-        abline(1,0, lwd=2)
+        graphics::abline(1,0, lwd=2)
     }
-    points( CS$CI$Fa, CS$CI$CI, pch=plot_parameters[["pch"]], 
+    graphics::points( CS$CI$Fa, CS$CI$CI, pch=plot_parameters[["pch"]], 
             col=plot_parameters[["col"]] )
     
 }

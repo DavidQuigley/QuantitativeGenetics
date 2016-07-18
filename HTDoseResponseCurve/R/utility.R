@@ -31,7 +31,7 @@ abc = c('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P')
 # Calculate standard error for error bars
 #
 se = function(x){
-    sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))) 
+    stats::sd(x, na.rm=TRUE)/sqrt(sum(!is.na(x))) 
 }
 
 

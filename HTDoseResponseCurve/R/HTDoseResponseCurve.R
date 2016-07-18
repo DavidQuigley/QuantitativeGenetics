@@ -1,4 +1,4 @@
-#' @import utils
+
 plate_dimensions_from_wells = function(number_of_wells){
     if( number_of_wells != 6 & number_of_wells != 24 & 
         number_of_wells != 96 & number_of_wells != 384){
@@ -92,7 +92,7 @@ AUC_across_timepoints = function( D, sample_type, treatment, concentration,
     Dsum = plyr::ddply( DA, c("hours"), 
                         function(x){ data.frame( 
                             mu=mean(x$value, na.rm=TRUE), 
-                            med=median(x$value, na.rm=TRUE) ) }
+                            med=stats::median(x$value, na.rm=TRUE) ) }
     )
     Dsum = Dsum[order(Dsum$hours),]
     if( summary_method=="mean"){
@@ -124,7 +124,7 @@ AUC.HT_fit = function(FIT, granularity=0.01, summary_method="mean"){
     Mstat = plyr::ddply( FIT$input, c("conditions_to_fit", "concentration"), 
                          function(x){ data.frame( 
                              mu=mean(x$value, na.rm=TRUE), 
-                             med=median(x$value, na.rm=TRUE) ) } )
+                             med=stats::median(x$value, na.rm=TRUE) ) } )
     if(summary_method=="mean"){
         Mstat$value = Mstat$mu
     }else{
@@ -165,7 +165,7 @@ AUC.HT_fit = function(FIT, granularity=0.01, summary_method="mean"){
         model_input_test = data.frame( concentration=conc_test, 
                                        conditions_to_fit=factor(cond_test),
                                        stringsAsFactors=FALSE ) 
-        preds = try( predict(FIT$model, model_input_test), silent=TRUE )
+        preds = try( stats::predict(FIT$model, model_input_test), silent=TRUE )
         
         if( !"try-error" %in% class( preds ) ){
             for( i in 1:length(FIT$unique_conditions) ){
@@ -176,29 +176,29 @@ AUC.HT_fit = function(FIT, granularity=0.01, summary_method="mean"){
                 idx_last =  max( which(cond_test==cur_cond ) )
                 ys = preds[ idx_first : idx_last ]
                 ys[ys<0]=0 # No negative values allowed for AUC
-                idx_b = which(names(coefficients(FIT$model))==
+                idx_b = which(names(stats::coefficients(FIT$model))==
                                   paste("b",cur_cond,sep=":"))
-                idx_c = which(names(coefficients(FIT$model))==
+                idx_c = which(names(stats::coefficients(FIT$model))==
                                   paste("c",cur_cond,sep=":"))
-                idx_d = which(names(coefficients(FIT$model))==
+                idx_d = which(names(stats::coefficients(FIT$model))==
                                   paste("d",cur_cond,sep=":"))
-                idx_e = which(names(coefficients(FIT$model))==
+                idx_e = which(names(stats::coefficients(FIT$model))==
                                   paste("e",cur_cond,sep=":"))
                 if(length(idx_b)>0){
-                    coef_b[i] = as.numeric( coefficients(FIT$model)[idx_b])
+                   coef_b[i] = as.numeric(stats::coefficients(FIT$model)[idx_b])
                 }
                 if(length(idx_c)>0){
-                    coef_c[i] = as.numeric( coefficients(FIT$model)[idx_c])
+                   coef_c[i] = as.numeric(stats::coefficients(FIT$model)[idx_c])
                 }else{
                     coef_c[i] = 0
                 }
                 if(length(idx_d)>0){
-                    coef_d[i] = as.numeric( coefficients(FIT$model)[idx_d])
+                   coef_d[i] = as.numeric(stats::coefficients(FIT$model)[idx_d])
                 }else{
                     coef_d[i] = 1
                 }
                 if(length(idx_e)>0){
-                    coef_e[i] = as.numeric( coefficients(FIT$model)[idx_e])
+                   coef_e[i] = as.numeric(stats::coefficients(FIT$model)[idx_e])
                 }
                 auc[i] = pracma::trapz(conc_to_fit, ys) / max_concentration
                 if( min( observed, na.rm=TRUE) > 0.5 ){
@@ -226,10 +226,12 @@ AUC.HT_fit = function(FIT, granularity=0.01, summary_method="mean"){
 #' Create a plate list with empty elements
 #' 
 #' 
-#' @param number_of_wells number representing plate size, one of {6, 12, 24, 96, 384}
-#' @param hour numeric; hours since the experiment began. Defaults to 0.
-#' @param plate_id string that identifies this plate map
-#' @return a data frame 
+#' @param number_of_wells Number of wells in the plate, must be one of 
+#' {6, 12, 24, 96, 384}.
+#' @param hour Number of hours since the experiment began. Defaults to 0.
+#' @param plate_id Text string that identifies this plate map. Defaults to 
+#' "plate_1".
+#' @return A data frame 
 #' @examples 
 #' create_empty_plate( number_of_wells=6 )
 #' create_empty_plate( number_of_wells=96, hour=0, plate_id="plate_12")
@@ -265,35 +267,48 @@ create_empty_plate = function( number_of_wells, hour=0, plate_id="plate_1" ){
 #' per well to conditions_per_well. This will create additional matrixes, 
 #' e.g. treatment_2 and concentration_2.
 #' 
-#' @param number_of_wells plate size, one of {6, 24, 96, 384}
-#' @param conditions_per_well number of treatment conditions per each well, 
-#' defaults to 1.
+#' @param number_of_wells Number of wells in the plate, must be one of 
+#' {6, 12, 24, 96, 384}
+#' @param max_treatments_per_well The maximum number of treatment 
+#' conditions per each well, either 1 or 2. Defaults to 1. Pass 2 only if 
+#' performing a synergy experiment. 
 #' @return a plate_map list with matrixes for treatment, concentration, 
 #' sample_types, density, and passage
 #' @seealso \code{\link{create_empty_plate}} 
 #' @examples 
-#' create_empty_plate_map( 96 )
+#' create_empty_plate_map( number_of_wells=96 )
 #' @export
-create_empty_plate_map = function( number_of_wells, conditions_per_well=1 ){
+create_empty_plate_map = function( number_of_wells, max_treatments_per_well=1 ){
+    if( !is.numeric(max_treatments_per_well)){
+        stop("parameter max_treatments_per_well must be 1 or 2")
+    }
+    if( max_treatments_per_well!=1 & max_treatments_per_well!=2){
+        stop("parameter max_treatments_per_well must be 1 or 2")
+    }
     PLATE_ROWS = plate_dimensions_from_wells(number_of_wells)$rows
     PLATE_COLS = plate_dimensions_from_wells(number_of_wells)$cols 
-    L = list(
-        conditions_per_well = conditions_per_well,
-        treatment_1 = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
-        concentration_1 = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS),
-        sample_type = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
-        density = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
-        passage = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS)
-    )
-    if( conditions_per_well > 1 ){
-        for(i in 1:conditions_per_well){
-            L = c(L, newmatrix = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS))
-            names(L)[ length(L) ] = paste( "treatment_", i, sep="")
-            L = c(L, newmatrix = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS))
-            names(L)[ length(L) ] = paste( "concentration_", i, sep="")
-        }
+    if( max_treatments_per_well==1 ){
+        list(
+            max_treatments_per_well = max_treatments_per_well,
+            treatment = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            concentration = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            sample_type = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            density = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            passage = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS)
+        )
     }
-    L
+    else{
+        list(
+            max_treatments_per_well = max_treatments_per_well,
+            treatment = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            concentration = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            treatment_2 = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            concentration_2 = matrix(NA, ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            sample_type = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            density = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS),
+            passage = matrix("", ncol=PLATE_COLS, nrow=PLATE_ROWS)
+        )
+    }
 }
 
 
@@ -304,7 +319,7 @@ create_empty_plate_map = function( number_of_wells, conditions_per_well=1 ){
 #' \code{combine_data_and_map}.
 #' 
 #' @param D A plate map list or a data frame generated by 
-#' \code{combine_data_and_map}
+#' \code{combine_data_and_map}.
 #' @return sorted vector of sample types
 #' @examples 
 #' pm = create_empty_plate_map( 6 )
@@ -332,8 +347,8 @@ get_sample_types = function( D ){
 #'
 #' Convenience method to extract treatments
 #' @param D A plate map list or a data frame generated by 
-#' \code{combine_data_and_map}
-#' @return sorted vector of treatments
+#' \code{combine_data_and_map}.
+#' @return A sorted vector of treatments.
 #' @examples 
 #' pm = create_empty_plate_map( 6 )
 #' pm$treatment[1,1:3] = c("DMSO","drug1","drug2")
@@ -353,7 +368,12 @@ get_sample_types = function( D ){
 #' @seealso  \code{\link{get_hours}}
 #' @export
 get_treatments = function( D ){
-    setdiff( sort(unique(as.vector(t(D$treatment)))), "")
+    if( sum( names(D)=="treatment_2")==1){
+        unique( c( setdiff( sort(unique(as.vector(t(D$treatment)))), ""),
+                   setdiff( sort(unique(as.vector(t(D$treatment_2)))), "")) )
+    }else{
+        setdiff( sort(unique(as.vector(t(D$treatment)))), "")
+    }
 }
 
 #' Sorted unique list of treatment concentrations
@@ -390,7 +410,7 @@ get_concentrations = function( D ){
 #' Convenience method to extract a sorted list of the hours 
 #' 
 #' @param D A dataframe generated by \code{combine_data_and_map}
-#' @return sorted vector of hours
+#' @return A sorted vector of hours.
 #' @examples 
 #' ds = create_dataset( 
 #'   sample_types= c("line1","line1","line1","line2","line2","line2"),
@@ -598,7 +618,7 @@ normalize_by_vehicle = function( D, summary_method ){
                 D_v = plyr::ddply( D_v, c("sample_type", "hours"), 
                                    function(x){ data.frame(
                                        mu=mean(x$value, na.rm=TRUE),
-                                       med=median(x$value, na.rm=TRUE) ) } 
+                                       med=stats::median(x$value, na.rm=TRUE) )} 
                 )
                 if( summary_method=="mean" ){
                     D_v$value = D_v$mu
@@ -619,7 +639,7 @@ normalize_by_vehicle = function( D, summary_method ){
     D
 }
 
-#' Create a dataset from raw data without plate  
+#' Create a dataset from raw data without a plate map
 #' 
 #' @param sample_types vector of sample types
 #' @param treatments vector of treatments
@@ -633,8 +653,7 @@ normalize_by_vehicle = function( D, summary_method ){
 #' 
 #' \itemize{
 #'  \item{NA: Use when there are no negative control measurements. The contents 
-#'    of the column named 'value_normalized' created by 
-#'    \code{normalize_by_vehicle()} will be copied from the contents of 
+#'    of the column named 'value_normalized' will be copied from the contents of 
 #'    the column named 'value'. }
 #'  \item{Number: Use when each treatment has been labeled with a concentration 
 #'    (typically 0) that indicates the vehicle control. Each treatment must 
@@ -649,11 +668,11 @@ normalize_by_vehicle = function( D, summary_method ){
 #'    map match treatments in the 'drug' column to those in the 
 #'    'vehicle' column.}
 #' }
-#' @param plate_id experiment identification string, useful if multiple datasets 
-#' are later combined. Defaults to "plate_1"
-#' @param summary_method summarize replicate measures by either mean or median; 
-#' must be one of "mean", "median". Defaults to "mean"
-#' @return a data frame where columns indicate the sample type, treatment, 
+#' @param plate_id Text string identifying this experiment, useful if 
+#' multiple datasets are later combined. Defaults to "plate_1".
+#' @param summary_method Method used to combine replicate measures into a single 
+#' value; must be one of "mean", "median". Defaults to "mean".
+#' @return A data frame where columns indicate the sample type, treatment, 
 #' concentration, observed raw value, normalized value,
 #' name of the negative_control treatment, whether a particular row 
 #' is a negative control for at least one other row, hours since the start time,
@@ -738,7 +757,7 @@ create_dataset = function( sample_types, treatments, concentrations, values,
     normalize_by_vehicle(df, summary_method=summary_method )
 }
 
-#' Create a synergy dataset from raw data without plate  
+#' Create a synergy dataset from raw data without a plate map
 #' 
 #' A synergy dataset differs from a standard dataset in that each value is the 
 #' result of combining two distinct treatments in two distinct concentrations. 
@@ -754,13 +773,14 @@ create_dataset = function( sample_types, treatments, concentrations, values,
 #' @param hours time points for each observation. If a number, the same time 
 #' point is assigned to all observations. If a vector, there should be one 
 #' number for each observation. Defaults to 0.
-#' @param negative_control Controls the normalization. This value may be NA, 
-#' a number, a string, or a data frame.  
+#' @param plate_id experiment identification string, useful if multiple datasets 
+#' are later combined. Defaults to "plate_1"
+#' @param negative_control A designation for the negative controls in this 
+#' dataset, if they exist. Value may be NA, a number, a string, or a data frame.
 #' 
 #' \itemize{
 #'  \item{NA: Use when there are no negative control measurements. The contents 
-#'    of the column named 'value_normalized' created by 
-#'    \code{normalize_by_vehicle()} will be copied from the contents of 
+#'    of the column named 'value_normalized' will be copied from the contents of 
 #'    the column named 'value'. }
 #'  \item{Number: Use when each treatment has been labeled with a concentration 
 #'    (typically 0) that indicates the vehicle control. Each treatment must 
@@ -775,8 +795,6 @@ create_dataset = function( sample_types, treatments, concentrations, values,
 #'    map match treatments in the 'drug' column to those in the 
 #'    'vehicle' column.}
 #' }
-#' @param plate_id experiment identification string, useful if multiple datasets 
-#' are later combined. Defaults to "plate_1"
 #' @param summary_method summarize replicate measures by either mean or median; 
 #' must be one of "mean", "median". Defaults to "mean"
 #' @return a data frame where columns indicate the sample type, treatment 1, 
@@ -856,14 +874,12 @@ create_synergy_dataset = function( sample_types, treatments_1, treatments_2,
 #' @param plate_map list where each item specifies concentrations, treatments, 
 #' and cell lines for a plate specified in raw_plates, matching the format of a 
 #' file created by \code{read_platemap_from_excel} 
-#' @param negative_control Controls the behavior of the 
-#' \code{\link{normalize_by_vehicle}} function. This value may be NA, 
-#' a number, a string, or a data frame.
+#' @param negative_control A designation for the negative controls in this 
+#' dataset, if they exist. Value may be NA, a number, a string, or a data frame.
 #' 
 #' \itemize{
 #'  \item{NA: Use when there are no negative control measurements. The contents 
-#'    of the column named 'value_normalized' created by 
-#'    \code{normalize_by_vehicle()} will be copied from the contents of 
+#'    of the column named 'value_normalized' will be copied from the contents of 
 #'    the column named 'value'. }
 #'  \item{Number: Use when each treatment has been labeled with a concentration 
 #'    (typically 0) that indicates the vehicle control. Each treatment must 
@@ -909,7 +925,6 @@ create_synergy_dataset = function( sample_types, treatments_1, treatments_2,
 #' plate_map$sample_type[1:2,1:3] = rep( c("line1", "line2"), 3)
 #' combine_data_and_map( plate, plate_map, negative_control=0 )
 #' @export
-#' @seealso \code{\link{normalize_by_vehicle}}
 combine_data_and_map = function( raw_plate, 
                                  plate_map, 
                                  negative_control=0, 
@@ -1076,9 +1091,9 @@ metric_to_grid = function( x_axis_labels, y_axis_labels, values ){
 #'          25,23,24,42,43,46,4,5,9)
 #' hours = rep(48, length(values))
 #' plate_id = "plate_1"
-#' ds = create_dataset( sample_types, treatments, concentrations, 
-#'                       hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_by_vehicle(ds, summary_method = "mean")
+#' ds = create_dataset( sample_types=sample_types, treatments=treatments, 
+#'                      concentrations=concentrations,hours=hours,values=values, 
+#'                      plate_id=plate_id, negative_control = "DMSO")
 #' library(drc)
 #' # Fit model using three-parameter log-logistic function
 #' fit_DRC(ds, sample_types=c("line1", "line2"), treatments=c("drug"), 
@@ -1146,7 +1161,7 @@ fit_DRC = function(D, fct, sample_types=NA, treatments=NA, hour=NA ){
         M = try( drc::drm(value~concentration, data=model_input, fct = fct), 
                  silent=TRUE )
         if( !"try-error" %in% class( M ) ){
-            M_anova = anova( FIT$model, M, details=FALSE )
+            M_anova = stats::anova( FIT$model, M, details=FALSE )
             FIT$ANOVA_F_test = M_anova$`F value`[2]
             FIT$ANOVA_P_value = M_anova$`p value`[2]
             FIT$ANOVA=M_anova
@@ -1169,9 +1184,10 @@ fit_DRC = function(D, fct, sample_types=NA, treatments=NA, hour=NA ){
 #'          25,23,24,42,43,46,4,5,9)
 #' hours = rep(48, length(values))
 #' plate_id = "plate_1"
-#' ds = create_dataset( sample_types, treatments, concentrations, 
-#'                       hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_by_vehicle(ds, summary_method = "mean")
+#' ds = create_dataset( sample_types=sample_types, treatments=treatments, 
+#'                      concentrations=concentrations, hours=hours, 
+#'                      values=values, plate_id=plate_id, 
+#'                      negative_control = "DMSO")
 #' library(drc)
 #' # Fit model using three-parameter log-logistic function
 #' fit_1 = fit_DRC(ds, sample_types=c("line1", "line2"), treatments=c("drug"), 
@@ -1225,9 +1241,10 @@ summary.HT_fit = function(object, ...){
 #'          25,23,24,42,43,46,4,5,9)
 #' hours = rep(48, length(values))
 #' plate_id = "plate_1"
-#' ds = create_dataset( sample_types, treatments, concentrations, 
-#'                       hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_by_vehicle(ds, summary_method = "mean")
+#' ds = create_dataset( sample_types=sample_types, treatments=treatments, 
+#'                      concentrations=concentrations, hours=hours, 
+#'                      values=values, plate_id=plate_id, 
+#'                      negative_control = "DMSO")
 #' library(drc)
 #' fit_statistics( ds, fct=LL.3() )
 #' @seealso \code{\link{fit_DRC}} 
@@ -1281,9 +1298,10 @@ fit_statistics = function(D, fct){
 #'          25,23,24,42,43,46,4,5,9)
 #' hours = rep(48, length(values))
 #' plate_id = "plate_1"
-#' ds = create_dataset( sample_types, treatments, concentrations, 
-#'                       hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_by_vehicle(ds, summary_method = "mean")
+#' ds = create_dataset( sample_types=sample_types, treatments=treatments, 
+#'                      concentrations=concentrations, hours=hours, 
+#'                      values=values, plate_id=plate_id, 
+#'                      negative_control = "DMSO")
 #' library(drc)
 #' fits = fit_statistics( ds, fct=LL.3() )
 #' fit_statistics_matrixes( fits )
@@ -1396,9 +1414,10 @@ convert_to_foldchange = function(M1, M2){
 #' concentrations = rep(concentrations, 2)
 #' sample_types = rep(sample_types, 2)
 #' plate_id = "plate_1"
-#' ds = create_dataset( sample_types, treatments, concentrations, 
-#'                      hours, values, plate_id, negative_control = "DMSO")
-#' ds = normalize_by_vehicle(ds, summary_method = "mean")
+#' ds = create_dataset( sample_types=sample_types, treatments=treatments, 
+#'                      concentrations=concentrations, hours=hours, 
+#'                      values=values, plate_id=plate_id, 
+#'                      negative_control = "DMSO")
 #' # calculate grid
 #' timecourse_relative_grid(ds, c("line1", "line2"), drc::LL.3() )
 #' @export
@@ -1510,7 +1529,6 @@ timecourse_relative_grid = function( D, sample_types, fct,
 #'                 10,10,15,12,30,11,60,13,80,9), 
 #'      plate_id = "plate_1",
 #'      negative_control = "DMSO")
-#' ds=normalize_by_vehicle(ds, summary_method="mean")
 #' tc=timecourse_AUC_ratio(ds, 
 #'                       treatments=c("drug1", "drug2"), 
 #'                       sample_types=c("line1", "line2"), 

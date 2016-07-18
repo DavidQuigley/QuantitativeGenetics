@@ -25,5 +25,9 @@ test_that("loading works", {
     expect_equal( sum(plate_map$treatment=="Vehicle"), 11 )
     expect_equal( plate_map$treatment[1,3], "drug_1")
     
+    fn_data = system.file("extdata", "sample_data_synergy_platemap.xml", 
+                          package = pkg)
+    plate_map = read_platemap_from_Incucyte_XML(fn_data, max_treatments_per_well = 2)
+    
 } )
     

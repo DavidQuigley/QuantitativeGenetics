@@ -1,3 +1,4 @@
+
 chou_synergy_helper = function( D, fu, fct ){
     # m is the slope of the median effect plot
     # measures the sigmoidicity of the dose effect curve; m=1 is hyperbolic
@@ -12,7 +13,7 @@ chou_synergy_helper = function( D, fu, fct ){
     not_zero = D != 0
     x_m[not_zero] = log( D[not_zero] )
 
-    m = as.numeric(coefficients( lm( y_m ~ x_m ) )[2])
+    m = as.numeric(stats::coefficients( stats::lm( y_m ~ x_m ) )[2])
     
     # Dm is the IC50 for this curve
     data = data.frame(fu, D)
@@ -37,7 +38,6 @@ chou_synergy_helper = function( D, fu, fct ){
 #' @param sample_type sample type in ds
 #' @param treatment_1 treatment in ds
 #' @param treatment_2 treatment in ds
-#' @param treatment_12 treatment in ds
 #' @param hour hour in ds
 #' @param proportion_1 value between 0 and 1, indicating the fixed proportional
 #' relationship between concentrations of treatment_1 and treatment_2 in the 
@@ -81,7 +81,7 @@ chou_synergy = function( ds, sample_type, treatment_1, treatment_2, hour,
     ds_c$conc_final = ds_c$concentration + ds_c$concentration_2
 
     get_mu = function(x){ Fa=mean(x$value_normalized, na.rm=TRUE) }
-    get_median = function(x){ Fa=median(x$value_normalized, na.rm=TRUE) }
+    get_median = function(x){ Fa=stats::median(x$value_normalized, na.rm=TRUE) }
     
     if( summary_method=="mean" ){
         Dsum1 = plyr::ddply(ds_1, c("conc_final"), get_mu )
@@ -114,8 +114,8 @@ chou_synergy = function( ds, sample_type, treatment_1, treatment_2, hour,
 
 #' Plot single-value Chou Combination Index at IC50
 #' 
-#' @param CS chou statistics calculated by \code{\link{chou_synergy_helper}}
-#' @param proportion proportion of dose 1 vs. dose 2, numeric between 0 and 1
+#' @param CS chou statistics calculated by \code{\link{chou_synergy}}
+#' @param proportion_1 proportion of dose 1 vs. dose 2, numeric between 0 and 1
 #' @return Combination Index
 #' @export
 chou_synergy_CI_median = function( CS, proportion_1 ){
@@ -143,6 +143,7 @@ chou_synergy_CI_median = function( CS, proportion_1 ){
 #' confidence intervals are estimated.
 #' @param hour hour in ds. Default 0. 
 #' @param alpha 1-alpha is the size of the confidence intervals, default 0.05
+#' @param summary_method mean or median
 #' @return list ii: estimated interaction indices corresponding to the 
 #' observations (c.d1, c.d2, E); ii.low, ii.up: estimated lower and upper CI
 #' @references Lee & Kong Statistics in Biopharmaceutical Research 2012
@@ -186,7 +187,7 @@ synergy_interaction_CI = function(ds, sample_type,
     }
     else{
         sumfunc = function(po){ data.frame( 
-            value=median(po$value_normalized, na.rm=TRUE)) }
+            value=stats::median(po$value_normalized, na.rm=TRUE)) }
     }
     E[ E > 1 ] = 0.999
     
@@ -209,41 +210,43 @@ synergy_interaction_CI = function(ds, sample_type,
     
     d2.d1 = proportion_1
 
-    lm1 <- lm(log(e1/(1-e1))~log(d1))
-    dm1 <- exp(-summary(lm1)$coef[1,1]/summary(lm1)$coef[2,1])
-    lm2 <- lm(log(e2/(1-e2))~log(d2))
-    dm2 <- exp(-summary(lm2)$coef[1,1]/summary(lm2)$coef[2,1])
-    lmcomb <- lm(log(e12/(1-e12))~log (d12))
-    dm12 <- exp(-summary(lmcomb)$coef[1,1]/summary(lmcomb)$coef[2,1]) 
-    Dx1 <- dm1*(E/(1-E))^(1/summary(lm1)$coef[2,1])
-    Dx2 <- dm2*(E/(1-E))^(1/summary(lm2)$coef[2,1])
-    dx12 <- dm12*(E/(1-E))^(1/summary(lmcomb)$coef[2,1])
-    iix <- (dx12/(1+d2.d1))/Dx1+(dx12*d2.d1/(1+d2.d1))/Dx2
-    lm1.s <-summary(lm1)
-    lm2.s <-summary(lm2)
-    lm12.s <-summary(lmcomb)
-    c1 <- 1.0/lm1.s$coef[2,1]^2*lm1.s$coef[1,2]^2
-    temp <- - mean(log(d1))*lm1.s$coef[2,2]^2
-    ### temp <- lm1.s$coef[1,2]*lm1.s$coef[2,2]*lm1.s$cor[1,2]   ### covariance of b0 and b1
-    c1 <- c1+2.0*(log(E/(1-E))-lm1.s$coef[1,1])/lm1.s$coef[2,1]^3*temp
-    c1 <- c1+(log(E/(1-E))-lm1.s$coef[1,1])^2/lm1.s$coef[2,1]^4*lm1.s$coef[2,2]^2
-    c2 <- 1.0/lm2.s$coef[2,1]^2*lm2.s$coef[1,2]^2
-    temp <- - mean(log(d2))*lm2.s$coef[2,2]^2
-    ### temp <- lm2.s$coef[1,2]*lm2.s$coef[2,2]*lm2.s$cor[1,2]   ### covariance of b0 and b1
-    c2 <- c2+2.0*(log(E/(1-E))-lm2.s$coef[1,1])/lm2.s$coef[2,1]^3*temp
-    c2 <- c2+(log(E/(1-E))-lm2.s$coef[1,1])^2/lm2.s$coef[2,1]^4*lm2.s$coef[2,2]^2
-    c12 <- 1.0/lm12.s$coef[2,1]^2*lm12.s$coef[1,2]^2
-    temp <- - mean(log(d12))*lm12.s$coef[2,2]^2
-    ### temp <- lm12.s$coef[1,2]*lm12.s$coef[2,2]*lm12.s$cor[1,2]   ### covariance of b0 and b1
-    c12 <- c12+2.0*(log(E/(1-E))-lm12.s$coef[1,1])/lm12.s$coef[2,1]^3*temp
-    c12 <- c12+(log(E/(1-E))-lm12.s$coef[1,1])^2/lm12.s$coef[2,1]^4*lm12.s$coef[2,2]^2
-    var.ii <-((dx12/Dx1)^2*c1+(dx12*d2.d1/Dx2)^2*c2+(1.0/Dx1+d2.d1/Dx2)^2*dx12^2*c12)/(1+d2.d1)^2 
-    t975 <- qt(1-alpha/2,length(d1)+length(d2)+length(d12)-6)
-    iix.low1 <- iix*exp(-t975*var.ii^0.5/iix)
-    iix.up1 <- iix*exp(t975*var.ii^0.5/iix)
+    lm1 =  stats::lm( log(e1/(1-e1)) ~ log(d1) )
+    lm2 =  stats::lm( log(e2/(1-e2)) ~ log(d2) )
+    lm12 = stats::lm( log(e12/(1-e12)) ~ log(d12) )
+    dm1 =  exp( -summary(lm1)$coef[1,1] / summary(lm1)$coef[2,1] )
+    dm2 =  exp( -summary(lm2)$coef[1,1] / summary(lm2)$coef[2,1] )
+    dm12 = exp( -summary(lm12)$coef[1,1] / summary(lm12)$coef[2,1] ) 
     
-    iix.low1[ is.nan(iix.low1) ] = NA
-    iix.up1[ is.nan(iix.up1) ] = NA
+    Dx1 = dm1*(E/(1-E))^(1/summary(lm1)$coef[2,1])
+    Dx2 = dm2*(E/(1-E))^(1/summary(lm2)$coef[2,1])
+    dx12 = dm12*(E/(1-E))^(1/summary(lm12)$coef[2,1])
+    iix = ( dx12 / (1+d2.d1) ) / Dx1 + (dx12 * d2.d1 / (1+d2.d1) ) / Dx2
+    lm1.s = summary(lm1)
+    lm2.s = summary(lm2)
+    lm12.s = summary(lm12)
+    c1 = 1.0/lm1.s$coef[2,1]^2*lm1.s$coef[1,2]^2
+    temp = - mean(log(d1))*lm1.s$coef[2,2]^2
+    c1 = c1+2.0*(log(E/(1-E))-lm1.s$coef[1,1]) / lm1.s$coef[2,1]^3*temp
+    c1 = c1+(log(E/(1-E))-lm1.s$coef[1,1])^2/lm1.s$coef[2,1]^4*lm1.s$coef[2,2]^2
+    
+    c2 = 1.0/lm2.s$coef[2,1]^2*lm2.s$coef[1,2]^2
+    temp = - mean(log(d2))*lm2.s$coef[2,2]^2
+    c2 = c2+2.0*(log(E/(1-E))-lm2.s$coef[1,1])/lm2.s$coef[2,1]^3*temp
+    c2 = c2+(log(E/(1-E))-lm2.s$coef[1,1])^2/lm2.s$coef[2,1]^4*lm2.s$coef[2,2]^2
+    
+    c12 = 1.0/lm12.s$coef[2,1]^2*lm12.s$coef[1,2]^2
+    temp = - mean(log(d12))*lm12.s$coef[2,2]^2
+    c12 = c12+2.0*(log(E/(1-E))-lm12.s$coef[1,1])/lm12.s$coef[2,1]^3*temp
+    c12 = c12+(log(E/(1-E))-lm12.s$coef[1,1])^2 / 
+              lm12.s$coef[2,1]^4*lm12.s$coef[2,2]^2
+    
+    var.ii =( (dx12/Dx1)^2 * c1 + (dx12*d2.d1/Dx2)^2 * 
+                  c2+( 1.0 / Dx1 + d2.d1 / Dx2 )^2 * dx12^2 * c12) / (1+d2.d1)^2 
+    t975 = stats::qt( 1-alpha/2, length(d1)+length(d2)+length(d12)-6 )
+    iix.lo1 = iix * exp( -t975*var.ii^0.5 / iix )
+    iix.up1 = iix * exp(  t975*var.ii^0.5 / iix )
+    
+    iix.lo1[ is.nan(iix.lo1) ] = NA
     iix.up1[ is.nan(iix.up1) ] = NA
     return(list(interaction_index=iix, cl_lower=iix.low1, cl_upper=iix.up1))
 
