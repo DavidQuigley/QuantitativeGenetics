@@ -1,0 +1,539 @@
+# job template file 
+# each line starting with #task defines a jobs we recognize. 
+# format is #job <JOB_NAME> {SINGLE_CORE/SINGLE_CORE} <required variables> followed by any number of 
+# lines with the actual command, terminated by #endjob
+# To include multiple commands per task, separate by an empty line
+# Every job requires SAMPLE_ID
+
+#####################
+### FILE MOVEMENT ###
+#####################
+
+#job pass SINGLE_CORE SAMPLE_ID
+#    ----
+#
+echo "PASS"
+#endjob
+
+#job test SINGLE_CORE SAMPLE_ID,DIR_OUT,FN_OUT
+#    ----
+#
+echo ${SAMPLE_ID} >> ${DIR_OUT}/${FN_OUT}
+#endjob
+
+#job s3_download SINGLE_CORE SAMPLE_ID,BUCKET_URL,DIR_OUT,FN_OUT
+#    -----------
+#
+aws s3 cp ${BUCKET_URL} ${DIR_OUT}/${FN_OUT}
+#endjob
+
+#job cp SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    --
+#
+cp ${DIR_IN}/${FN_IN} ${DIR_OUT}/${FN_OUT}
+#endjob
+
+#job rm SINGLE_CORE SAMPLE_ID,DIR,FN
+#    --
+#
+rm ${DIR}/${FN}
+#endjob
+
+#############
+### ALIGN ###
+#############
+
+#job bwa_unpaired_fastq MULTI_CORE SAMPLE_ID,DIR_IN,FASTQ,DIR_OUT,FN_OUT 
+#    ---------------------
+${BWA} mem -R "@RG\tID:${SAMPLE_ID}\tSM:${SAMPLE_ID}\tPL:ILLUMINA" \
+  -M -t ${N_CORES} -v 3 ${REFERENCE_FA} \
+  ${DIR_IN}/${FASTQ} | \
+  ${SAMTOOLS} view -u -h -b /dev/stdin | \
+  ${SAMTOOLS} sort -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -O bam \
+  -o ${DIR_OUT}/${FN_OUT} -
+#endjob
+
+#job bwa_from_paired_fastq MULTI_CORE SAMPLE_ID,DIR_IN,FASTQ_1,FASTQ_2,DIR_OUT,FN_OUT 
+#    ---------------------
+${BWA} mem -R "@RG\tID:${SAMPLE_ID}\tSM:${SAMPLE_ID}\tPL:ILLUMINA" \
+  -M -t ${N_CORES} -v 3 ${REFERENCE_FA} \
+  ${DIR_IN}/${FASTQ_1} ${DIR_IN}/${FASTQ_2} | \
+  ${SAMTOOLS} view -u -h -b /dev/stdin | \
+  ${SAMTOOLS} sort -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -O bam \
+  -o ${DIR_OUT}/${FN_OUT} -
+#endjob
+
+#job resorted_bwa_from_paired_bam MULTI_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT 
+#    -------------------
+#
+READ_GROUP_STRING="@RG\tID:${SAMPLE_ID}\tSM:${SAMPLE_ID}\tPL:ILLUMINA"
+${SAMTOOLS} sort -n -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -T /temp/pre_${FN_IN} -O bam ${DIR_IN}/${FN_IN} | \
+      ${BEDTOOLS}/bamToFastq -i /dev/stdin -fq /dev/stdout -fq2 /dev/stdout | \
+      ${BWA} mem -p -M -t ${N_CORES} -R ${READ_GROUP_STRING} -v 3 ${REFERENCE_FA} - | \
+      ${SAMTOOLS} view -u -h -b /dev/stdin | \
+      ${SAMTOOLS} sort -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -T /temp/post_${FN_IN} -O bam \
+      -o ${DIR_OUT}/${FN_OUT} -
+#endjob
+
+#job bwa_from_paired_bam MULTI_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT 
+#    -------------------
+#
+READ_GROUP_STRING="@RG\tID:${SAMPLE_ID}\tSM:${SAMPLE_ID}\tPL:ILLUMINA"
+${BEDTOOLS}/bamToFastq -i ${DIR_IN}/${FN_IN} -fq /dev/stdout -fq2 /dev/stdout | \
+      ${BWA} mem -p -M -t ${N_CORES} -R ${READ_GROUP_STRING} -v 3 ${REFERENCE_FA} - | \
+      ${SAMTOOLS} view -u -h -b /dev/stdin | \
+      ${SAMTOOLS} sort -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -T /data/temp/${SAMPLE_ID} -O bam \
+      -o ${DIR_OUT}/${FN_OUT} -
+
+#endjob
+
+
+#######################
+### MANIPULATE BAMS ###
+#######################
+
+#job sort_bam_by_name MULTI_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    ----------------
+#
+${SAMTOOLS} sort -n -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -O bam -o ${DIR_OUT}/${FN_OUT} ${DIR_IN}/${FN_IN}
+echo "MESSAGE: sorted ${DIR_IN}/${FN_IN}"
+#endjob
+
+#job index_bam SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    ---------
+#
+${SAMTOOLS} index ${DIR_IN}/${FN_IN} ${DIR_OUT}/${FN_OUT}
+echo "MESSAGE: indexed ${DIR_IN}/${FN_IN}"
+#endjob
+
+#job bam_stats SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    ---------
+export PERL5LIB=/opt/ICGC/lib/perl5"${PERL5LIB:+:$PERL5LIB}"
+/opt/ICGC/bin/bam_stats -i ${DIR_IN}/${FN_IN} -o ${DIR_OUT}/${FN_OUT}
+echo "MESSAGE: ran bam_stats on ${DIR_IN}/${FN_IN}"
+#endjob
+
+#job merge_bams SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN_1,FN_IN_2,DIR_OUT,FN_OUT
+#    ----------
+${SAMTOOLS} merge -f ${DIR_OUT}/${FN_OUT} ${DIR_IN}/${FN_IN_1} ${DIR_IN}/${FN_IN_2}
+echo "MESSAGE: merged ${DIR_IN}/${FN_IN_1}, ${DIR_IN}/${FN_IN_2}"
+#endjob
+
+#job AddOrReplaceReadGroups SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT,LIBRARY,UNIT
+#    ----------------------
+${PICARD} AddOrReplaceReadGroups \
+      I=${DIR_IN}/${FN_IN} \
+      O=${DIR_OUT}/${FN_OUT} \
+      RGLB=${LIBRARY} \
+      RGPL=illumina \
+      RGPU=${UNIT} \
+      RGSM=${SAMPLE_ID}
+#endjob
+
+#job filter_secondary_alignments SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    ---------------------------
+#
+# given a BAM file, remove any secondary alignments
+
+${SAMTOOLS} view -F 3840 -u ${DIR_IN}/${FN_IN} | \
+   ${SAMTOOLS} sort -n -@ ${N_CORES} -m ${MAX_MEM_PER_CORE} -O bam -o ${DIR_OUT}/${FN_OUT}
+#endjob
+
+#job mark_duplicates SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    ---------------
+#
+${PICARD} MarkDuplicates \
+          INPUT=${DIR_IN}/${FN_IN} \
+          OUTPUT=${DIR_OUT}/${FN_OUT} \
+          METRICS_FILE=${DIR_OUT}/${SAMPLE_ID}_metrics.txt
+echo "MESSAGE: marked duplicates on ${DIR_IN}/${FN_IN}"
+#endjob
+
+##########################
+### SECONDARY ANALYSIS ###
+##########################
+
+#############
+## MUTECT ###
+#############
+
+#job mutect SINGLE_CORE SAMPLE_ID,DIR_IN,BAM_NORMAL,BAM_TUMOR,DIR_OUT,FN_OUT_BASE
+#    ------
+#
+${MUTECT} --analysis_type MuTect \
+        --reference_sequence ${REFERENCE_FA} \
+        --dbsnp ${DBSNP_SITES} \
+        --input_file:normal ${DIR_IN}/${BAM_NORMAL} \
+        --input_file:tumor ${DIR_IN}/${BAM_TUMOR} \
+        --out ${DIR_OUT}/${FN_OUT_BASE}_coverage_stats.txt \
+        --vcf ${DIR_OUT}/${FN_OUT_BASE}_mutect.vcf  
+
+grep "PASS\|#" ${DIR_OUT}/${FN_OUT_BASE}_mutect.vcf > ${DIR_OUT}/${FN_OUT_BASE}_mutect_PASS.vcf
+#endjob
+
+#job mutect_interval SINGLE_CORE SAMPLE_ID,DIR_IN,BAM_NORMAL,BAM_TUMOR,DIR_OUT,INTERVAL
+#    ---------------
+#
+${MUTECT} --analysis_type MuTect \
+        --reference_sequence ${REFERENCE_FA} \
+        --dbsnp ${DBSNP_SITES} \
+        --intervals ${INTERVAL} \
+        --input_file:normal ${DIR_IN}/${BAM_NORMAL} \
+        --input_file:tumor ${DIR_IN}/${BAM_TUMOR} \
+        --out ${DIR_OUT}/${FN_OUT_BASE}_${INTERVAL}_coverage_stats.txt \
+        --coverage_file ${DIR_OUT}/${FN_OUT_BASE}_${INTERVAL}_coverage.wig.txt
+#endjob
+
+############
+## PINDEL ##
+############
+
+#job pindel MULTI_CORE SAMPLE_ID DIR_IN,FN_BAM_NORMAL,FN_BAM_TUMOR,DIR_OUT,INTERVAL
+#    ------
+#
+# interval ALL for all chromosomes
+# create pindel_config
+FN_CONFIG=${DIR_OUT}/pindel_config_${SAMPLE_ID}
+echo -e "${DIR_IN}/${FN_BAM_TUMOR} 250 TUMOR_001\\n${DIR_IN}/${FN_BAM_NORMAL} 250 NORMAL_001" > $FN_CONFIG
+
+${PINDEL} -f ${REFERENCE_FA} \
+  --config-file ${FN_CONFIG} \
+  --chromosome ${INTERVAL} \
+  --output-prefix ${DIR_OUT}/pindel_${SAMPLE_ID} \
+  --number_of_threads ${N_CORES}
+#endjob
+
+#job cgpPindel_normal SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FAKE_BAM,FAKE_GFF,SEQTYPE
+${CGPPINDEL} \
+  -outdir ${DIR_OUT} \
+  -normal ${DIR_IN}/${FN_IN} \
+  -reference ${REFERENCE_FA} \
+  -tumour ${FAKE_BAM} \
+  -simrep ${SIMPLE_REPEATS} \
+  -unmatched ${FAKE_GFF} \
+  -filter ${CGPPINDEL_RULES}/pulldownRules.lst \
+  -softfil ${CGPPINDEL_RULES}/softRules.lst \
+  -genes ${PINDEL_REF_EXON} \
+  -species HUMAN -seqtype ${FAKE_BAM} -exclude M -assembly ${BUILD_VER} -cpus ${N_CORES} -limit 2
+#endjob
+
+#job cgpPindel SINGLE_CORE SAMPLE_ID,DIR_IN,TUMOR_BAM,NORMAL_BAM,DIR_OUT
+mkdir ${DIR_OUT}/${SAMPLE_ID}
+${CGPPINDEL} \
+  -outdir ${DIR_OUT}/${SAMPLE_ID} \
+  -reference ${REFERENCE_FA} \
+  -tumour ${DIR_IN}/${TUMOR_BAM} \
+  -normal ${DIR_IN}/${NORMAL_BAM} \
+  -simrep ${SIMPLE_REPEATS} \
+  -unmatched ${CGPPINDEL_NORMAL_PANEL} \
+  -filter ${CGPPINDEL_RULES}/pulldownRules.lst \
+  -softfil ${CGPPINDEL_RULES}/softRules.lst \
+  -genes ${PINDEL_REF_EXON} \
+  -cpus ${N_CORES} \
+  -limit ${N_CORES}
+#endjob
+
+############
+## CNVkit ##
+############
+
+#job cnvkit MULTI_CORE SAMPLE_ID,DIR_IN,FN_IN_TUMOR,FN_IN_NORMAL,DIR_OUT
+#    ------
+#
+sudo ${CNVKIT} batch ${DIR_IN}/${FN_IN_TUMOR} \
+    --normal ${DIR_IN}/${FN_IN_NORMAL} \
+    -p ${N_CORES} \
+    --targets ${CNVKIT_EXOME_BAIT} \
+    --fasta ${REFERENCE_FA} \
+    --access ${CNVKIT_ACCESS} \
+    --output-reference ${DIR_OUT}/CNV_reference.cnn \
+    --output-dir ${DIR_OUT}/ \
+    --diagram \
+    --scatter
+#endjob
+
+##############
+### SNPEFF ###
+##############
+
+#job snpeff SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE
+#    ------
+#
+${SNPEFF} -v -stats \
+  ${DIR_OUT}/${FN_OUT_BASE}_snpeff.html \
+  ${SNPEFF_REFERENCE} \
+  ${DIR_IN}/${FN_IN} > ${DIR_OUT}/${FN_OUT_BASE}_snpeff.vcf
+
+${SNPSIFT} annotate -v \
+    ${SNPEFF_CLINVAR} \
+    ${DIR_OUT}/${FN_OUT_BASE}_snpeff.vcf > ${DIR_OUT}/${FN_OUT_BASE}_snpeff.clinvar.vcf
+#endjob
+
+################
+### TITANCNA ###
+################
+
+#job titanCNV_extract_readcounts SINGLE_CORE SAMPLE_ID,DIR_IN_VCF,FN_IN_VCF_N,DIR_IN_BAM,FN_BAM_N,FN_BAM_T,DIR_OUT
+#    ------
+#
+FN_IN_VCF=${DIR_IN_VCF}/${FN_IN_VCF_N}
+FN_OUT_PASS=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS.vcf
+FN_OUT_PASS_SNP=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS_SNP.vcf
+FN_COUNT_OUT=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS_COUNTS.txt
+FN_COUNT_OUT_STD_CHR=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS_COUNTS_STD_CHR.txt 
+FN_WIG_TUMOR=${DIR_OUT}/${SAMPLE_ID}_titan_tumor_reads.wig
+FN_WIG_TUMOR_STD=${DIR_OUT}/${SAMPLE_ID}_titan_tumor_reads_std_chrom.wig
+FN_WIG_NORMAL=${DIR_OUT}/${SAMPLE_ID}_titan_norm_reads.wig
+FN_WIG_NORMAL_STD=${DIR_OUT}/${SAMPLE_ID}_titan_norm_reads_std_chrom.wig
+FN_BAM_TUMOR=${DIR_IN_BAM}/${FN_BAM_T}
+FN_BAM_NORMAL=${DIR_IN_BAM}/${FN_BAM_N}
+
+${SNPSIFT} filter \
+    -f ${FN_IN_VCF} \
+    "(GEN[0].AD[0] > 10) & (GEN[0].AD[1] > 10) & ( na FILTER )" > ${FN_OUT_PASS}
+${SNPSIFT} varType ${FN_OUT_PASS} | grep '#\|SNP' > ${FN_OUT_PASS_SNP}
+
+${SNPSIFT} extractFields \
+    ${FN_OUT_PASS_SNP} CHROM POS REF GEN[0].AD[0] ALT GEN[0].AD[1] > $FN_COUNT_OUT
+grep -v KN707 ${FN_COUNT_OUT} | grep -v JTFH | grep -v _random | grep -v chrUn | grep -v chrM > ${FN_COUNT_OUT_STD_CHR} 
+
+### COUNT READS IN BAM FILES ###
+${HMM_READCOUNTER} ${FN_BAM_TUMOR} > ${FN_WIG_TUMOR}
+${HMM_READCOUNTER} ${FN_BAM_NORMAL} > ${FN_WIG_NORMAL}
+python ${TITANCNA_STANDARDIZE_WIG_CHROMOSOMES} \
+  --in ${FN_WIG_TUMOR} \
+  --out ${FN_WIG_TUMOR_STD}
+python ${TITANCNA_STANDARDIZE_WIG_CHROMOSOMES} \
+  --in ${FN_WIG_NORMAL} \
+  --out ${FN_WIG_NORMAL_STD}
+
+#endjob
+
+#job titancna SINGLE_CORE SAMPLE_ID,DIR_IN_VCF,FN_IN_VCF_N,DIR_IN_BAM,FN_BAM_N,FN_BAM_T,N_CLUSTERS,PLOIDY,N_ITER,DIR_OUT
+#    ------
+#
+FN_IN_VCF=${DIR_IN_VCF}/${FN_IN_VCF_N}
+FN_OUT_PASS=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS.vcf
+FN_OUT_PASS_SNP=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS_SNP.vcf
+FN_COUNT_OUT=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS_COUNTS.txt
+FN_COUNT_OUT_STD_CHR=${DIR_OUT}/${SAMPLE_ID}_titan_HET_PASS_COUNTS_STD_CHR.txt 
+FN_WIG_TUMOR=${DIR_OUT}/${SAMPLE_ID}_titan_tumor_reads.wig
+FN_WIG_TUMOR_STD=${DIR_OUT}/${SAMPLE_ID}_titan_tumor_reads_std_chrom.wig
+FN_WIG_NORMAL=${DIR_OUT}/${SAMPLE_ID}_titan_norm_reads.wig
+FN_WIG_NORMAL_STD=${DIR_OUT}/${SAMPLE_ID}_titan_norm_reads_std_chrom.wig
+FN_BAM_TUMOR=${DIR_IN_BAM}/${FN_BAM_T}
+FN_BAM_NORMAL=${DIR_IN_BAM}/${FN_BAM_N}
+
+Rscript ${TITANCNA_RUN} \
+    --sample_id ${SAMPLE_ID} \
+    --fn_het_counts ${FN_COUNT_OUT_STD_CHR} \
+	--fn_wig_normal ${FN_WIG_NORMAL_STD} \
+	--fn_wig_tumor ${FN_WIG_TUMOR_STD} \
+	--fn_wig_gc ${TITAN_GC} \
+	--fn_wig_mappable ${TITAN_MAPCOUNTER} \
+    --dir_out ${DIR_OUT} \
+    --n_clusters ${N_CLUSTERS} \
+    --ploidy ${PLOIDY} \
+    --genomestyle ${REFERENCE_ORG} \
+    --n_iter ${N_ITER}
+#endjob
+
+#job titan_refseq_bedfile SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    -----------------
+# expects to be passed the SAMPLE_ID_segments.txt file
+
+# convert full segment information into bed format
+echo "MESSAGE: Beginning titan_refseq_bedfile for $SAMPLE_ID"
+awk 'BEGIN { FS = "\t" } ; NR>1 { print "chr" $2 "\t" $3 "\t" $4 "\t" $5 "~" $6 "~" $8 "~" $10 "~" $11 "~" $12 "~" $13 "~" $14 "~" $15}' ${DIR_IN}/${FN_IN} > ${DIR_OUT}/${SAMPLE_ID}_segments.bed
+
+# refseq-level BED file
+${BEDTOOLS}/intersectBed \
+  -a ${DIR_OUT}/${SAMPLE_ID}_segments.bed  \
+  -b ${GENE_LOC_BED} \
+  -wa -wb > ${DIR_OUT}/${FN_OUT}
+echo "MESSAGE: wrote titan_refseq_bedfile to ${DIR_OUt}/${FN_OUT}"
+#endjob
+
+#############
+### MANTA ###
+#############
+
+#job manta MULTI_CORE SAMPLE_ID,DIR_IN,FN_IN_BAM_N,FN_IN_BAM_T,DIR_OUT
+#    -----
+#
+mkdir -p ${DIR_OUT}
+${MANTA_DIR}/bin/configManta.py \
+  --normalBam=${DIR_IN}/${FN_IN_BAM_N}\
+  --tumorBam=${DIR_IN}/${FN_IN_BAM_T} \
+  --referenceFasta=${REFERENCE_FA} \
+  --runDir=${DIR_OUT}
+${DIR_OUT}/runWorkflow.py -m local -j ${N_CORES} 
+
+#endjob
+
+#job manta_postprocess SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    -----------------
+if [ -f ${DIR_IN}/${FN_IN}.gz ]; then
+    gunzip ${DIR_IN}/${FN_IN}.gz
+fi  
+python ${MANTA_QUANTIFY} --in ${DIR_IN}/${FN_IN} --out ${DIR_OUT}/${FN_OUT}
+#endjob
+
+#############
+### LUMPY ###
+#############
+
+#job lumpy SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN_BAM_N,FN_IN_BAM_T,DIR_OUT
+#    -----
+${LUMPYEXPRESS} \
+  -B ${DIR_IN}/${FN_BAM_T},${DIR_IN}/${FN_BAM_N} \
+  -T ${LUMPY_TEMPDIR} \
+  -o ${DIR_OUT}/${SAMPLE_ID}_lumpy.vcf
+#endjob
+
+#job lumpy_postprocess SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE,MIN_DEL_DIST,MIN_BREAK_DIST,MIN_READS_T,MAX_READS_N
+python ${LUMPY_QUANTIFY} \
+  --in ${DIR_IN}/${FN_IN} \
+  --out ${DIR_OUT}/${FN_OUT_BASE} \
+  --min_del_distance ${MIN_DEL_DIST} \
+  --min_break_distance ${MIN_BREAK_DIST} \
+  --min_tumor_reads ${MIN_READS_T} \
+  --max_normal_reads ${MAX_READS_N}
+#endjob
+
+##############
+## ANNOVAR ###
+##############
+
+#job annovar SINGLE_CORE SAMPLE_ID,DIR_IN,VCF_IN,DIR_OUT,FN_OUT_BASE
+#    -------
+#
+${ANNOVAR}/table_annovar.pl ${DIR_IN}/${VCF_IN} \
+  ${ANNOVAR_DB}/ \
+  --buildver ${ANNOVAR_BUILDVER} \
+  -out ${DIR_OUT}/${FN_OUT_BASE} \
+  -protocol ${ANNOVAR_PROTOCOL} \
+  -operation ${ANNOVAR_OPERATION} \
+  -nastring . \
+  -vcfinput
+cat ${DIR_OUT}/${FN_OUT_BASE}.${BUILD_VER}_multianno.vcf | \
+    ${SNPSIFT} filter "${SIFT_FILTER}" > ${DIR_OUT}/${FN_OUT_BASE}.${FN_OUT_BASE}_multianno_SNPPSift_FILTERED.vcf
+#endjob
+
+##############
+## STRELKA ###
+##############
+
+#job strelka_derive_mutation_signatures SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT
+#    ----------------------------------
+
+FN_OUT=${DIR_OUT}/${SAMPLE_ID}_somatic_VQSR8.5.vcf
+FN_OUT_CPRA=${DIR_OUT}/${SAMPLE_ID}_somatic_VQSR8.5_CPRA.txt
+${SNPSIFT} filter \
+  -f ${DIR_IN}/${FN_IN} \
+  "(FILTER = 'PASS') & (VQSR > 8.5)" > ${FN_OUT}
+${SNPSIFT} extractFields ${FN_OUT} CHROM POS REF ALT > ${FN_OUT_CPRA}
+
+Rscript ${RUN_STRELKA_MUTATIONSIGS} \
+  --sample_id ${SAMPLE_ID} \
+  --fn_CPRA ${FN_OUT_CPRA} \
+  --out ${DIR_OUT}/${SAMPLE_ID}_strelka_mutation_percentages.txt
+
+#endjob
+
+################
+### GENOTYPE ###
+################
+
+#job haplotypecaller_to_gvcf SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE
+#    -----------------------
+#
+PATH_BAM_IN=${DIR_IN}/${FN_IN}
+PATH_RECAL_TABLE=${DIR_OUT}/${FN_OUT_BASE}_recal_data.table
+PATH_BAM_RECAL=${DIR_OUT}/${FN_OUT_BASE}_recalibrated.bam
+PATH_GVCF=${DIR_OUT}/${FN_OUT_BASE}.g.vcf
+${GATK} -T BaseRecalibrator \
+   -R ${REFERENCE_FA} \
+   --num_cpu_threads_per_data_thread ${N_CORES} \
+   -I ${PATH_BAM_IN} \
+   -knownSites ${DBSNP_SITES} \
+   -o ${PATH_RECAL_TABLE}
+
+${GATK} -T PrintReads \
+    -R ${REFERENCE_FA} \
+    --num_cpu_threads_per_data_thread ${N_CORES} \
+    -I ${PATH_BAM_IN} \
+    --BQSR ${PATH_RECAL_TABLE} \
+    -o ${PATH_BAM_RECAL}
+
+${GATK} -T HaplotypeCaller \
+    --reference_sequence ${REFERENCE_FA} \
+    --input_file ${PATH_BAM_RECAL} \
+    --genotyping_mode DISCOVERY \
+    -ERC GVCF \
+    -stand_emit_conf 10 \
+    -stand_call_conf 30 \
+    -variant_index_type LINEAR \
+    -variant_index_parameter 128000 \
+    -o ${PATH_GVCF}
+#endjob
+
+#job haplotypecaller_to_vcf SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE
+#    -----------------------
+#
+PATH_BAM_IN=${DIR_IN}/${FN_IN}
+PATH_RECAL_TABLE=${DIR_OUT}/${FN_OUT_BASE}_recal_data.table
+PATH_BAM_RECAL=${DIR_OUT}/${FN_OUT_BASE}_recalibrated.bam
+PATH_VCF=${DIR_OUT}/${FN_OUT_BASE}.vcf
+${GATK} -T BaseRecalibrator \
+   -R ${REFERENCE_FA} \
+   --num_cpu_threads_per_data_thread ${N_CORES} \
+   -I ${PATH_BAM_IN} \
+   -knownSites ${DBSNP_SITES} \
+   -o ${PATH_RECAL_TABLE}
+
+${GATK} -T PrintReads \
+    -R ${REFERENCE_FA} \
+    --num_cpu_threads_per_data_thread ${N_CORES} \
+    -I ${PATH_BAM_IN} \
+    --BQSR ${PATH_RECAL_TABLE} \
+    -o ${PATH_BAM_RECAL}
+
+${GATK} -T HaplotypeCaller \
+    --reference_sequence ${REFERENCE_FA} \
+    --input_file ${PATH_BAM_RECAL} \
+    --genotyping_mode DISCOVERY \
+    -stand_emit_conf 10 \
+    -stand_call_conf 30 \
+    -variant_index_type LINEAR \
+    -variant_index_parameter 128000 \
+    -o ${PATH_VCF}
+#endjob
+
+#job SelectVariants_SNP SINGLE_CORE SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT
+#    ------------------
+#
+${GATK} -T SelectVariants \
+    -R ${REFERENCE_FA} \
+    -V ${DIR_IN}/${FN_IN} \
+    -selectType SNP \
+    -o ${DIR_OUT}/${FN_OUT}
+#endjob
+
+#job genotype_gvcfs MULTI_CORE SAMPLE_ID,DIR_IN,FN_ARRAY,DIR_OUT,FN_OUT
+#    --------------
+
+arr_fn=${FN_ARRAY}
+declare -a arr_cmd
+for i in "${arr_fn[@]}"
+do
+    arr_cmd+=( --variant "${DIR_IN}/$i" )
+done
+
+${GATK} -T GenotypeGVCFs \
+   -R ${REFERENCE_FA} \
+   -nt ${N_CORES} \
+   --dbsnp ${DBSNP_SITES} \
+   "${arr_cmd[@]}" \
+   --out ${DIR_OUT}/${FN_OUT}
+#endjob

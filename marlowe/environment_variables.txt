@@ -1,0 +1,66 @@
+export JAVA7=/usr/lib/jvm/java-7-openjdk-amd64/jre/bin/java
+export PERL5LIB=/opt/ICGC/lib/perl5
+
+export REFERENCE_BASE=/reference
+export REFERENCE_ORG=UCSC
+export REFERENCE_BUILD=GRCh38Decoy
+export REFERENCE_FA=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Sequence/WholeGenomeFasta/genome.fa
+
+export SCRIPT_DIR=/reference/marlowe/pipeline_scripts
+export GENE_LOC_BED=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/Genes/${REFERENCE_BUILD}_refseq_genelocs_from_refFlat.bed
+
+export BEDTOOLS=/opt/bedtools2/bin
+export BWA=/opt/bwa-0.7.15/bwa
+export SAMTOOLS=/opt/samtools/samtools
+export PICARD_PATH=/opt/picard_2-7-1.jar
+export PICARD="java -Xmx${MAX_MEM_TOTAL} -jar ${PICARD_PATH}"
+
+export ANNOVAR=/opt/annovar
+export ANNOVAR_DB=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/ANNOVAR
+export ANNOVAR_PROTOCOL="refGene,genomicSuperDups,esp6500siv2_all,1000g2015aug,avsnp147,ljb26_all,cosmic70,clinvar_20170130"
+export ANNOVAR_OPERATION="g,r,f,f,f,f,f,f"
+export ANNOVAR_BUILDVER=hg38
+
+export MUTECT_PATH=/opt/mutect-1.1.7.jar
+export MUTECT="${JAVA7} -Xmx${MAX_MEM_TOTAL} -jar ${MUTECT_PATH}"
+
+export GATK_PATH=/opt/GenomeAnalysisTK.jar
+export GATK="java -Xmx${MAX_MEM_TOTAL} -jar ${GATK_PATH}"
+export DBSNP_SITES=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/dbsnp_138.${REFERENCE_BUILD}.vcf
+
+export PINDEL=/opt/pindel/pindel
+export PINDEL_REF_EXON=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/pindel/${REFERENCE_BUILD}_refExon.bed
+export SIMPLE_REPEATS=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/simpleRepeats_${REFERENCE_BUILD}.bed.gz
+export CGPPINDEL="perl /opt/cgpPindel/perl/bin/pindel.pl"
+export CGPPINDEL_RULES=/opt/cgpPindel/perl/rules
+export CGPPINDEL_NORMAL_PANEL="/data/test_data/pindel_np/normalPanel.gff3.gz"
+
+export CNVKIT="python /opt/cnvkit/cnvkit.py"
+export CNVKIT_ACCESS=/opt/cnvkit/data/access-5k-mappable.${REFERENCE_BUILD}.bed
+export CNVKIT_EXOME_BAIT=/notebook/annotations/manufacturers/agilent/SureSelect_Human_All_Exon_V6/SureSelectHumanAllExonV6_UTR_R2_Regions_cleaned.bed
+
+export SNPSIFT_PATH="/opt/snpEff/SnpSift.jar"
+export SNPSIFT="java -Xmx${MAX_MEM_TOTAL} -jar ${SNPSIFT_PATH}"
+export SIFT_FUNC=" ( Func.refGene = 'splicing' ) | ( ( Func.refGene = 'exonic' ) & ( ( ExonicFunc.refGene = 'stopgain' ) | ( ExonicFunc.refGene = 'nonsynonymous_SNV' ) | ( ExonicFunc.refGene = 'frameshift_insertion' ) | ( ExonicFunc.refGene = 'frameshift_deletion' ) | ( ExonicFunc.refGene = 'frameshift_block_substitution' ) ) )"
+export SIFT_QUAL=" ( QD > 2 ) & ( FS < 60.0 ) & ( MQ > 40 ) & ( SOR < 3 )"
+export SIFT_ONEK_GENOMES=" ( ( 1000g2015aug_all = '.' ) | (1000g2015aug_all<0.01) )"
+export SIFT_FILTER="${SIFT_QUAL} & ${SIFT_FUNC} & ${SIFT_ONEK_GENOMES}"
+export SNPEFF="java -Xmx${MAX_MEM_TOTAL} -jar /opt/snpEff/snpEff.jar"
+export SNPEFF_REFERENCE="GRCh38.86"
+export SNPEFF_CLINVAR_VCF="/reference/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/clinvar_20171029.vcf"
+
+export TITANCNA_RUN="${SCRIPT_DIR}/TitanCNA_run.R"
+export TITAN_GC=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/TitanCNV/TitanCNV_gc_std_chrom.wig
+export TITAN_MAPCOUNTER=${REFERENCE_BASE}/${REFERENCE_ORG}/${REFERENCE_BUILD}/Annotation/TitanCNV/bin_mappability_std_chrom.bw
+export HMM_READCOUNTER=/opt/HMMcopy/bin/readCounter
+export TITANCNA_STANDARDIZE_WIG_CHROMOSOMES=${SCRIPT_DIR}/standardize_wig_chromosomes.py
+
+export RUN_STRELKA_MUTATIONSIGS=${SCRIPT_DIR}/quantify_mutation_signatures.R
+
+export MANTA_DIR=/opt/manta-1.2.2
+export MANTA_QUANTIFY="${SCRIPT_DIR}/quantify_structural_variants_manta.py"
+
+export LUMPYEXPRESS=/usr/local/bin/lumpyexpress
+export LUMPY_TEMPDIR=/temp/lumpy/temp
+export LUMPY_QUANTIFY="${SCRIPT_DIR}/quantify_structural_variants_lumpy.py"
+

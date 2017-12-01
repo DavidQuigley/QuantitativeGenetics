@@ -1,0 +1,211 @@
+##########################################
+### SINGLE COMMANDS                    ###
+##########################################
+
+#workflow	bam_stats	SAMPLE_ID,DIR_IN,DIR_OUT,FN_IN,FN_OUT
+1	0	bam_stats	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN} FN_OUT=${FN_OUT}
+#endworkflow
+
+#workflow	genotype_gvcfs	SAMPLE_ID,FN_ARRAY,DIR_IN,DIR_OUT,FN_OUT
+1	0	genotype_gvcfs	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, FN_ARRAY=${FN_ARRAY}, DIR_OUT=${DIR_OUT}, FN_OUT=${FN_OUT}
+#endworkflow
+
+#workflow	annovar	SAMPLE_ID,DIR_IN,VCF_IN,DIR_OUT,FN_OUT_BASE
+1	0	annovar	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, VCF_IN=${DIR_IN}/${FN_IN}, DIR_OUT=${DIR_OUT}, FN_OUT_BASE=${FN_OUT_BASE}
+#endworkflow
+
+#workflow	mutect	SAMPLE_ID,DIR_IN,BAM_NORMAL,BAM_TUMOR,DIR_OUT,FN_OUT_BASE
+1	0	mutect	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, BAM_NORMAL=${BAM_NORMAL}, BAM_TUMOR=${BAM_TUMOR}, DIR_OUT=${DIR_OUT}, FN_OUT_BASE=${FN_OUT_BASE}
+#endworkflow
+
+#workflow	index	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT
+1	0	index_bam	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN}, FN_OUT=${FN_IN}.bai
+#endworkflow
+
+#workflow	snpeff	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE
+1	0	snpeff	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN}, FN_OUT_BASE=${FN_OUT_BASE}
+#endworkflow
+
+#workflow	haplotypecaller_to_gvcf	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE
+1	0	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN}, FN_OUT_BASE=${FN_OUT_BASE}
+#endworkflow
+
+#workflow	haplotypecaller_to_vcf	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FN_OUT_BASE
+1	0	haplotypecaller_to_vcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN}, FN_OUT_BASE=${FN_OUT_BASE}
+#endworkflow
+
+#workflow	cgpPindel_normal	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,FAKE_BAM,FAKE_GFF,SEQTYPE
+1	0	cgpPindel_normal	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN}, FAKE_BAM=${FAKE_BAM}, FAKE_GFF=${FAKE_GFF},SEQTYPE=${SEQTYPE}
+#endworkflow
+
+#workflow	cgpPindel	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT,TUMOR_BAM,NORMAL_BAM
+1	0	cgpPindel	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, TUMOR_BAM=${TUMOR_BAM}, NORMAL_BAM=${NORMAL_BAM}
+#endworkflow
+
+#workflow	manta	SAMPLE_ID,DIR_IN,FN_IN_BAM_N,FN_IN_BAM_T,DIR_OUT
+1	0	manta	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_IN},FN_IN_BAM_N=${FN_IN_BAM_N},FN_IN_BAM_T=${FN_IN_BAM_T},DIR_OUT=${DIR_OUT}
+#endworkflow
+
+#workflow	titancna	SAMPLE_ID,DIR_IN_VCF,FN_IN_VCF_N,DIR_IN_BAM,FN_BAM_N,FN_BAM_T,N_CLUSTERS,PLOIDY,N_ITER,DIR_OUT
+1	0	titancna	SAMPLE_ID=${SAMPLE_ID},PLOIDY=${PLOIDY},N_ITER=${N_ITER},N_CLUSTERS=${N_CLUSTERS},DIR_IN_VCF=${DIR_IN_VCF},FN_IN_VCF_N=${FN_IN_VCF_N},DIR_IN_BAM=${DIR_IN_BAM},FN_BAM_N=${FN_BAM_N},FN_BAM_T=${FN_BAM_T},DIR_OUT=${DIR_OUT}
+#endworkflow
+
+
+##########################################
+### REALIGNMENT                        ###
+##########################################
+
+#workflow	realign_TN_bam_wgs	SAMPLE_ID,DIR_IN,FN_IN_BASE_N,FN_IN_BASE_T,DIR_OUT
+1	0	resorted_bwa_from_paired_bam	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN},  DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}.bam,           FN_OUT=${FN_IN_BASE_N}_realigned.bam
+2	1	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_realigned.bam, FN_OUT=${FN_IN_BASE_N}_realigned.bam.bai
+3	2	bam_stats	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_realigned.bam, FN_OUT=${FN_IN_BASE_N}_realigned.bam.bas
+4	3	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_realigned.bam, FN_OUT_BASE=${FN_IN_BASE_N}
+5	4	genotype_gvcfs	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_ARRAY=( "${FN_IN_BASE_N}".g.vcf ), FN_OUT=${FN_IN_BASE_N}.vcf
+6	5	annovar	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, VCF_IN=${FN_IN_BASE_N}.vcf, FN_OUT_BASE=${FN_IN_BASE_N}
+10	0	resorted_bwa_from_paired_bam	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN},  DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_T}.bam,           FN_OUT=${FN_IN_BASE_T}_realigned.bam
+11	10	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_T}_realigned.bam, FN_OUT=${FN_IN_BASE_T}_realigned.bam.bai
+12	11	bam_stats	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_T}_realigned.bam, FN_OUT=${FN_IN_BASE_T}_realigned.bam.bas
+#endworkflow
+
+#workflow	genotype_wgs	SAMPLE_ID,DIR_IN,FN_IN_BASE_N,FN_IN_BASE_T,DIR_OUT
+5	0	genotype_gvcfs	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_ARRAY=( "${FN_IN_BASE_N}".g.vcf ), FN_OUT=${FN_IN_BASE_N}.vcf
+6	5	annovar	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, VCF_IN=${FN_IN_BASE_N}.vcf, FN_OUT_BASE=${FN_IN_BASE_N}
+#endworkflow
+
+# #workflow	titanCNA_preprocessing	SAMPLE_ID,DIR_IN,FN_IN,DIR_OUT
+# 1	0	    haplotypecaller_to_gvcf	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}, FN_OUT_BASE=${SAMPLE_ID}
+# 10	1	genotype_gvcfs	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, FN_ARRAY=${FN_ARRAY}, DIR_OUT=${DIR_OUT}, FN_OUT=${SAMPLE_ID}.vcf
+# 20	10	titanCNV_extract_readcounts	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}.vcf, FN_OUT=${SAMPLE_ID}_titanCNV_readcounts
+# 30	20	titanCNV	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_titanCNV_readcounts, FN_OUT=${SAMPLE_ID}
+# #endworkflow
+
+##########################################
+### TUMOR VS NORMAL                    ###
+##########################################
+
+#------------------------------------------------------------------------------
+
+#workflow	prostate_WGS	SAMPLE_ID,DIR_IN,FN_BAM_N,FN_BAM_T,DIR_OUT,PLOIDY,N_ITER,N_CLUSTERS
+########################
+# STRUCTURAL VARIATION # 
+########################
+# Identify large indels, structural variants. Count SV subtypes.
+#1	0	manta	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_IN},FN_IN_BAM_N=${FN_IN_BAM_N},FN_IN_BAM_T=${FN_IN_BAM_T},DIR_OUT=${DIR_OUT}/manta_results/${SAMPLE_ID}
+1	0	pass	SAMPLE_ID=${SAMPLE_ID}
+2	1	manta_postprocess	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT}/manta_results/${SAMPLE_ID}/results/variants,FN_IN=somaticSV.vcf,DIR_OUT=${DIR_OUT},FN_OUT=${SAMPLE_ID}_manta_circos.txt
+#5	0	lumpy	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_IN},FN_IN_BAM_N=${FN_IN_BAM_N},FN_IN_BAM_T=${FN_IN_BAM_T},DIR_OUT=${DIR_OUT}
+5	0	pass	SAMPLE_ID=${SAMPLE_ID}
+6	5	lumpy_postprocess	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT},DIR_OUT=${DIR_OUT},FN_IN=${SAMPLE_ID}_lumpy.vcf,FN_OUT_BASE=${SAMPLE_ID}_lumpy,MIN_DEL_DIST=1000,MIN_BREAK_DIST=30,MIN_READS_T=10,MAX_READS_N=0
+
+############
+# GERMLINE # 
+############
+# Identify and annotate germline variants
+#20	0	haplotypecaller_to_vcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_BAM_N}, FN_OUT_BASE=${SAMPLE_ID}_germline
+20	0	pass	SAMPLE_ID=${SAMPLE_ID}
+21	20	snpeff	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT},FN_IN=${SAMPLE_ID}_germline.vcf,DIR_OUT=${DIR_OUT},FN_OUT_BASE=${SAMPLE_ID}_germline
+
+#######
+# CNV # 
+#######
+# Identify copy number alterations, estimate ploidy. Filter segments less than 5kb
+#30	20	titanCNV_extract_readcounts	SAMPLE_ID=${SAMPLE_ID},DIR_IN_VCF=${DIR_OUT},FN_IN_VCF_N=${SAMPLE_ID}_germline.vcf,DIR_IN_BAM=${DIR_IN},FN_BAM_N=${FN_BAM_N},FN_BAM_T=${FN_BAM_T},DIR_OUT=${DIR_OUT}
+30	0	pass	SAMPLE_ID=${SAMPLE_ID}
+31	30	titancna	SAMPLE_ID=${SAMPLE_ID},PLOIDY=${PLOIDY},N_ITER=${N_ITER},N_CLUSTERS=${N_CLUSTERS},DIR_IN_VCF=${DIR_OUT},FN_IN_VCF_N=${SAMPLE_ID}_germline.vcf,DIR_IN_BAM=${DIR_IN},FN_BAM_N=${FN_BAM_N},FN_BAM_T=${FN_BAM_T},DIR_OUT=${DIR_OUT}
+32	31	titan_refseq_bedfile	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT},FN_IN=${SAMPLE_ID}_titan_segments.txt,DIR_OUT=${DIR_OUT},FN_OUT=${SAMPLE_ID}_titan_refseq.bed
+
+#####################
+# SOMATIC VARIATION #
+#####################
+# Identify somatic variants. Call mutation signatures.
+# pass on SPLICE SITE ACCEPTOR, SPLICE SITE DONOR, START LOST, NON SYNONYMOUS START, NON SYNONYMOUS CODING, FRAME SHIFT, CODON CHANGE, CODON INSERTION, CODON CHANGE PLUS CODON DELETION, CODON CHANGE PLUS CODON DELETION, STOP GAINED, STOP LOST, RARE AMINO ACID
+#40	0	strelka	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_IN},FN_IN_BAM_N=${FN_IN_BAM_N},FN_IN_BAM_T=${FN_IN_BAM_T},DIR_OUT=${DIR_OUT}
+40	0	pass	SAMPLE_ID=${SAMPLE_ID}
+41	40	strelka_derive_mutation_signatures	SAMPLE_ID=${SAMPLE_ID},DIR_IN=${DIR_OUT},FN_IN=${SAMPLE_ID}_strelka.somatic.vcf,DIR_OUT=${DIR_OUT}
+
+#endworkflow
+
+#------------------------------------------------------------------------------
+
+#workflow	unpaired_TN_from_fastq	SAMPLE_ID,DIR_IN,FN_PINDEL_NORMALS,FASTQ_g,FASTQ_t,FN_OUT,DIR_OUT
+1	0	bwa_unpaired_fastq	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FASTQ=${FASTQ_g}, FN_OUT=${SAMPLE_ID}_germline_sorted.bam
+2	1	mark_duplicates	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted.bam,       FN_OUT=${SAMPLE_ID}_germline_sorted_nodup.bam
+3	2	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted_nodup.bam, FN_OUT=${SAMPLE_ID}_germline_sorted_nodup.bam.bai
+4	3	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${SAMPLE_ID}_germline_sorted.bam
+5	4	bam_stats	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted_nodup.bam,DIR_OUT=${DIR_OUT}, FN_OUT=${SAMPLE_ID}_germline_sorted_nodup.bam.bas
+6	5	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted_nodup.bam, FN_OUT_BASE=${SAMPLE_ID}_germline
+10	0	bwa_unpaired_fastq	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FASTQ=${FASTQ_t}, FN_OUT=${SAMPLE_ID}_tumor_sorted.bam
+11	10	mark_duplicates	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted.bam,       FN_OUT=${SAMPLE_ID}_tumor_sorted_nodup.bam
+12	11	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted_nodup.bam, FN_OUT=${SAMPLE_ID}_tumor_sorted_nodup.bam.bai
+13	12	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${SAMPLE_ID}_tumor_sorted.bam
+14	13	bam_stats	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted_nodup.bam,DIR_OUT=${DIR_OUT}, FN_OUT=${SAMPLE_ID}_tumory_sorted_nodup.bam.bas
+15	14	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted_nodup.bam, FN_OUT_BASE=${SAMPLE_ID}_tumor
+20	6,15	genotype_gvcfs	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_ARRAY=( "${SAMPLE_ID}_germline" "${SAMPLE_ID}_tumor" ), FN_OUT=${SAMPLE_ID}.vcf
+21	20	annovar	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, VCF_IN=${SAMPLE_ID}.vcf, FN_OUT_BASE=${SAMPLE_ID}
+40	5,14	mutect	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, BAM_NORMAL=${SAMPLE_ID}_germline_sorted_nodup.bam, BAM_TUMOR=${SAMPLE_ID}_tumor_sorted_nodup.bam, DIR_OUT=${DIR_OUT}, FN_OUT_BASE=${SAMPLE_ID}
+41	40	annovar	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, VCF_IN=${SAMPLE_ID}_mutect.vcf, FN_OUT_BASE=${SAMPLE_ID}_mutect
+#endworkflow
+
+#workflow	paired_TN_from_fastq	SAMPLE_ID,DIR_IN,FN_PINDEL_NORMALS,FASTQ_g_1,FASTQ_g_2,FASTQ_t_1,FASTQ_t_2,FN_OUT,DIR_OUT
+1	0	bwa_from_paired_fastq	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FASTQ_1=${FASTQ_g_1}, FASTQ_2=${FASTQ_g_2}, FN_OUT=${SAMPLE_ID}_germline_sorted.bam
+2	1	mark_duplicates	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted.bam,       FN_OUT=${SAMPLE_ID}_germline_sorted_nodup.bam
+3	2	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted_nodup.bam, FN_OUT=${SAMPLE_ID}_germline_sorted_nodup.bam.bai
+4	3	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${SAMPLE_ID}_germline_sorted.bam
+5	4	bam_stats	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted_nodup.bam,DIR_OUT=${DIR_OUT}, FN_OUT=${SAMPLE_ID}_germline_sorted_nodup.bam.bas
+6	5	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_germline_sorted_nodup.bam, FN_OUT_BASE=${SAMPLE_ID}_germline
+10	0	bwa_from_paired_fastq	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, DIR_OUT=${DIR_OUT}, FASTQ_1=${FASTQ_t_1}, FASTQ_2=${FASTQ_t_2}, FN_OUT=${SAMPLE_ID}_tumor_sorted.bam
+11	10	mark_duplicates	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted.bam,       FN_OUT=${SAMPLE_ID}_tumor_sorted_nodup.bam
+12	11	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted_nodup.bam, FN_OUT=${SAMPLE_ID}_tumor_sorted_nodup.bam.bai
+13	12	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${SAMPLE_ID}_tumor_sorted.bam
+14	13	bam_stats	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted_nodup.bam,DIR_OUT=${DIR_OUT}, FN_OUT=${SAMPLE_ID}_tumor_sorted_nodup.bam.bas
+15	14	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${SAMPLE_ID}_tumor_sorted_nodup.bam, FN_OUT_BASE=${SAMPLE_ID}_tumor
+20	6,15	genotype_gvcfs	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_ARRAY=( "${SAMPLE_ID}_germline" "${SAMPLE_ID}_tumor" ), FN_OUT=${SAMPLE_ID}.vcf
+21	20	annovar	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, VCF_IN=${SAMPLE_ID}.vcf, FN_OUT_BASE=${SAMPLE_ID}
+40	5,14	mutect	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, BAM_NORMAL=${SAMPLE_ID}_germline_sorted_nodup.bam, BAM_TUMOR=${SAMPLE_ID}_tumor_sorted_nodup.bam, DIR_OUT=${DIR_OUT}, FN_OUT_BASE=${SAMPLE_ID}
+41	40	annovar	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, VCF_IN=${SAMPLE_ID}_mutect.vcf, FN_OUT_BASE=${SAMPLE_ID}_mutect
+#endworkflow
+
+#workflow	paired_WGS	SAMPLE_ID,DIR_IN,FN_IN_BASE_N,FN_IN_BASE_T,DIR_OUT,FN_OUT_BASE
+1	0	bwa_from_paired_bam	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_sorted.bam,                 FN_OUT=${FN_IN_BASE_N}_sorted_realigned.bam
+2	1	mark_duplicates	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_sorted_realigned.bam,       FN_OUT=${FN_IN_BASE_N}_sorted_realigned_nodup.bam
+3	2	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_sorted_realigned_nodup.bam, FN_OUT=${FN_IN_BASE_N}_sorted_realigned_nodup.bai
+4	3	haplotypecaller_to_gvcf	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_N}_sorted_realigned_nodup.bam, FN_OUT_BASE=${FN_IN_BASE_N}
+5	3	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE_N}_sorted.bam
+6	3	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE_N}_sorted_realigned.bam
+7	0	bwa_from_paired_bam	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_T}_sorted.bam,                 FN_OUT=${FN_IN_BASE_T}_sorted_realigned.bam
+8	7	mark_duplicates	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_T}_sorted_realigned.bam,       FN_OUT=${FN_IN_BASE_T}_sorted_realigned_nodup.bam
+9	8	index_bam	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE_T}_sorted_realigned_nodup.bam, FN_OUT=${FN_IN_BASE_T}_sorted_realigned_nodup.bai
+10	9	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE_T}_sorted.bam
+11	10	rm	                    SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE_T}_sorted_realigned.bam
+12	6,11	mutect	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN}, BAM_NORMAL=${FN_IN_BASE_N}_sorted_realigned_nodup.bam, BAM_TUMOR=${FN_IN_BASE_T}_sorted_realigned_nodup.bam, DIR_OUT=${DIR_OUT}, FN_OUT_BASE=${FN_OUT_BASE}
+#endworkflow
+
+
+##########################################
+### EPIC WORKFLOWS                     ###
+##########################################
+
+#workflow	EPIC_bam_to_gvcf	SAMPLE_ID,DIR_IN,FN_IN_BASE,DIR_OUT
+1	0	filter_secondary_alignments	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN},  DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}.bam,                        FN_OUT=${SAMPLE_ID}_sorted.bam
+2	1	bwa_from_paired_bam	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted.bam,                 FN_OUT=${SAMPLE_ID}_sorted_realigned.bam
+3	2	index_bam	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned.bam,       FN_OUT=${SAMPLE_ID}_sorted_realigned.bai
+4	3	mark_duplicates	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned.bam,       FN_OUT=${SAMPLE_ID}_sorted_realigned_nodup.bam
+5	4	index_bam	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned_nodup.bam, FN_OUT=${SAMPLE_ID}_sorted_realigned_nodup.bai
+6	5	haplotypecaller_to_gvcf	    SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned_nodup.bam, FN_OUT_BASE=${SAMPLE_ID}
+7	6	rm	                        SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE}_sorted.bam
+8	7	rm	                        SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE}_sorted_realigned.bam
+9	8	rm	                        SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE}_sorted_realigned.bai
+#endworkflow
+
+#workflow	EPIC_bam	SAMPLE_ID,DIR_IN,FN_IN_BASE,DIR_OUT
+1	0	filter_secondary_alignments	SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_IN},  DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}.bam,                        FN_OUT=${SAMPLE_ID}_sorted.bam
+2	1	bwa_from_paired_bam	        SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted.bam,                 FN_OUT=${SAMPLE_ID}_sorted_realigned.bam
+3	2	index_bam	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned.bam,       FN_OUT=${SAMPLE_ID}_sorted_realigned.bai
+4	3	mark_duplicates	            SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned.bam,       FN_OUT=${SAMPLE_ID}_sorted_realigned_nodup.bam
+5	4	index_bam	                SAMPLE_ID=${SAMPLE_ID}, DIR_IN=${DIR_OUT}, DIR_OUT=${DIR_OUT}, FN_IN=${FN_IN_BASE}_sorted_realigned_nodup.bam, FN_OUT=${SAMPLE_ID}_sorted_realigned_nodup.bai
+6	5	rm	                        SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE}_sorted.bam
+7	6	rm	                        SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE}_sorted_realigned.bam
+8	7	rm	                        SAMPLE_ID=${SAMPLE_ID}, DIR=${DIR_OUT}, FN=${FN_IN_BASE}_sorted_realigned.bai
+#endworkflow
+
+
