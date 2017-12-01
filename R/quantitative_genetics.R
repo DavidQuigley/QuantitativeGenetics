@@ -256,7 +256,7 @@ COLOR.WHEEL=c("black","cornflowerblue","orange","darkgreen","red","darkblue","da
 #
 #   Given a matrix and a list of gene names and symbol, plot gene names sorted by symbol
 #
-# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19)
+# do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19, legend.cex=1.5)
 #
 #    Helper function for quick visualization of PCA. Automatically colors based on labels.
 #
@@ -2140,13 +2140,13 @@ convert.genome.to.scaled.x = function( chr.list, loc.list, x.max=1000 ){
         cur.chrom = chr.list[i]
         cur.loc = loc.list[i]
         if( cur.chrom>1 ){
-            xs[i] = sum(size.chroms$loc[1:(cur.chrom-1)]) + cur.loc
+            xs[i] = sum(size.chroms$loc[size.chroms$chr < cur.chrom]) + cur.loc
         }
         else{
             xs[i] = cur.loc
         }
     }
-    xs = round( xs/(max(xs)) * x.max )
+    round( xs/(max(xs)) * x.max )
 }
 
 plot.percent.altered.by.locus.proportionate=function(M, chr.list, loc.list, upper.bound=0.5, lower.bound=-0.5, y.min=0, y.max=0, x.max=1000, colors=c("blue", "red")){
@@ -3278,7 +3278,9 @@ sorted.heatmap = function(D, ga=NULL, target.symbols=NULL, target.probes=NULL,
      ggplot(df, aes(x, y, fill = v)) + geom_tile() + scg + element_blank() + syc + sxc + theme(axis.title.x = element_blank() )
 }
 
-do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, pch=19){
+do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
+                 colors=NULL, legend.xy=NULL, main="", x.axis=1, y.axis=2, 
+                 legend.cex=1.5, pch=19){
     if(length(pch)!=1 & length(pch) != dim(D)[2] )
         stop("pch must be of length 1 or equal length to the number of samples.")
     
@@ -3296,7 +3298,6 @@ do.pca=function( D, pca=NULL, labels=NULL, xlim=NULL, ylim=NULL, show.legend=T, 
     if( !is.null(labels) ){
         labels[is.na(labels)]="NA"
         unique.labels = sort(unique(labels))
-        legend.cex=1.5
         for( i in 1:length(labels)){
             colors[i] = color.wheel[ which(unique.labels==labels[i]) ] 
         }
@@ -4756,7 +4757,8 @@ SAM.convert.siggenes=function(T){
 }
 
 
-km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL, x.max=NULL, legend.xy = NULL, verbose=T){
+km=function( times, had.events, conditions, main=NULL, legends=NULL, 
+fn_out=NULL, x.max=NULL, legend.xy = NULL, verbose=T){
     # Wrapper for Kaplan-meier analysis (using library "survival")
     # If fn_out is passed, the plot is saved to the specified file as a png
     # returns the coxph object
@@ -4791,7 +4793,7 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
     if(is.null(x.max)){
         x.max = max(times)
     }
-    plot(surv.all, lwd=3, col=color.list,
+    plot(surv.all, lwd=3, col=color.list, mark.time=TRUE,
         main=main.title, las=1,
         xlab="time", cex.axis=1.5, bty="n", xlim=c(0,x.max))
     if( is.null( legend.xy ) ){
@@ -4806,10 +4808,12 @@ km=function( times, had.events, conditions, main=NULL, legends=NULL, fn_out=NULL
         legend.y = legend.xy[2]
     }
     if( !is.null(legends) ){
-        legend(legend.x,legend.y,legends, col=color.list,lty=1,lwd=3,cex=1)
+        legend(legend.x,legend.y,legends, col=color.list,lty=1,lwd=3,cex=1,
+               bty="n")
     }
     else{
-        legend(legend.x,legend.y,sort(unique(conditions,na.rm=T)), col=color.list,lty=1,lwd=3,cex=1.5)
+        legend(legend.x,legend.y,sort(unique(conditions,na.rm=T)), 
+               col=color.list,lty=1,lwd=3,cex=1.5,bty="n")
     }
     if( !is.null(fn_out) ){
         i=dev.off()
