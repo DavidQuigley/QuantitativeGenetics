@@ -19,26 +19,31 @@ shinyUI(fluidPage(
     ))),
     
     # Application title
-    titlePanel("Drug response curve"),
+    titlePanel("Dose response curve"),
     
     # Sidebar with a slider input for the number of bins
     sidebarLayout(
         sidebarPanel(
         fileInput("file", label = "File",width="300px" ),
-        h4("Labels"),
-        textInput("xlab", label = "X axis", value = "Log drug concentration", width="200px"),
-        textInput("ylab", label = "Y axis", value = "viability", width="200px"),
-        hr(),
+        h4("Curve fitting"),
+        fluidRow( 
+            column( width=8, selectInput("curve_fit", label = "", 
+                                         choices = 
+                                             list("Fit lower & upper" = 1, 
+                                                  "Fixed lower, fit upper"=2, 
+                                                  "Fixed lower & upper" = 3), 
+                                         selected = 1, width="150px"))
+        ),
         h4("X axis"),
         fluidRow(
             column( width=4, selectInput("min_x", label = "From", 
                     choices = list("0"=0, "10" = 10, "1e2" = 100,"1e3" = 1e3, 
                                    "1e4" = 1e4, "1e5" = 1e5, "1e6" = 1e6, "1e7" = 1e7), 
-                    selected = 0, width="75px") ),
+                    selected = 0, width="150px") ),
             column( width=4, selectInput("max_x", label = "To", 
                     choices = list("1e1" = 1e1, "1e2" = 1e2,"1e3" = 1e3, "1e4" = 1e4, 
                                    "1e5" = 1e5, "1e6" = 1e6, "1e7" = 1e7), 
-                    selected = 1e5, width="75px") )
+                    selected = 1e5, width="150px") )
         ),
         
         fluidRow(
@@ -71,6 +76,10 @@ shinyUI(fluidPage(
                     choices = list("1" = 1, "2" = 2,"3" = 3), 
                     selected = 1, width="75px"),
         checkboxInput("sf50", label = "Show EC50", value = TRUE),
+        hr(),
+        h4("Labels"),
+        textInput("xlab", label = "X axis", value = "Log drug concentration", width="200px"),
+        textInput("ylab", label = "Y axis", value = "viability", width="200px"),
         hr(),
         h4("Legend location"),
         fluidRow(

@@ -34,34 +34,41 @@ se=function(x){
     sd(x, na.rm=T)/sqrt(sum(!is.na(x))) 
 }
 
+make_fit = function(dd, input){
+    treatments = rep("drug", dim(dd)[1] * dim(dd)[2])
+    concentrations = rep( as.numeric(rownames(dd)), dim(dd)[2])
+    values = as.numeric( data.matrix( dd ) )
+    plate_id="plate"
+    negative_control=0
+    st = c()
+    for(i in 1:dim(dd)[2]){
+        st = c(st, rep(names(dd)[i], dim(dd)[1] ) )    
+    }
+    D=create_dataset( sample_types=st, 
+                      treatments=treatments, 
+                      concentrations=concentrations, 
+                      values=values, 
+                      plate_id=plate_id, 
+                      negative_control=negative_control)
+    unique_samples = unique(names(dd))
+    
+    if( input$curve_fit ==1 ){
+        fct=drc::LL.4()   
+    }else if( input$curve_fit==2){
+        fct=drc::LL.3()   
+    }else{
+        fct=drc::LL.2()   
+    }
+    fit_DRC(D, sample_types = unique_samples, treatments = "drug", 
+            fct=fct )
+}
+
 shinyServer(function(input, output, session) {
     
     output$drugresponsePlot <- renderPlot({
         if( !is.null( input$file$datapath ) ){
             dd = load.matrix(input$file$datapath[1])
-            treatments = rep("drug", dim(dd)[1] * dim(dd)[2])
-            concentrations = rep( as.numeric(rownames(dd)), dim(dd)[2])
-            hours = rep( 0, dim(dd)[1] * dim(dd)[2])
-            values = as.numeric( data.matrix( dd ) )
-            plate_id="plate"
-            negative_control=0
-            st = c()
-            for(i in 1:dim(dd)[2]){
-                st = c(st, rep(names(dd)[i], dim(dd)[1] ) )    
-            }
-            D=create_dataset( sample_types=st, 
-                              treatments = treatments, 
-                              concentrations = concentrations, 
-                              hours = hours,
-                              values = values, 
-                              plate_id=plate_id, 
-                              negative_control = negative_control)
-            unique_samples = unique(names(dd))
-            bar_multiple = as.numeric(input$barmultiple)
-            fitted = fit_DRC(D, sample_types = unique_samples, 
-                             treatments = "drug", 
-                             hour=0, 
-                             fct=drc::LL.3() )
+            fitted = make_fit(dd, input)
             par(mar=c(5,5,3,1))
             if( as.numeric(input$axis_pointsize) > 1.5 ){
                 par(mar=c(8,8,3,1))
@@ -74,7 +81,7 @@ shinyServer(function(input, output, session) {
                 show_x_log_tics=as.logical(input$show_x_logtic),
                 show_x_exponent=as.logical(input$show_x_exponent),
                 show_EC50 = as.logical(input$sf50),
-                bar_multiple=bar_multiple, 
+                bar_multiple=as.numeric(input$barmultiple),
                 xlim=c(as.numeric(input$min_x), as.numeric(input$max_x) ),
                 cex.lab=as.numeric(input$axis_labelsize), 
                 ylim=c(0, as.numeric(input$max_y) ),
@@ -94,30 +101,7 @@ shinyServer(function(input, output, session) {
         
         if( !is.null( input$file$datapath) ){
             dd = load.matrix( input$file$datapath[1] )
-            
-            treatments = rep("drug", dim(dd)[1] * dim(dd)[2])
-            concentrations = rep( as.numeric(rownames(dd)), dim(dd)[2])
-            hours = rep( 0, dim(dd)[1] * dim(dd)[2])
-            values = as.numeric( data.matrix( dd ) )
-            plate_id="plate"
-            negative_control=0
-            st = c()
-            for(i in 1:dim(dd)[2]){
-                st = c(st, rep(names(dd)[i], dim(dd)[1] ) )    
-            }
-            D=create_dataset( sample_types=st, 
-                              treatments = treatments, 
-                              concentrations = concentrations, 
-                              hours = hours,
-                              values = values, 
-                              plate_id=plate_id, 
-                              negative_control = negative_control)
-            unique_samples = unique(names(dd))
-            bar_multiple = as.numeric(input$barmultiple)
-            fitted = fit_DRC(D, sample_types = unique_samples, 
-                             treatments = "drug", 
-                             hour=0, 
-                             fct=drc::LL.3() )
+            fitted = make_fit(dd, input)
             sn=get.split.col( rownames(fitted$fit_stats), "_|_", first=TRUE)
             data = data.frame( sample=sn,
                                AUC=fitted$fit_stats$AUC,
@@ -128,7 +112,7 @@ shinyServer(function(input, output, session) {
                           stringsAsFactors=FALSE)
         }
     })
-    
+
     output$download_PDF <- downloadHandler(
         filename = function() {
             "dose_response.pdf"
@@ -137,41 +121,20 @@ shinyServer(function(input, output, session) {
         content = function(file) {
             pdf( file, width=10, height=8 )
             dd = load.matrix( input$file$datapath[1] )
-            treatments = rep("drug", dim(dd)[1] * dim(dd)[2])
-            concentrations = rep( as.numeric(rownames(dd)), dim(dd)[2])
-            hours = rep( 0, dim(dd)[1] * dim(dd)[2])
-            values = as.numeric( data.matrix( dd ) )
-            plate_id="plate"
-            negative_control=0
-            st = c()
-            for(i in 1:dim(dd)[2]){
-                st = c(st, rep(names(dd)[i], dim(dd)[1] ) )    
-            }
-            D=create_dataset( sample_types=st, 
-                              treatments, 
-                              concentrations, 
-                              hours,
-                              values, 
-                              plate_id, 
-                              negative_control)
-            unique_samples = unique(names(dd))
-            bar_multiple = as.numeric(input$barmultiple)
-            fitted = fit_DRC(D, sample_types = unique_samples, 
-                             treatments = "drug", 
-                             hour=0, 
-                             fct=drc::LL.3() )
+            
             par(mar=c(5,5,3,1))
             if( as.numeric(input$axis_pointsize) > 1.5 ){
                 par(mar=c(8,8,3,1))
                 par(mgp=c(5,1,0))
             }
+            fitted = make_fit(dd, input)
             plot( fitted,
                   xlab=input$xlab,
                   ylab=input$ylab,
                   show_x_log_tics=as.logical(input$show_x_logtic),
                   show_x_exponent=as.logical(input$show_x_exponent),
                   cex.axis=as.numeric(input$axis_pointsize),
-                  bar_multiple=bar_multiple, 
+                  bar_multiple=as.numeric(input$barmultiple), 
                   show_EC50 = as.logical(input$sf50),
                   xlim=c(as.numeric(input$min_x), as.numeric(input$max_x) ),
                   cex.lab=as.numeric(input$axis_labelsize), 
